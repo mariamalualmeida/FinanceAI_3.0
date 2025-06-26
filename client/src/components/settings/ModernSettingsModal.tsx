@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Palette, Brain, Shield, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import type { UserSettings } from "@shared/schema";
 
 interface SettingsModalProps {
   open: boolean;
@@ -47,7 +48,7 @@ export function ModernSettingsModal({ open, onOpenChange }: SettingsModalProps) 
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState("appearance");
 
-  const { data: settings = {} } = useQuery({
+  const { data: settings } = useQuery<UserSettings>({
     queryKey: ["/api/settings"],
   });
 
