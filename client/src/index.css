@@ -104,7 +104,10 @@ pre {
 
 html, body, #root {
   height: 100%;
+  height: 100vh; /* Força altura completa da viewport */
+  max-height: 100vh; /* Evita overflow */
   overflow-x: hidden;
+  overflow-y: hidden; /* Evita scroll vertical no body */
   font-family: 'Inter', sans-serif;
 }
 
