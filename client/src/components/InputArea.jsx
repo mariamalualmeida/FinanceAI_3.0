@@ -120,7 +120,7 @@ export default function InputArea({ onSend, onFileUpload }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-16 leading-6 text-base scrollbar-hide overflow-y-auto"
+            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-16 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
