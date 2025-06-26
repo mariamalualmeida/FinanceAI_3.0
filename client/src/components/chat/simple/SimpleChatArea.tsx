@@ -13,7 +13,7 @@ interface SimpleChatAreaProps {
   setDarkMode: (dark: boolean) => void;
 }
 
-export default function SimpleChatArea({ 
+function SimpleChatArea({ 
   conversationId, 
   setSidebarOpen, 
   darkMode, 
@@ -118,3 +118,5 @@ export default function SimpleChatArea({
     </main>
   );
 }
+
+export default SimpleChatArea;
