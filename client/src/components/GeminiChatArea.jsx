@@ -122,7 +122,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
             <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
               <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
             </svg>
-            <span className="text-lg font-normal text-gray-800 dark:text-gray-200">Gemini</span>
+            <span className="text-lg font-normal text-gray-800 dark:text-gray-200">Mig</span>
           </div>
         </div>
         <div className="w-20" />
@@ -209,13 +209,19 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                     <Paperclip size={20} />
                   </button>
                   
-                  {/* Textarea sem bordas */}
+                  {/* Textarea responsiva */}
                   <textarea
                     value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Peça ao Gemini"
-                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[24px] max-h-32 py-1"
+                    onChange={(e) => {
+                      setInputText(e.target.value)
+                      // Auto-resize
+                      e.target.style.height = 'auto'
+                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
+                    }}
+                    placeholder="Peça ao Mig"
+                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[24px] max-h-[120px] py-1 leading-6"
                     rows="1"
+                    style={{ height: '24px' }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
