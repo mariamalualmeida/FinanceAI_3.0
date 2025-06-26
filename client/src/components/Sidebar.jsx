@@ -150,7 +150,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
 
                   {/* Dropdown menu */}
                   {showDropdown === conv.id && (
-                    <div className="absolute right-0 top-full mt-1 w-40 bg-gray-700 rounded-md border border-gray-600 shadow-lg z-50">
+                    <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 shadow-lg z-50">
                       <button 
                         key={`rename-${conv.id}-${index}`}
                         onClick={async () => {
@@ -172,7 +172,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                           }
                           setShowDropdown(null)
                         }}
-                        className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                        className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors rounded text-sm flex items-center gap-2"
                       >
                         <Edit size={14} />
                         Renomear
@@ -184,7 +184,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                           // Implementar funcionalidade de arquivar
                           setShowDropdown(null)
                         }}
-                        className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                        className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors rounded text-sm flex items-center gap-2"
                       >
                         <Archive size={14} />
                         Arquivar
@@ -197,7 +197,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                           }
                           setShowDropdown(null)
                         }}
-                        className="w-full text-left p-2 hover:bg-red-600 text-red-400 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                        className="w-full text-left p-2 hover:bg-red-500 dark:hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
                       >
                         <Trash2 size={14} />
                         Excluir
@@ -211,11 +211,11 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Perfil */}
-        <div className="border-t border-gray-600 px-2 py-2">
+        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2">
           <div className="relative">
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm"
+              className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-700 dark:text-gray-300 transition-colors text-sm"
             >
               <User size={16} />
               Perfil
@@ -237,7 +237,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-1 bg-gray-700 rounded-md border border-gray-600 overflow-hidden"
+                  className="mt-1 bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden"
                 >
                   <button 
                     onClick={() => {
