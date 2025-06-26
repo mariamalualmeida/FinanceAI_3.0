@@ -17,7 +17,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Palette, Bot, Shield, User } from "lucide-react";
+import { Palette, Bot, Shield, User, Settings } from "lucide-react";
+import { AdminPanel } from "./AdminPanel";
+import { useAuth } from "@/hooks/useAuth";
 
 interface SettingsModalProps {
   open: boolean;
@@ -27,7 +29,12 @@ interface SettingsModalProps {
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  
+  // Verifica se o usuário é Leonardo (administrador)
+  const isAdmin = user?.username === "Leonardo";
 
   const [localSettings, setLocalSettings] = useState({
     llmProvider: "openai",

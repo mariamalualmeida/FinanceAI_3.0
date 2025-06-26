@@ -151,7 +151,7 @@ export default function LoginPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                    placeholder={username ? "" : "admin ou Leonardo"}
+                    placeholder={username ? "" : "admin"}
                     required
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 pr-10"
-                      placeholder={password ? "" : "admin123 ou Leo@10041983"}
+                      placeholder={password ? "" : "admin123"}
                       required
                     />
                     <Button

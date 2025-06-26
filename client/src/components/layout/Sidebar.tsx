@@ -110,8 +110,8 @@ export function Sidebar({ onClose }: SidebarProps) {
           </Tabs>
         </div>
 
-        {/* New Chat Button - Touch friendly */}
-        <div className="px-4 pb-4 shrink-0">
+        {/* Action Buttons - Touch friendly */}
+        <div className="px-4 pb-4 shrink-0 space-y-3">
           <Button
             onClick={handleNewChat}
             className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
@@ -120,6 +120,34 @@ export function Sidebar({ onClose }: SidebarProps) {
             <Plus className="h-5 w-5 mr-2" />
             Nova Conversa
           </Button>
+          
+          {/* Search and Actions */}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="flex-1 h-10"
+              title="Pesquisar conversas"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="flex-1 h-10"
+              title="Arquivar conversa"
+            >
+              <Archive className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="flex-1 h-10"
+              title="Excluir conversa"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Conversations List - Scrollable area */}
@@ -147,7 +175,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 >
                   <div className="flex items-start space-x-3">
                     <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                      <Bot className="h-4 w-4 text-primary" />
+                      <MessageSquare className="h-4 w-4 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <h4 className="text-sm font-medium text-foreground truncate leading-tight">
