@@ -106,6 +106,7 @@ export default function App() {
               isOpen={sidebarOpen}
               onToggle={() => setSidebarOpen(!sidebarOpen)}
               onClose={() => setSidebarOpen(false)}
+              onOpenSettings={() => setShowSettings(true)}
             />
             {settings.interface === 'gemini' ? (
               <GeminiChatArea 
@@ -124,6 +125,14 @@ export default function App() {
           </Route>
         </Switch>
         <Toaster />
+        
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          currentTheme={settings.theme}
+          onThemeChange={(theme) => updateSettings({ theme })}
+        />
       </div>
     </Router>
   )
