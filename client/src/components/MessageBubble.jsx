@@ -48,10 +48,26 @@ export default function MessageBubble({ message, isTyping = false }) {
               />
             </div>
           ) : (
-            <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-900 dark:text-gray-100 ${
-              isUser ? 'text-right' : 'text-left'
-            }`}>
-              <ReactMarkdown>{message.text}</ReactMarkdown>
+            <div className="text-gray-900 dark:text-gray-100">
+              {/* Arquivos anexados */}
+              {message.files && message.files.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {message.files.map((file, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-3 py-2 rounded-lg">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                      </svg>
+                      <span className="text-sm font-medium">{file.name}</span>
+                      <span className="text-xs text-gray-500">({(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Texto da mensagem */}
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{message.text}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
