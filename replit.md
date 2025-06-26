@@ -136,6 +136,13 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. Interface melhorada: botões de envio com fundo transparente
 - June 26, 2025. Seletor de tema movido para barra superior dos chats
 - June 26, 2025. Bordas melhoradas na caixa de digitação para melhor visibilidade
+- June 26, 2025. Sistema de áudio completo: gravação, preview, transcrição automática
+- June 26, 2025. Botão de gravação adicionado ao GeminiChatArea com interface roxa
+- June 26, 2025. Linhas de cabeçalho removidas do ChatArea, botões flutuantes implementados
+- June 26, 2025. Correções de rolagem móvel implementadas com CSS específico
+- June 26, 2025. Modal de configurações reorganizado com seções expansíveis
+- June 26, 2025. Campos para APIs OpenAI, Anthropic e Google adicionados
+- June 26, 2025. Acesso administrativo implementado para funções sensíveis
 
 ## User Preferences
 
