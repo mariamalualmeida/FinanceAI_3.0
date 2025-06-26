@@ -8,7 +8,5 @@ export function useInterfaceStyle() {
 
   return {
     interfaceStyle: settings?.interfaceStyle || "simple",
-    isSimple: (settings?.interfaceStyle || "simple") === "simple",
-    isProfessional: (settings?.interfaceStyle || "simple") === "professional",
   };
 }
