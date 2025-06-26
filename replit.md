@@ -109,6 +109,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. File upload system with progress tracking implemented
 - June 26, 2025. Conversation management system with sidebar navigation
 - June 26, 2025. Message layout with user/AI distinction and file attachments
+- June 26, 2025. Interface ChatGPT 100% finalizada com todas as funcionalidades
+- June 26, 2025. Sistema de notificações, validação de arquivos, e controles funcionais
+- June 26, 2025. Sidebar comportamento corrigido, perfil reorganizado, funcionalidades ativas
 
 ## User Preferences
 

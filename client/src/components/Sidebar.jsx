@@ -104,6 +104,12 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
                     <div className="absolute right-0 top-full mt-1 w-40 bg-gray-700 rounded-md border border-gray-600 shadow-lg z-50">
                       <button 
                         onClick={() => {
+                          // Implementar funcionalidade de renomear
+                          const newName = prompt('Novo nome da conversa:', conv.title)
+                          if (newName && newName.trim()) {
+                            console.log('Renomeando conversa:', conv.id, 'para:', newName)
+                            // Aqui seria atualizado o estado das conversas
+                          }
                           setShowDropdown(null)
                         }}
                         className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
@@ -113,6 +119,8 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
                       </button>
                       <button 
                         onClick={() => {
+                          console.log('Arquivando conversa:', conv.id)
+                          // Implementar funcionalidade de arquivar
                           setShowDropdown(null)
                         }}
                         className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"

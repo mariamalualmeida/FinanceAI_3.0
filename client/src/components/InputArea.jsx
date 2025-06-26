@@ -48,7 +48,6 @@ export default function InputArea({ onSend, onFileUpload, toast }) {
 
     if (validFiles.length > 0) {
       setFiles(prev => [...prev, ...validFiles])
-      toast?.success(`${validFiles.length} arquivo(s) anexado(s)`)
     }
     
     if (fileInputRef.current) {
@@ -58,24 +57,20 @@ export default function InputArea({ onSend, onFileUpload, toast }) {
 
   const removeFile = (index) => {
     setFiles(prev => prev.filter((_, i) => i !== index))
-    toast?.info('Arquivo removido')
   }
 
   const toggleRecording = () => {
     if (!isRecording) {
       // Start recording
       setIsRecording(true)
-      toast?.info('Gravação de áudio iniciada')
       
       // Simulate recording for demo
       setTimeout(() => {
         setIsRecording(false)
-        toast?.success('Áudio gravado com sucesso')
       }, 3000)
     } else {
       // Stop recording
       setIsRecording(false)
-      toast?.info('Gravação interrompida')
     }
   }
 
