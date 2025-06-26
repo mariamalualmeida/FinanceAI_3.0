@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Menu, Settings, User, HelpCircle, Sun, Moon } from 'lucide-react';
+import { Send, Plus, Menu, Settings, User, HelpCircle, Sun, Moon, Paperclip, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -10,13 +10,41 @@ export function ChatGPTLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const { currentConversation, conversations, messages, sendMessage, createConversation, setCurrentConversation } = useChat();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { currentConversation, conversations, messages, sendMessage, createConversation, setCurrentConversation, isSendingMessage } = useChat();
   const { user, logout } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const sendingMessage = isSendingMessage;
 
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
+    }
+  };
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
+    }
+  }, [message]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,6 +59,12 @@ export function ChatGPTLayout() {
     if (!message.trim()) return;
     
     try {
+      if (selectedFile) {
+        // Handle file upload with message
+        console.log('Uploading file:', selectedFile.name);
+        setSelectedFile(null);
+      }
+      
       await sendMessage(message);
       setMessage('');
     } catch (error) {
@@ -209,20 +243,73 @@ export function ChatGPTLayout() {
         <div className="border-t border-gray-700 p-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Pergunte alguma coisa"
-                className="w-full bg-gray-700 border-gray-600 text-white placeholder-gray-400 rounded-lg py-3 pr-12 focus:border-gray-500"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                disabled={!message.trim()}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent hover:bg-gray-600 disabled:opacity-50"
-              >
-                <Send size={16} />
-              </Button>
+              <div className="flex items-end gap-2 bg-gray-700 border border-gray-600 rounded-lg p-3 focus-within:border-gray-500">
+                {/* Botão de anexar arquivo */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.jpg,.jpeg,.png"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-gray-400 hover:text-white hover:bg-gray-600 flex-shrink-0"
+                >
+                  <Paperclip size={16} />
+                </Button>
+
+                {/* Textarea para mensagem */}
+                <Textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Pergunte alguma coisa"
+                  className="flex-1 bg-transparent border-0 text-white placeholder-gray-400 resize-none min-h-[40px] max-h-32 focus:ring-0 focus:outline-none"
+                  rows={1}
+                />
+
+                {/* Botões de ação */}
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-gray-400 hover:text-white hover:bg-gray-600"
+                  >
+                    <RotateCcw size={16} />
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={!message.trim() || sendingMessage}
+                    className="bg-white text-gray-900 hover:bg-gray-200 disabled:opacity-50 disabled:bg-gray-600"
+                  >
+                    <Send size={16} />
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Arquivo selecionado */}
+              {selectedFile && (
+                <div className="mt-2 flex items-center gap-2 p-2 bg-gray-600 rounded text-sm">
+                  <Paperclip size={14} />
+                  <span className="text-gray-200">{selectedFile.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedFile(null)}
+                    className="text-gray-400 hover:text-white ml-auto"
+                  >
+                    ×
+                  </Button>
+                </div>
+              )}
             </form>
           </div>
         </div>
