@@ -188,24 +188,18 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
   }
 
   return (
-    <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541]">
-      {/* Header estilo ChatGPT */}
-      <header className="relative z-10 flex items-center justify-between p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
-            aria-label="Toggle sidebar"
-          >
-            <Menu size={20} />
-          </button>
-          <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
-        </div>
-        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Chat
-        </h1>
-        <div className="w-20" /> {/* Espaçador para centralizar o título */}
-      </header>
+    <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541] relative">
+      {/* Botões flutuantes no topo */}
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
+          aria-label="Toggle sidebar"
+        >
+          <Menu size={20} />
+        </button>
+        <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+      </div>
 
       {/* Área de mensagens */}
       <section className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 dark:from-[#343541] dark:to-[#343541]/80">

@@ -6,7 +6,7 @@ import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
 import EnhancedChatArea from './components/EnhancedChatArea'
 import AdminPanel from './components/AdminPanel'
-import SettingsModal from './components/SettingsModal'
+import NewSettingsModal from './components/NewSettingsModal'
 import { Toaster } from './components/ui/toaster'
 
 export default function App() {
@@ -128,11 +128,12 @@ export default function App() {
         <Toaster />
         
         {/* Settings Modal */}
-        <SettingsModal
+        <NewSettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
           currentTheme={settings.theme}
           onThemeChange={(theme) => updateSettings({ theme })}
+          user={user}
         />
       </div>
     </Router>

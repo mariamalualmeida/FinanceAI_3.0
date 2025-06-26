@@ -23,6 +23,31 @@
   --border-light: #4d4d4f;
 }
 
+/* Mobile scroll fixes */
+html, body {
+  overflow-x: hidden !important;
+  height: 100vh !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    overscroll-behavior: none !important;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  .sidebar-container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+}
+
 /* Força quebra de linha para textos longos */
 .break-text {
   word-wrap: break-word !important;
