@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
 import LoginPage from "@/pages/login";
 import ChatPage from "@/pages/chat";
-import NotFound from "@/pages/not-found";
 
 function AuthRouter() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -26,18 +25,9 @@ function AuthRouter() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <>
-          <Route path="/" component={LoginPage} />
-          <Route path="/login" component={LoginPage} />
-          <Route component={LoginPage} />
-        </>
+        <Route component={LoginPage} />
       ) : (
-        <>
-          <Route path="/" component={ChatPage} />
-          <Route path="/chat" component={ChatPage} />
-          <Route path="/chat/:conversationId" component={ChatPage} />
-          <Route component={NotFound} />
-        </>
+        <Route component={ChatPage} />
       )}
     </Switch>
   );
