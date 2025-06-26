@@ -204,9 +204,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-3 left-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    className="absolute bottom-2 left-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
-                    <Paperclip size={20} />
+                    <Paperclip size={18} />
                   </button>
                   
                   {/* Textarea responsiva - sem bordas internas */}
@@ -219,7 +219,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
                     }}
                     placeholder=""
-                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[60px] max-h-[200px] py-4 pl-12 pr-12 leading-6 text-base scrollbar-hide overflow-y-auto"
+                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[60px] max-h-[200px] pt-2 pb-10 px-3 leading-6 text-base scrollbar-hide overflow-y-auto"
                     rows="3"
                     style={{ height: '60px' }}
                     onKeyDown={(e) => {
@@ -234,9 +234,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="submit"
                     disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="absolute bottom-3 right-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="absolute bottom-2 right-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    <Send size={20} />
+                    <Send size={18} />
                   </button>
                   
                   {/* Input de arquivo oculto */}
