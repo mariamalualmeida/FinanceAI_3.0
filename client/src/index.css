@@ -61,21 +61,67 @@ html, body {
     flex-direction: column !important;
   }
   
+  /* Força máxima para seção de perfil no mobile */
+  aside[class*="fixed"] > div:last-child {
+    position: sticky !important;
+    bottom: 0 !important;
+    flex: 0 0 auto !important;
+    margin-top: auto !important;
+    background: inherit !important;
+    z-index: 999 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 60px !important;
+  }
+  
   /* Garantir que o perfil seja sempre visível no mobile */
-  @media (max-width: 768px) {
-    aside[class*="fixed"] > div:last-child {
-      flex-shrink: 0 !important;
-      margin-top: auto !important;
-      background: inherit !important;
-      position: relative !important;
-      z-index: 10 !important;
+  aside[class*="fixed"] > div:last-child {
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+    background: inherit !important;
+    position: relative !important;
+    z-index: 10 !important;
+    min-height: fit-content !important;
+  }
+  
+  /* Forçar visibilidade da seção de perfil em qualquer dispositivo mobile */
+  aside[class*="fixed"] .border-t {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Força específica para mobile webkit (Safari, Chrome mobile) */
+  @supports (-webkit-appearance: none) {
+    aside[class*="fixed"] {
+      height: 100vh !important;
+      height: 100dvh !important;
+      display: flex !important;
+      flex-direction: column !important;
     }
     
-    /* Forçar visibilidade da seção de perfil */
-    aside[class*="fixed"] .border-t {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
+    aside[class*="fixed"] > div:last-child {
+      flex: 0 0 auto !important;
+      margin-top: auto !important;
+      position: sticky !important;
+      bottom: 0 !important;
+    }
+  }
+  
+  /* Detecção específica para dispositivos com touch */
+  @media (hover: none) and (pointer: coarse) {
+    aside[class*="fixed"] {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    /* Forçar o perfil no final */
+    aside[class*="fixed"] > div:nth-last-child(2) {
+      flex: 0 0 auto !important;
+      margin-top: auto !important;
     }
   }
   
