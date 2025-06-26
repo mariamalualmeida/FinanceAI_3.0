@@ -196,17 +196,17 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         
         {/* Input Area flutuante - Posicionado como overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-gray-900">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-lg focus-within:shadow-xl transition-all">
-                <div className="flex items-center px-4 py-3">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg focus-within:shadow-xl transition-all">
+                <div className="flex items-center px-6 py-4">
                   {/* Botão de anexar arquivos - posição correta */}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mr-2"
+                    className="p-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mr-3"
                   >
-                    <Paperclip size={20} />
+                    <Paperclip size={22} />
                   </button>
                   
                   {/* Textarea responsiva */}
@@ -219,9 +219,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
                     }}
                     placeholder="Peça ao Mig"
-                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[24px] max-h-[120px] py-1 leading-6"
+                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[28px] max-h-[120px] py-2 leading-6 text-base"
                     rows="1"
-                    style={{ height: '24px' }}
+                    style={{ height: '28px' }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
@@ -234,9 +234,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="submit"
                     disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ml-2"
+                    className="p-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ml-3"
                   >
-                    <Send size={20} />
+                    <Send size={22} />
                   </button>
                   
                   {/* Input de arquivo oculto */}
