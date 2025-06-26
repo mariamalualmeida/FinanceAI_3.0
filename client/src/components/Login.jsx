@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 export default function Login({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    username: 'Admin',
+    username: '',
     email: '',
-    password: 'admin123'
+    password: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -68,14 +68,7 @@ export default function Login({ onLogin }) {
               Análise Financeira Inteligente
             </p>
             
-            {/* Demo Users */}
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-2">Credenciais Padrão:</p>
-              <div className="text-xs text-blue-600 dark:text-blue-400">
-                <div>Admin / admin123 (já preenchido)</div>
-                <div className="text-xs text-gray-500 mt-1">Para painel admin: Leonardo / L30n4rd0@1004</div>
-              </div>
-            </div>
+
           </div>
 
 

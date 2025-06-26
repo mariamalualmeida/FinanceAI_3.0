@@ -1,8 +1,35 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+declare module 'express-session' {
+  interface SessionData {
+    userId?: number;
+  }
+}
+
 const app = express();
+
+const MemStore = MemoryStore(session);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    store: new MemStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      httpOnly: true,
+      secure: false // set to true in production with HTTPS
+    }
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
