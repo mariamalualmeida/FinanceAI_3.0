@@ -177,6 +177,34 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
       performance_mode: false,
       debug_mode: false,
       analytics: true
+    },
+    // Multi-LLM Strategy
+    multiLlm: {
+      mode: 'economic',
+      subjectRouting: false,
+      backupSystem: true,
+      crossValidation: false,
+      primaryAI: 'openai',
+      backupAI: 'anthropic',
+      validationAI: 'google'
+    },
+    // Sistema de Prompts
+    prompts: {
+      activeSet: 'financial_analysis',
+      sequential: true,
+      validateOutput: true,
+      prompt1: 'Você é um consultor financeiro especializado em análise de crédito e detecção de riscos.',
+      prompt2: '',
+      prompt3: '',
+      prompt4: '',
+      prompt5: '',
+      prompt6: '',
+      prompt7: '',
+      prompt8: '',
+      prompt9: '',
+      prompt10: '',
+      prompt11: '',
+      prompt12: ''
     }
   });
 
@@ -543,6 +571,159 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
                     ]}
                     icon={Database}
                   />
+                </div>
+              </ExpandableSection>
+            )}
+
+            {/* Multi-LLM Strategy - Restrito para Admin */}
+            {isAdmin && (
+              <ExpandableSection title="Estratégia Multi-LLM" icon={Brain}>
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                      Configuração Avançada de IA
+                    </h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Configure como múltiplas IAs trabalham juntas para análises mais precisas
+                    </p>
+                  </div>
+
+                  <SelectField
+                    label="Modo de Operação"
+                    value={settings.multiLlm?.mode || 'economic'}
+                    onChange={(e) => updateSetting('multiLlm', 'mode', e.target.value)}
+                    options={[
+                      { value: 'economic', label: 'Econômico - Uma IA principal + backup' },
+                      { value: 'balanced', label: 'Balanceado - Roteamento inteligente + backup' },
+                      { value: 'premium', label: 'Premium - Sistema completo com validação' }
+                    ]}
+                    icon={Brain}
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <ToggleField
+                      label="Roteamento por Assunto"
+                      value={settings.multiLlm?.subjectRouting || false}
+                      onChange={(value) => updateSetting('multiLlm', 'subjectRouting', value)}
+                      description="Direcionar assuntos para IA especializada"
+                    />
+                    <ToggleField
+                      label="Sistema de Backup"
+                      value={settings.multiLlm?.backupSystem || true}
+                      onChange={(value) => updateSetting('multiLlm', 'backupSystem', value)}
+                      description="IA backup em caso de falha"
+                    />
+                    <ToggleField
+                      label="Validação Cruzada"
+                      value={settings.multiLlm?.crossValidation || false}
+                      onChange={(value) => updateSetting('multiLlm', 'crossValidation', value)}
+                      description="Validar respostas com segunda IA"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <h5 className="font-medium text-gray-900 dark:text-gray-100">
+                      Configuração de Prioridades
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <SelectField
+                        label="IA Primária"
+                        value={settings.multiLlm?.primaryAI || 'openai'}
+                        onChange={(e) => updateSetting('multiLlm', 'primaryAI', e.target.value)}
+                        options={[
+                          { value: 'openai', label: 'OpenAI GPT-4o' },
+                          { value: 'anthropic', label: 'Claude Sonnet 4' },
+                          { value: 'google', label: 'Gemini 2.5 Pro' }
+                        ]}
+                      />
+                      <SelectField
+                        label="IA de Backup"
+                        value={settings.multiLlm?.backupAI || 'anthropic'}
+                        onChange={(e) => updateSetting('multiLlm', 'backupAI', e.target.value)}
+                        options={[
+                          { value: 'openai', label: 'OpenAI GPT-4o' },
+                          { value: 'anthropic', label: 'Claude Sonnet 4' },
+                          { value: 'google', label: 'Gemini 2.5 Pro' }
+                        ]}
+                      />
+                      <SelectField
+                        label="IA de Validação"
+                        value={settings.multiLlm?.validationAI || 'google'}
+                        onChange={(e) => updateSetting('multiLlm', 'validationAI', e.target.value)}
+                        options={[
+                          { value: 'openai', label: 'OpenAI GPT-4o' },
+                          { value: 'anthropic', label: 'Claude Sonnet 4' },
+                          { value: 'google', label: 'Gemini 2.5 Pro' }
+                        ]}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </ExpandableSection>
+            )}
+
+            {/* Sistema de Prompts - Restrito para Admin */}
+            {isAdmin && (
+              <ExpandableSection title="Sistema de Prompts" icon={Edit3}>
+                <div className="space-y-4">
+                  <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <h4 className="font-medium text-purple-900 dark:text-purple-100 mb-2">
+                      Prompts Personalizados
+                    </h4>
+                    <p className="text-sm text-purple-700 dark:text-purple-300">
+                      Configure até 12 prompts em cadeia para análises mais precisas
+                    </p>
+                  </div>
+
+                  <SelectField
+                    label="Conjunto de Prompts Ativo"
+                    value={settings.prompts?.activeSet || 'financial_analysis'}
+                    onChange={(e) => updateSetting('prompts', 'activeSet', e.target.value)}
+                    options={[
+                      { value: 'financial_analysis', label: 'Análise Financeira Padrão' },
+                      { value: 'credit_scoring', label: 'Score de Crédito Avançado' },
+                      { value: 'risk_detection', label: 'Detecção de Riscos' },
+                      { value: 'custom', label: 'Personalizado' }
+                    ]}
+                    icon={Edit3}
+                  />
+
+                  <div className="space-y-3">
+                    <h5 className="font-medium text-gray-900 dark:text-gray-100">
+                      Prompts da Cadeia (12 campos disponíveis)
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <div key={i} className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Prompt {i + 1} {i === 0 ? '(Sistema Base)' : i === 1 ? '(Extração)' : i === 2 ? '(Validação)' : ''}
+                          </label>
+                          <textarea
+                            value={settings.prompts?.[`prompt${i + 1}`] || ''}
+                            onChange={(e) => updateSetting('prompts', `prompt${i + 1}`, e.target.value)}
+                            placeholder={`Prompt ${i + 1} - deixe em branco se não for usar`}
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <ToggleField
+                      label="Processamento Sequencial"
+                      value={settings.prompts?.sequential || true}
+                      onChange={(value) => updateSetting('prompts', 'sequential', value)}
+                      description="Executar prompts em sequência (um após o outro)"
+                    />
+                    <ToggleField
+                      label="Validação de Saída"
+                      value={settings.prompts?.validateOutput || true}
+                      onChange={(value) => updateSetting('prompts', 'validateOutput', value)}
+                      description="Validar saída de cada prompt"
+                    />
+                  </div>
                 </div>
               </ExpandableSection>
             )}
