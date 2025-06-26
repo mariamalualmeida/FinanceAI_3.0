@@ -1,47 +1,76 @@
-import { useEffect, useState } from "react";
-import { useParams } from "wouter";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 
 export default function ChatPage() {
-  const params = useParams();
-  const conversationId = params.conversationId;
-  const { selectConversation, currentConversation } = useChat();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, isLoading } = useAuth();
+  const { currentConversation } = useChat();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Auto-close sidebar on mobile when conversation changes
   useEffect(() => {
-    if (conversationId && conversationId !== currentConversation?.id) {
-      selectConversation(conversationId);
+    if (currentConversation && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
     }
-  }, [conversationId, currentConversation?.id, selectConversation]);
+  }, [currentConversation]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(false); // Let desktop handle sidebar visibility
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar - Hidden on mobile by default */}
+      {/* Sidebar - Mobile: Overlay, Desktop: Fixed */}
       <div className={`
-        fixed lg:relative lg:translate-x-0 z-50 transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0 lg:static
+        fixed inset-y-0 left-0 z-50 w-full max-w-[85vw] sm:max-w-sm
+        lg:w-80 lg:max-w-none
+        transition-transform duration-300 ease-in-out
+        lg:transition-none
       `}>
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+        <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Top Bar */}
-        <TopBar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-h-screen lg:min-h-0">
+        {/* Top Bar - Mobile optimized */}
+        <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
 
-        {/* Chat Interface */}
-        <ChatInterface />
+        {/* Chat Interface - Full height on mobile */}
+        <div className="flex-1 overflow-hidden">
+          <ChatInterface />
+        </div>
       </div>
     </div>
   );

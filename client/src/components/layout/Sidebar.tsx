@@ -19,13 +19,13 @@ export function Sidebar({ onClose }: SidebarProps) {
     conversations, 
     currentConversation, 
     selectConversation, 
-    createNewConversation 
+    createConversation 
   } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
 
   const handleNewChat = async () => {
-    await createNewConversation();
+    await createConversation();
     if (onClose) onClose(); // Fecha sidebar no mobile após criar nova conversa
   };
 
