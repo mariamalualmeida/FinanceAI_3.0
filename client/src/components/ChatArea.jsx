@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
+import ThemeToggle from './ThemeToggle'
 
 export default function ChatArea({ user, settings, interface: interfaceType, onToggleSidebar }) {
   const [messages, setMessages] = useState([])
@@ -189,8 +190,8 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
   return (
     <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541]">
       {/* Header estilo ChatGPT */}
-      <header className="relative z-10 flex items-center justify-center p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
-        <div className="absolute left-4 md:left-4">
+      <header className="relative z-10 flex items-center justify-between p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
+        <div className="flex items-center gap-2">
           <button
             onClick={onToggleSidebar}
             className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
@@ -198,10 +199,12 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
           >
             <Menu size={20} />
           </button>
+          <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
         </div>
         <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
           Chat
         </h1>
+        <div className="w-20" /> {/* Espaçador para centralizar o título */}
       </header>
 
       {/* Área de mensagens */}

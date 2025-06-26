@@ -178,8 +178,8 @@ export default function InputArea({ onSend, onFileUpload }) {
               whileTap={{ scale: 0.95 }}
               className={`p-2 rounded-lg transition-colors ${
                 text.trim() || files.length > 0
-                  ? 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  ? 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                  : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
               title="Enviar mensagem"
             >
