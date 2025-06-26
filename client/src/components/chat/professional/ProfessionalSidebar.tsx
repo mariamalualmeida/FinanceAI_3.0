@@ -9,7 +9,7 @@ interface ProfessionalSidebarProps {
   conversationId?: string;
 }
 
-export default function ProfessionalSidebar({ 
+function ProfessionalSidebar({ 
   isSidebarCollapsed, 
   setIsSidebarCollapsed, 
   conversationId 
@@ -124,3 +124,5 @@ export default function ProfessionalSidebar({
     </aside>
   );
 }
+
+export default ProfessionalSidebar;

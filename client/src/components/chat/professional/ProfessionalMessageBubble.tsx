@@ -6,7 +6,7 @@ interface ProfessionalMessageBubbleProps {
   message: Message;
 }
 
-export default function ProfessionalMessageBubble({ message }: ProfessionalMessageBubbleProps) {
+function ProfessionalMessageBubble({ message }: ProfessionalMessageBubbleProps) {
   const isUser = message.role === "user";
 
   return (
@@ -56,3 +56,5 @@ export default function ProfessionalMessageBubble({ message }: ProfessionalMessa
     </motion.div>
   );
 }
+
+export default ProfessionalMessageBubble;

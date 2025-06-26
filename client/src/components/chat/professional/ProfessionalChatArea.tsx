@@ -10,7 +10,7 @@ interface ProfessionalChatAreaProps {
   conversationId?: string;
 }
 
-export default function ProfessionalChatArea({ conversationId }: ProfessionalChatAreaProps) {
+function ProfessionalChatArea({ conversationId }: ProfessionalChatAreaProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -108,3 +108,5 @@ export default function ProfessionalChatArea({ conversationId }: ProfessionalCha
     </main>
   );
 }
+
+export default ProfessionalChatArea;
