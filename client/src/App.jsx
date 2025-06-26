@@ -52,7 +52,6 @@ export default function App() {
       if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
         e.preventDefault()
         handleNewChat()
-        success('Nova conversa iniciada')
       }
 
       // Escape to close sidebar
@@ -82,7 +81,6 @@ export default function App() {
     if (currentChatId === chatId) {
       setCurrentChatId(null)
     }
-    success('Conversa excluída')
   }
 
   return (

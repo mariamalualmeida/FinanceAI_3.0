@@ -62,7 +62,6 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
             }
             setMessages(prev => [...prev, aiMessage])
             setIsTyping(false)
-            toast?.success('Análise financeira concluída!')
           }, 500)
         }, 2000)
       } else {
@@ -82,7 +81,6 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
       console.error('Erro ao processar mensagem:', error)
       setIsTyping(false)
       setUploadProgress(null)
-      toast?.error('Erro ao processar sua mensagem. Tente novamente.')
     }
   }
 
