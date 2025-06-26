@@ -135,7 +135,7 @@ export function ChatGPTLayout() {
           <div className="p-3">
             <Button
               onClick={handleNewChat}
-              className="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg py-3 px-4 flex items-center gap-2"
+              className="w-full bg-transparent border border-gray-600 hover:bg-gray-700 text-white rounded-lg py-3 px-4 flex items-center gap-2 transition-colors"
             >
               <Plus size={16} />
               Nova Conversa
@@ -148,10 +148,10 @@ export function ChatGPTLayout() {
               <div
                 key={conv.id}
                 className={cn(
-                  "group relative w-full p-3 rounded-lg mb-2 transition-colors",
+                  "group relative w-full p-2 rounded-lg mb-1 transition-colors",
                   currentConversation?.id === conv.id 
                     ? "bg-gray-700" 
-                    : "hover:bg-gray-700"
+                    : "hover:bg-gray-800"
                 )}
               >
                 {editingConversation === conv.id ? (
@@ -168,7 +168,7 @@ export function ChatGPTLayout() {
                         }
                       }}
                       onBlur={() => handleSaveRename(conv.id)}
-                      className="flex-1 bg-gray-600 text-white text-sm border-none outline-none rounded px-2 py-1"
+                      className="flex-1 bg-transparent text-white text-sm border-none outline-none px-2 py-1"
                       autoFocus
                     />
                   </div>
@@ -181,10 +181,7 @@ export function ChatGPTLayout() {
                     className="cursor-pointer flex items-center justify-between"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{conv.title}</div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        {new Date(conv.createdAt).toLocaleDateString('pt-BR')}
-                      </div>
+                      <div className="text-sm truncate text-gray-200">{conv.title}</div>
                     </div>
                     
                     {/* Menu de três pontos */}
@@ -193,7 +190,7 @@ export function ChatGPTLayout() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-white hover:bg-gray-600 ml-2 h-6 w-6"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-white hover:bg-gray-600 ml-2 h-6 w-6 rounded-md"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <MoreHorizontal size={14} />
@@ -247,39 +244,51 @@ export function ChatGPTLayout() {
             ))}
           </div>
 
-          {/* Menu inferior */}
-          <div className="p-3 border-t border-gray-700">
-            <div className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-700"
+          {/* Menu de perfil no final */}
+          <div className="p-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 p-2 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      {user?.firstName?.charAt(0) || 'U'}
+                    </div>
+                    <span className="text-sm">{user?.firstName || 'Usuário'}</span>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-56 bg-gray-800 border-gray-700 text-white mb-2"
               >
-                <Settings size={16} className="mr-2" />
-                Configurações
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-700"
-              >
-                <User size={16} className="mr-2" />
-                Perfil
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-700"
-              >
-                <HelpCircle size={16} className="mr-2" />
-                Ajuda
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={toggleTheme}
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-700"
-              >
-                {theme === 'dark' ? <Sun size={16} className="mr-2" /> : <Moon size={16} className="mr-2" />}
-                Modo Claro
-              </Button>
-            </div>
+                <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
+                  <Settings size={16} className="mr-2" />
+                  Configurações
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
+                  <HelpCircle size={16} className="mr-2" />
+                  Ajuda e FAQ
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={toggleTheme}
+                  className="hover:bg-gray-700 cursor-pointer"
+                >
+                  {theme === 'dark' ? <Sun size={16} className="mr-2" /> : <Moon size={16} className="mr-2" />}
+                  Modo Claro
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-gray-700" />
+                <DropdownMenuItem 
+                  onClick={() => logout()}
+                  className="hover:bg-gray-700 cursor-pointer text-red-400 hover:text-red-300"
+                >
+                  <User size={16} className="mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -294,8 +303,8 @@ export function ChatGPTLayout() {
 
       {/* Área principal */}
       <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        {/* Header simplificado */}
+        <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -361,11 +370,11 @@ export function ChatGPTLayout() {
           )}
         </div>
 
-        {/* Input de mensagem - igual ao ChatGPT */}
-        <div className="border-t border-gray-700 p-4">
+        {/* Input de mensagem - estilo ChatGPT limpo */}
+        <div className="p-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="flex items-end gap-2 bg-gray-700 border border-gray-600 rounded-lg p-3 focus-within:border-gray-500">
+              <div className="flex items-end gap-2 bg-gray-700 rounded-xl p-3 focus-within:bg-gray-600 transition-colors">
                 {/* Botão de anexar arquivo */}
                 <input
                   type="file"
@@ -391,7 +400,7 @@ export function ChatGPTLayout() {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Pergunte alguma coisa"
-                  className="flex-1 bg-transparent border-0 text-white placeholder-gray-400 resize-none min-h-[40px] max-h-32 focus:ring-0 focus:outline-none"
+                  className="flex-1 bg-transparent border-0 text-white placeholder-gray-400 resize-none min-h-[24px] max-h-32 focus:ring-0 focus:outline-none"
                   rows={1}
                 />
 
@@ -409,7 +418,7 @@ export function ChatGPTLayout() {
                     type="submit"
                     size="icon"
                     disabled={!message.trim() || sendingMessage}
-                    className="bg-white text-gray-900 hover:bg-gray-200 disabled:opacity-50 disabled:bg-gray-600"
+                    className="bg-white text-gray-900 hover:bg-gray-200 disabled:opacity-50 disabled:bg-gray-600 rounded-lg"
                   >
                     <Send size={16} />
                   </Button>
