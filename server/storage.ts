@@ -159,6 +159,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteConversation(id: string): Promise<void> {
+    // Delete related records first to avoid foreign key constraint violations
+    await db.delete(fileUploads).where(eq(fileUploads.conversationId, id));
+    await db.delete(messages).where(eq(messages.conversationId, id));
     await db.delete(conversations).where(eq(conversations.id, id));
   }
 
