@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
+import TypingIndicator from './TypingIndicator'
 
 export default function MessageBubble({ message, isTyping = false }) {
   const isUser = message.sender === 'user'
@@ -30,25 +31,9 @@ export default function MessageBubble({ message, isTyping = false }) {
         {/* Mensagem */}
         <div className={`flex-1 min-w-0 ${isUser ? 'flex justify-end' : ''}`}>
           {isTyping ? (
-            <div className="flex items-center gap-1 py-2">
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                className="w-2 h-2 bg-gray-400 rounded-full"
-              />
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                className="w-2 h-2 bg-gray-400 rounded-full"
-              />
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                className="w-2 h-2 bg-gray-400 rounded-full"
-              />
-            </div>
+            <TypingIndicator />
           ) : (
-            <div className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : ''}`}>
+            <div className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : 'max-w-full'}`}>
               {/* Arquivos anexados */}
               {message.files && message.files.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">
@@ -65,7 +50,7 @@ export default function MessageBubble({ message, isTyping = false }) {
               )}
               
               {/* Texto da mensagem */}
-              <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed ${
+              <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap break-words ${
                 isUser ? 'text-right' : 'text-left'
               }`}>
                 <ReactMarkdown>{message.text}</ReactMarkdown>
