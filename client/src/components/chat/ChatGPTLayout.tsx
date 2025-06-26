@@ -123,12 +123,12 @@ export function ChatGPTLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-800 text-white">
+    <div className="flex h-screen bg-gray-800 text-white overflow-hidden">
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out",
         sidebarOpen ? "translate-x-0" : "-translate-x-full",
-        "md:relative md:translate-x-0"
+        "md:relative md:translate-x-0 md:flex-shrink-0"
       )}>
         <div className="flex h-full flex-col">
           {/* Header com botão Nova Conversa */}
@@ -302,19 +302,19 @@ export function ChatGPTLayout() {
       )}
 
       {/* Área principal */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/* Header simplificado */}
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between p-4 flex-shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden text-gray-300 hover:text-white"
+              className="md:hidden text-gray-300 hover:text-white flex-shrink-0"
             >
               <Menu size={20} />
             </Button>
-            <h1 className="text-lg font-semibold">
+            <h1 className="text-lg font-semibold truncate">
               {currentConversation ? 'ChatGPT' : 'FinanceAI'}
             </h1>
           </div>
@@ -322,18 +322,18 @@ export function ChatGPTLayout() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="text-gray-300 hover:text-white"
+            className="text-gray-300 hover:text-white flex-shrink-0"
           >
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </Button>
         </div>
 
         {/* Área de mensagens */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           {!currentConversation ? (
             // Tela inicial - igual ao ChatGPT
             <div className="flex flex-col items-center justify-center h-full px-4">
-              <h2 className="text-3xl font-bold mb-4 text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
                 Tudo pronto quando você também estiver.
               </h2>
               <p className="text-gray-400 text-center mb-8 max-w-md">
@@ -349,19 +349,19 @@ export function ChatGPTLayout() {
             </div>
           ) : (
             // Área de chat com mensagens
-            <div className="max-w-3xl mx-auto px-4 py-6">
+            <div className="w-full max-w-3xl mx-auto px-4 py-6">
               {messages.map((msg) => (
                 <div key={msg.id} className={cn(
                   "mb-6 flex",
                   msg.role === 'user' ? "justify-end" : "justify-start"
                 )}>
                   <div className={cn(
-                    "max-w-[70%] p-4 rounded-lg",
+                    "max-w-[85%] p-4 rounded-lg break-words",
                     msg.role === 'user' 
                       ? "bg-blue-600 text-white" 
                       : "bg-gray-700 text-gray-100"
                   )}>
-                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                    <div className="whitespace-pre-wrap break-words">{msg.content}</div>
                   </div>
                 </div>
               ))}
@@ -371,10 +371,10 @@ export function ChatGPTLayout() {
         </div>
 
         {/* Input de mensagem - estilo ChatGPT limpo */}
-        <div className="p-4">
-          <div className="max-w-3xl mx-auto">
-            <form onSubmit={handleSubmit} className="relative">
-              <div className="flex items-end gap-2 bg-gray-700 rounded-xl p-3 focus-within:bg-gray-600 transition-colors">
+        <div className="p-4 flex-shrink-0">
+          <div className="w-full max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="relative w-full">
+              <div className="flex items-end gap-2 bg-gray-700 rounded-xl p-3 focus-within:bg-gray-600 transition-colors w-full">
                 {/* Botão de anexar arquivo */}
                 <input
                   type="file"
