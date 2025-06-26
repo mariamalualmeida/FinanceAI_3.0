@@ -38,17 +38,6 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
         files.forEach(file => formData.append('files', file))
         if (text.trim()) formData.append('message', text)
 
-        // Simular progresso de upload
-        const progressInterval = setInterval(() => {
-          setUploadProgress(prev => {
-            if (prev >= 90) {
-              clearInterval(progressInterval)
-              return 90
-            }
-            return prev + 10
-          })
-        }, 200)
-
         // Fazer upload real e análise
         const uploadPromise = fetch('/api/upload', {
           method: 'POST',

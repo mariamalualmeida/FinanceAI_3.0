@@ -6,17 +6,14 @@ import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 import { storage } from "./storage";
-import { fileProcessor } from "./services/fileProcessor";
-import { llmService } from "./services/llmService";
-import { financialAnalyzer } from "./services/financialAnalyzer";
 import { 
   loginSchema, 
   insertUserSchema, 
   insertConversationSchema,
   insertMessageSchema,
-  insertUserSettingsSchema,
   type User 
 } from "@shared/schema";
+import { financialAnalyzer } from './financial-analyzer';
 
 // Extend session data interface
 declare module 'express-session' {
@@ -191,23 +188,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content,
       });
 
-      // Get user settings to determine LLM provider
-      const userSettings = await storage.getUserSettings(req.session.userId);
-      const providerName = userSettings?.llmProvider || 'openai';
-      const userApiKey = userSettings?.llmApiKey;
-
-      // Generate AI response
-      const aiResponse = await llmService.generateChatResponse(
-        content,
-        providerName,
-        context,
-        userApiKey ?? undefined
-      );
+      // Generate AI response (simplified for now)
+      const aiResponse = `Recebi sua mensagem: "${content}"\n\nComo assistente especializado em análise financeira, posso ajudar com:\n\n• Análise de extratos bancários\n• Avaliação de score de crédito\n• Detecção de padrões suspeitos\n• Consultoria em investimentos\n• Análise de riscos\n\nPara uma análise detalhada, envie seus documentos financeiros.`;
 
       // Save AI message
       const aiMessage = await storage.createMessage({
         conversationId,
-        role: 'assistant',
+        sender: 'assistant',
         content: aiResponse,
       });
 
@@ -249,33 +236,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           fileUpload.fileType
         );
 
-        await storage.updateFileUpload(fileUpload.id, {
-          status: 'completed',
-          processingResult: document,
-        });
+        await storage.updateFileUploadStatus(fileUpload.id, 'completed');
 
         // Clean up uploaded file
         await fs.unlink(req.file.path).catch(() => {});
 
-        // Create financial analysis
-        const analysis = financialAnalyzer.analyzeFinancialDocument(document);
+        // Read file content for analysis
+        const fileContent = await fs.readFile(req.file.path, 'utf-8');
         
-        await storage.createFinancialAnalysis({
-          userId: req.session.userId,
+        // Create financial analysis
+        const analysis = await financialAnalyzer.analyzeFinancialDocument(
+          req.session.userId!,
           conversationId,
-          fileUploadId: fileUpload.id,
-          analysisType: 'comprehensive',
-          results: analysis,
-          score: analysis.creditScore.toString(),
-          riskLevel: analysis.riskLevel,
+          fileContent,
+          req.file.originalname
+        );
+        
+        res.json({
+          success: true,
+          analysis: {
+            creditScore: analysis.creditScore,
+            riskLevel: analysis.riskLevel,
+            recommendations: analysis.recommendations,
+            totalIncome: analysis.totalIncome,
+            totalExpenses: analysis.totalExpenses,
+            balance: analysis.balance,
+            transactionCount: analysis.transactionCount,
+            patterns: analysis.patterns,
+            summary: `Análise completa realizada com ${analysis.transactionCount} transações processadas.`
+          }
         });
 
       } catch (processingError) {
         console.error('File processing error:', processingError);
-        await storage.updateFileUpload(fileUpload.id, {
-          status: 'error',
-          processingResult: { error: (processingError as Error).message || 'Unknown error' },
-        });
+        await storage.updateFileUploadStatus(fileUpload.id, 'error');
         await fs.unlink(req.file.path).catch(() => {});
       }
 
