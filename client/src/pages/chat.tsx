@@ -30,8 +30,8 @@ export default function ChatPage() {
 
   // Render the appropriate interface based on user preference
   return interfaceStyle === "professional" ? (
-    <ProfessionalLayout conversationId={conversationId} />
+    <ProfessionalLayout />
   ) : (
-    <SimpleLayout conversationId={conversationId} />
+    <SimpleLayout />
   );
 }
