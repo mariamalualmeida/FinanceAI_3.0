@@ -19,7 +19,11 @@ import {
   User 
 } from "lucide-react";
 
-export function TopBar() {
+interface TopBarProps {
+  onMenuClick?: () => void;
+}
+
+export function TopBar({ onMenuClick }: TopBarProps) {
   const { theme, toggleMode } = useTheme();
   const { user, logout } = useAuth();
 
@@ -32,12 +36,17 @@ export function TopBar() {
   };
 
   return (
-    <div className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center space-x-4">
-        <Button variant="ghost" size="icon" className="lg:hidden">
+    <div className="bg-card border-b border-border px-4 py-3 flex items-center justify-between min-h-[64px]">
+      <div className="flex items-center space-x-3">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="lg:hidden shrink-0"
+          onClick={onMenuClick}
+        >
           <Menu className="h-5 w-5" />
         </Button>
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground truncate">
           Análise Financeira Conversacional
         </h2>
       </div>
