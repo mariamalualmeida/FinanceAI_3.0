@@ -145,6 +145,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   {showDropdown === conv.id && (
                     <div className="absolute right-0 top-full mt-1 w-40 bg-gray-700 rounded-md border border-gray-600 shadow-lg z-50">
                       <button 
+                        key={`rename-${conv.id}-${index}`}
                         onClick={() => {
                           // Implementar funcionalidade de renomear
                           const newName = prompt('Novo nome da conversa:', conv.title)
@@ -160,6 +161,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                         Renomear
                       </button>
                       <button 
+                        key={`archive-${conv.id}-${index}`}
                         onClick={() => {
                           console.log('Arquivando conversa:', conv.id)
                           // Implementar funcionalidade de arquivar
@@ -171,6 +173,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                         Arquivar
                       </button>
                       <button 
+                        key={`delete-${conv.id}-${index}`}
                         onClick={() => {
                           onDeleteConversation(conv.id)
                           setShowDropdown(null)
@@ -328,6 +331,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   </label>
                   <div className="flex gap-3">
                     <button
+                      key="interface-chatgpt"
                       onClick={() => onUpdateSettings({ interface: 'chatgpt' })}
                       className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
                         settings.interface === 'chatgpt'
@@ -339,6 +343,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                       ChatGPT
                     </button>
                     <button
+                      key="interface-gemini"
                       onClick={() => onUpdateSettings({ interface: 'gemini' })}
                       className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
                         settings.interface === 'gemini'
@@ -355,6 +360,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                 {/* Botões de ação */}
                 <div className="flex gap-3 pt-4">
                   <button
+                    key="settings-save"
                     onClick={() => {
                       onUpdateSettings({ userName: tempUserName })
                       setShowSettings(false)
@@ -364,6 +370,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     Salvar
                   </button>
                   <button
+                    key="settings-cancel"
                     onClick={() => {
                       setTempUserName(settings.userName || '')
                       setShowSettings(false)
