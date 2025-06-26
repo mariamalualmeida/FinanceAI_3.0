@@ -5,6 +5,16 @@ import TypingIndicator from './TypingIndicator'
 export default function MessageBubble({ message, isTyping = false }) {
   const isUser = message.sender === 'user'
   
+  // Log para debug
+  if (message.text) {
+    console.log('Renderizando mensagem:', {
+      sender: message.sender,
+      textLength: message.text.length,
+      hasLineBreaks: message.text.includes('\n'),
+      text: message.text
+    })
+  }
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
