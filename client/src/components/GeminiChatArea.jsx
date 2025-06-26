@@ -108,7 +108,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   return (
     <main className="flex-1 flex flex-col bg-white dark:bg-gray-900">
       {/* Gemini Header - Fundo uniforme */}
-      <header className="flex items-center justify-between py-3 px-6 bg-white dark:bg-gray-900">
+      <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleSidebar}
@@ -195,7 +195,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         <div ref={messagesEndRef} />
         
         {/* Input Area flutuante - Posicionado como overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-gray-900">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
