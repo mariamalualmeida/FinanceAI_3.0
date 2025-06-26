@@ -4,10 +4,19 @@ import ChatArea from './components/ChatArea'
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false) // Padrão fechado para evitar problemas iniciais
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [currentChatId, setCurrentChatId] = useState(null)
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev)
+  }
+
+  const handleNewChat = () => {
+    setCurrentChatId(null)
+  }
+
+  const handleSelectChat = (chatId) => {
+    setCurrentChatId(chatId)
   }
 
   return (
@@ -18,11 +27,15 @@ export default function App() {
           setDarkMode={setDarkMode}
           isOpen={isSidebarOpen}
           setIsOpen={setIsSidebarOpen}
+          onNewChat={handleNewChat}
+          currentChatId={currentChatId}
+          onSelectChat={handleSelectChat}
         />
         <ChatArea 
           darkMode={darkMode}
           toggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
+          currentChatId={currentChatId}
         />
       </div>
     </div>

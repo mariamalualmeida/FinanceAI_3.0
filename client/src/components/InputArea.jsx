@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Mic } from 'lucide-react'
+import { Send, Paperclip, Mic, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-export default function InputArea({ onSend }) {
+export default function InputArea({ onSend, onFileUpload }) {
   const [text, setText] = useState('')
+  const [files, setFiles] = useState([])
   const textareaRef = useRef(null)
+  const fileInputRef = useRef(null)
 
   // Auto-resize textarea
   useEffect(() => {
@@ -16,9 +18,22 @@ export default function InputArea({ onSend }) {
   }, [text])
 
   const handleSend = () => {
-    if (!text.trim()) return
-    onSend(text)
+    if (!text.trim() && files.length === 0) return
+    onSend(text, files)
     setText('')
+    setFiles([])
+  }
+
+  const handleFileSelect = (e) => {
+    const selectedFiles = Array.from(e.target.files)
+    setFiles(prev => [...prev, ...selectedFiles])
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleKeyDown = (e) => {
@@ -31,12 +46,41 @@ export default function InputArea({ onSend }) {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="relative">
+        {/* Arquivos anexados */}
+        {files.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {files.map((file, index) => (
+              <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                <Paperclip size={14} />
+                <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+                <button 
+                  onClick={() => removeFile(index)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Container do input */}
         <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-black/10 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
+          
+          {/* Input de arquivo oculto */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png,.txt"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
           
           {/* Botão de anexo */}
           <button 
             type="button"
+            onClick={() => fileInputRef.current?.click()}
             className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
             title="Anexar arquivo"
           >
@@ -69,10 +113,10 @@ export default function InputArea({ onSend }) {
             <motion.button
               type="button"
               onClick={handleSend}
-              disabled={!text.trim()}
+              disabled={!text.trim() && files.length === 0}
               whileTap={{ scale: 0.95 }}
               className={`p-2 rounded-lg transition-colors ${
-                text.trim()
+                text.trim() || files.length > 0
                   ? 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
