@@ -1,4 +1,6 @@
-export { default as ProfessionalSidebar } from './ProfessionalSidebar';
-export { default as ProfessionalChatArea } from './ProfessionalChatArea';
-export { default as ProfessionalMessageBubble } from './ProfessionalMessageBubble';
-export { default as ProfessionalInputArea } from './ProfessionalInputArea';
+import ProfessionalSidebar from './ProfessionalSidebar';
+import ProfessionalChatArea from './ProfessionalChatArea';
+import ProfessionalMessageBubble from './ProfessionalMessageBubble';
+import ProfessionalInputArea from './ProfessionalInputArea';
+
+export { ProfessionalSidebar, ProfessionalChatArea, ProfessionalMessageBubble, ProfessionalInputArea };

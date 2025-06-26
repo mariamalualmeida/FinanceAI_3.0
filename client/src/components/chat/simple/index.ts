@@ -1,4 +1,6 @@
-export { default as SimpleSidebar } from './SimpleSidebar';
-export { default as SimpleChatArea } from './SimpleChatArea';
-export { default as SimpleMessageBubble } from './SimpleMessageBubble';
-export { default as SimpleInputArea } from './SimpleInputArea';
+import SimpleSidebar from './SimpleSidebar';
+import SimpleChatArea from './SimpleChatArea';
+import SimpleMessageBubble from './SimpleMessageBubble';
+import SimpleInputArea from './SimpleInputArea';
+
+export { SimpleSidebar, SimpleChatArea, SimpleMessageBubble, SimpleInputArea };

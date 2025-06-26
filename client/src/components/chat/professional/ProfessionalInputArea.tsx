@@ -6,7 +6,7 @@ interface ProfessionalInputAreaProps {
   disabled?: boolean;
 }
 
-export default function ProfessionalInputArea({ onSend, disabled }: ProfessionalInputAreaProps) {
+function ProfessionalInputArea({ onSend, disabled }: ProfessionalInputAreaProps) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
@@ -48,3 +48,5 @@ export default function ProfessionalInputArea({ onSend, disabled }: Professional
     </div>
   );
 }
+
+export default ProfessionalInputArea;
