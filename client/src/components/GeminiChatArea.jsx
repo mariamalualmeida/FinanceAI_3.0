@@ -140,48 +140,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
             </div>
             
             {/* Saudação minimalista */}
-            <div className="text-center mb-12">
+            <div className="text-center">
               <h1 className="text-4xl font-light text-gray-900 dark:text-white mb-4">
                 {settings.userName ? `Olá, ${settings.userName}` : 'Olá'}
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-400">
                 Como posso ajudá-lo hoje?
               </p>
-            </div>
-            
-            {/* Cards de sugestões - estilo Gemini */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 max-w-6xl w-full">
-              {[
-                {
-                  title: "Analisar extrato bancário",
-                  description: "Upload de documentos financeiros"
-                },
-                {
-                  title: "Calcular score de crédito", 
-                  description: "Avaliação de perfil creditício"
-                },
-                {
-                  title: "Identificar padrões de gastos",
-                  description: "Análise de comportamento financeiro"
-                },
-                {
-                  title: "Consultoria personalizada",
-                  description: "Dicas e recomendações financeiras"
-                }
-              ].map((card, index) => (
-                <button
-                  key={index}
-                  onClick={() => setInputText(card.title)}
-                  className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 text-left group"
-                >
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                    {card.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {card.description}
-                  </p>
-                </button>
-              ))}
             </div>
           </div>
         ) : (
@@ -230,7 +195,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area - Estilo Gemini limpo */}
+      {/* Input Area - Estilo Gemini limpo sem linha separadora */}
       <div className="p-6 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-3xl mx-auto">
           <form onSubmit={handleSubmit} className="relative">
