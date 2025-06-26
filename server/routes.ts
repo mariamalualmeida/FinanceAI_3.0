@@ -47,47 +47,66 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Authentication routes
-  app.post('/api/register', async (req, res) => {
-    try {
-      const userData = insertUserSchema.parse(req.body);
-      
-      // Check if user already exists
-      const existingUser = await storage.getUserByUsername(userData.username);
-      if (existingUser) {
-        return res.status(400).json({ message: 'Username already exists' });
-      }
-
-      if (userData.email) {
-        const existingEmail = await storage.getUserByEmail(userData.email);
-        if (existingEmail) {
-          return res.status(400).json({ message: 'Email already exists' });
-        }
-      }
-
-      const user = await storage.createUser(userData);
-      const { password: _, ...userWithoutPassword } = user;
-      
-      req.session.userId = user.id;
-      res.json({ user: userWithoutPassword });
-    } catch (error) {
-      console.error('Registration error:', error);
-      res.status(400).json({ message: 'Invalid registration data' });
+  // Fixed users system
+  const FIXED_USERS = [
+    {
+      id: 1,
+      username: 'admin',
+      password: 'admin123',
+      email: 'admin@financeai.com',
+      role: 'admin',
+      fullName: 'Administrador'
+    },
+    {
+      id: 2,
+      username: 'user',
+      password: 'user123',
+      email: 'user@financeai.com',
+      role: 'user',
+      fullName: 'Usuário Padrão'
     }
-  });
+  ];
+
+  // Initialize fixed users if they don't exist
+  async function initializeUsers() {
+    for (const fixedUser of FIXED_USERS) {
+      const existingUser = await storage.getUserByUsername(fixedUser.username);
+      if (!existingUser) {
+        await storage.createUser({
+          username: fixedUser.username,
+          password: fixedUser.password,
+          email: fixedUser.email,
+          role: fixedUser.role
+        });
+      }
+    }
+  }
+  
+  // Initialize users on server start
+  initializeUsers().catch(console.error);
 
   app.post('/api/login', async (req, res) => {
     try {
       const { username, password } = loginSchema.parse(req.body);
       
-      const user = await storage.getUserByUsername(username);
-      if (!user || user.password !== password) {
+      // Check against fixed users
+      const fixedUser = FIXED_USERS.find(u => u.username === username && u.password === password);
+      if (!fixedUser) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const { password: _, ...userWithoutPassword } = user;
-      req.session.userId = user.id;
-      res.json({ user: userWithoutPassword });
+      // Create session
+      req.session.userId = fixedUser.id;
+      
+      const userResponse = {
+        id: fixedUser.id,
+        username: fixedUser.username,
+        email: fixedUser.email,
+        role: fixedUser.role,
+        fullName: fixedUser.fullName
+      };
+      
+      res.json({ user: userResponse });
     } catch (error) {
       console.error('Login error:', error);
       res.status(400).json({ message: 'Invalid login data' });

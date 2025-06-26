@@ -67,33 +67,18 @@ export default function Login({ onLogin }) {
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               Análise Financeira Inteligente
             </p>
+            
+            {/* Demo Users */}
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-2">Usuários de Demonstração:</p>
+              <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
+                <div><strong>Admin:</strong> admin / admin123</div>
+                <div><strong>User:</strong> user / user123</div>
+              </div>
+            </div>
           </div>
 
-          {/* Toggle */}
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-6">
-            <button
-              type="button"
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                isLogin
-                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Entrar
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                !isLogin
-                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Registrar
-            </button>
-          </div>
+
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
