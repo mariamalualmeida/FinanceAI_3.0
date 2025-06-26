@@ -4,23 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark mode variables */
+/* Custom CSS variables for components that need them */
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f7f7f8;
-  --bg-chat: #ffffff;
   --text-primary: #000000;
   --text-secondary: #6e6e80;
-  --border-light: #e5e5e5;
 }
 
 .dark {
   --bg-primary: #343541;
   --bg-secondary: #202123;
-  --bg-chat: #343541;
   --text-primary: #ffffff;
   --text-secondary: #c5c5d2;
-  --border-light: #4d4d4f;
 }
 
 /* Mobile scroll fixes */

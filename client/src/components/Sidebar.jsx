@@ -21,10 +21,17 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
       const response = await fetch('/api/conversations', { credentials: 'include' })
       if (response.ok) {
         const data = await response.json()
-        setConversations(data)
+        setConversations(data || [])
+      } else if (response.status === 401) {
+        // User not authenticated, conversations list should be empty
+        setConversations([])
+      } else {
+        console.error('Failed to load conversations:', response.status)
+        setConversations([])
       }
     } catch (error) {
       console.error('Error loading conversations:', error)
+      setConversations([])
     }
   }
 
@@ -36,7 +43,11 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
 
   const onSelectChat = (chatId) => {
     setCurrentChatId(chatId)
-    // Navigate to chat
+    // Close sidebar on mobile after selection
+    if (window.innerWidth < 768 && onClose) {
+      onClose()
+    }
+    // TODO: Implement chat loading logic when backend supports it
   }
 
   const onDeleteConversation = async (conversationId) => {
