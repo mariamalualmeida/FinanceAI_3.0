@@ -375,19 +375,22 @@ class MultiLLMOrchestrator {
       this.prompts.prompt10,
       this.prompts.prompt11,
       this.prompts.prompt12
-    ].filter(p => p && p.trim().length > 0);
+    ].filter(p => p && p.trim().length > 0) as string[];
 
     if (prompts.length <= 1) {
       return this.processRequest(input, context);
     }
 
-    let currentResult: string = (context ?? input) || '';
+    let currentResult = (context ?? input) || '';
     
     // Processar prompts em sequência
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
+      if (!prompt) continue;
+      
       try {
-        currentResult = await this.processRequest(prompt, currentResult || undefined);
+        const result = await this.processRequest(prompt, currentResult || undefined);
+        currentResult = result;
         console.log(`Chain step ${i + 1} completed`);
       } catch (error) {
         console.error(`Chain step ${i + 1} failed:`, error);

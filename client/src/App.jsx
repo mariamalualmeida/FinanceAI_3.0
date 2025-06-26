@@ -4,7 +4,7 @@ import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
-import EnhancedChatArea from './components/EnhancedChatArea'
+
 import AdminPanel from './components/AdminPanel'
 import NewSettingsModal from './components/NewSettingsModal'
 import { Toaster } from './components/ui/toaster'
