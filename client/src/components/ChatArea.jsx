@@ -270,7 +270,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
       </section>
 
       {/* Área de input */}
-      <footer className="border-t border-white/20 p-4">
+      <footer className="border-t border-gray-800 dark:border-gray-800 p-4">
         <InputArea onSend={sendMessage} />
       </footer>
     </main>
