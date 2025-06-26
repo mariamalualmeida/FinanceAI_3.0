@@ -6,6 +6,10 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(true)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev)
+  }
+
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="flex h-screen bg-gray-50 dark:bg-[#343541] text-black dark:text-white overflow-hidden">
@@ -17,7 +21,8 @@ export default function App() {
         />
         <ChatArea 
           darkMode={darkMode}
-          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          toggleSidebar={toggleSidebar}
+          isSidebarOpen={isSidebarOpen}
         />
       </div>
     </div>
