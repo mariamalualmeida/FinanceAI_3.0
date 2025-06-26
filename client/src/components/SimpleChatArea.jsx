@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Menu, Send, Paperclip, User, Bot } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 
-export default function SimpleChatArea({ toggleSidebar, toast }) {
+export default function SimpleChatArea({ toggleSidebar, user }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -52,11 +52,7 @@ export default function SimpleChatArea({ toggleSidebar, toast }) {
         setIsLoading(false)
       }, 1000)
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Erro ao enviar mensagem",
-        variant: "destructive",
-      })
+      console.error('Error sending message:', error)
       setIsLoading(false)
     }
   }
@@ -104,10 +100,7 @@ export default function SimpleChatArea({ toggleSidebar, toast }) {
           }
           setMessages(prev => [...prev, aiMessage])
           
-          toast({
-            title: "Sucesso",
-            description: "Arquivo enviado e sendo processado",
-          })
+          console.log('File uploaded successfully')
         } else {
           throw new Error(result.message || 'Erro no upload')
         }
@@ -115,11 +108,16 @@ export default function SimpleChatArea({ toggleSidebar, toast }) {
 
     } catch (error) {
       setUploadProgress(null)
-      toast({
-        title: "Erro",
-        description: error.message || "Erro ao fazer upload do arquivo",
-        variant: "destructive",
-      })
+      console.error('Upload error:', error)
+      
+      // Show error message
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: 'assistant',
+        text: `❌ **Erro no Upload**\n\nNão foi possível processar o arquivo: ${error.message || 'Erro desconhecido'}\n\nTente novamente ou verifique se o arquivo está no formato correto.`,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
     }
   }
 
