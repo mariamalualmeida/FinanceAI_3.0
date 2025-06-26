@@ -48,7 +48,8 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen }) {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
+            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white flex items-center justify-center"
+            aria-label="Toggle sidebar"
           >
             <Menu size={20} />
           </button>

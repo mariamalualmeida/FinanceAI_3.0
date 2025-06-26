@@ -4,7 +4,7 @@ import ChatArea from './components/ChatArea'
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768) // Padrão aberto no desktop
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev)

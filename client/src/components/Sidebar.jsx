@@ -33,7 +33,10 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen }) {
           x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed md:relative z-50 flex flex-col w-full md:w-64 h-full bg-[#202123] md:translate-x-0 md:z-auto"
+        className="fixed md:relative z-50 flex flex-col w-full md:w-64 h-full bg-[#202123]"
+        style={{
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+        }}
       >
         {/* Header com botão Nova Conversa */}
         <div className="p-2">
