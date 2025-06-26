@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Paperclip, Mic, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-export default function InputArea({ onSend, onFileUpload }) {
+export default function InputArea({ onSend, onFileUpload, toast }) {
   const [text, setText] = useState('')
   const [files, setFiles] = useState([])
+  const [isRecording, setIsRecording] = useState(false)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
 
@@ -26,7 +27,30 @@ export default function InputArea({ onSend, onFileUpload }) {
 
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files)
-    setFiles(prev => [...prev, ...selectedFiles])
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    const allowedTypes = ['.pdf', '.xlsx', '.xls', '.csv', '.jpg', '.jpeg', '.png', '.txt']
+    
+    const validFiles = selectedFiles.filter(file => {
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase()
+      
+      if (file.size > maxSize) {
+        toast?.error(`Arquivo ${file.name} é muito grande (máx: 10MB)`)
+        return false
+      }
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        toast?.error(`Tipo de arquivo ${fileExtension} não suportado`)
+        return false
+      }
+      
+      return true
+    })
+
+    if (validFiles.length > 0) {
+      setFiles(prev => [...prev, ...validFiles])
+      toast?.success(`${validFiles.length} arquivo(s) anexado(s)`)
+    }
+    
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -34,6 +58,25 @@ export default function InputArea({ onSend, onFileUpload }) {
 
   const removeFile = (index) => {
     setFiles(prev => prev.filter((_, i) => i !== index))
+    toast?.info('Arquivo removido')
+  }
+
+  const toggleRecording = () => {
+    if (!isRecording) {
+      // Start recording
+      setIsRecording(true)
+      toast?.info('Gravação de áudio iniciada')
+      
+      // Simulate recording for demo
+      setTimeout(() => {
+        setIsRecording(false)
+        toast?.success('Áudio gravado com sucesso')
+      }, 3000)
+    } else {
+      // Stop recording
+      setIsRecording(false)
+      toast?.info('Gravação interrompida')
+    }
   }
 
   const handleKeyDown = (e) => {
@@ -101,13 +144,28 @@ export default function InputArea({ onSend, onFileUpload }) {
           {/* Botões de ação */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Botão de microfone */}
-            <button
+            <motion.button
               type="button"
-              className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
-              title="Gravar áudio"
+              onClick={toggleRecording}
+              whileTap={{ scale: 0.95 }}
+              className={`p-2 transition-colors rounded-lg ${
+                isRecording 
+                  ? 'bg-red-500 text-white' 
+                  : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
+              }`}
+              title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
             >
-              <Mic size={20} />
-            </button>
+              {isRecording ? (
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  <Mic size={20} />
+                </motion.div>
+              ) : (
+                <Mic size={20} />
+              )}
+            </motion.button>
 
             {/* Botão de enviar */}
             <motion.button
@@ -129,7 +187,7 @@ export default function InputArea({ onSend, onFileUpload }) {
 
         {/* Dica de atalho */}
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-          Pressione Enter para enviar, Shift + Enter para nova linha
+          Enter para enviar • Shift + Enter para nova linha • Ctrl + K para sidebar • Ctrl + N para nova conversa
         </div>
       </div>
     </div>
