@@ -1,201 +1,212 @@
 import { useState } from "react";
-import { useChat } from "@/hooks/useChat";
-import { useAuth } from "@/hooks/useAuth";
+import { Link, useLocation } from "wouter";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  MessageSquare, 
+  Search, 
+  Settings, 
+  X,
+  Plus,
+  MoreVertical,
+  Archive,
+  Trash2
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { ModernSettingsModal } from "@/components/settings/ModernSettingsModal";
-import { formatRelativeTime, truncateText } from "@/lib/authUtils";
-import { Menu, Settings, MessageSquare, FileText, X, Plus, Archive, Trash2, Search } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import type { Conversation } from "@shared/schema";
 
 interface SidebarProps {
-  onClose?: () => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-export function Sidebar({ onClose }: SidebarProps) {
-  const { user } = useAuth();
-  const { 
-    conversations, 
-    currentConversation, 
-    selectConversation, 
-    createConversation 
-  } = useChat();
+export function Sidebar({ isOpen, onToggle }: SidebarProps) {
+  const [location] = useLocation();
   const [showSettings, setShowSettings] = useState(false);
-  const [activeTab, setActiveTab] = useState("chat");
+  const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
 
-  const handleNewChat = async () => {
-    await createConversation();
-    if (onClose) onClose(); // Fecha sidebar no mobile após criar nova conversa
+  const { data: conversations = [] } = useQuery<Conversation[]>({
+    queryKey: ["/api/conversations"],
+  });
+
+  const createConversationMutation = useMutation({
+    mutationFn: () => apiRequest("/api/conversations", "POST", { title: "Nova Conversa" }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      window.location.href = `/chat/${data.id}`;
+    },
+  });
+
+  const archiveConversationMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/conversations/${id}`, "PATCH", { archived: true }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    },
+  });
+
+  const deleteConversationMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/conversations/${id}`, "DELETE"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    },
+  });
+
+  const filteredConversations = conversations.filter(conv =>
+    conv.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleNewConversation = () => {
+    createConversationMutation.mutate();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500";
-      case "processing":
-        return "bg-blue-500";  
-      case "error":
-        return "bg-red-500";
-      default:
-        return "bg-gray-400";
-    }
+  const handleArchive = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    archiveConversationMutation.mutate(id);
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "Concluído";
-      case "processing":
-        return "Em análise";
-      case "error":
-        return "Erro";
-      default:
-        return "Pendente";
-    }
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    deleteConversationMutation.mutate(id);
   };
+
+  // Previne que cliques na sidebar fechem ela
+  const handleSidebarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  if (!isOpen) return null;
 
   return (
     <>
-      {/* Mobile Sidebar - Full screen overlay */}
-      <div className="fixed inset-0 z-50 bg-background flex flex-col lg:relative lg:w-80 lg:bg-card lg:border-r lg:border-border">
-        {/* Header - Clean and minimal */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-card/95 backdrop-blur-sm shrink-0">
-          <div className="flex items-center space-x-3 min-w-0">
-            <div className="min-w-0">
-              <h1 className="text-lg font-semibold text-foreground truncate">FinanceAI</h1>
-              <p className="text-xs text-muted-foreground truncate">Análise Inteligente</p>
-            </div>
-          </div>
+      {/* Overlay para mobile */}
+      <div 
+        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        onClick={onToggle}
+      />
+      
+      {/* Sidebar */}
+      <div 
+        className={cn(
+          "fixed left-0 top-0 h-full w-80 bg-card border-r border-border z-50 flex flex-col",
+          "transform transition-transform duration-300 ease-in-out",
+          "lg:relative lg:translate-x-0"
+        )}
+        onClick={handleSidebarClick}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-xl font-semibold">FinanceAI</h2>
           <Button
             variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="lg:hidden shrink-0"
+            size="sm"
+            onClick={onToggle}
+            className="lg:hidden"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* User Info - Compact for mobile */}
-        <div className="p-4 border-b border-border bg-card/50 shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-              <span className="text-sm font-medium text-primary">
-                {user?.firstName?.[0] || user?.username?.[0] || "U"}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="font-medium text-foreground text-sm truncate">
-                {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username || 'Usuário'}
-              </p>
-              <p className="text-xs text-muted-foreground">Consultor Financeiro</p>
-            </div>
+        {/* Search Bar */}
+        <div className="p-4 border-b border-border">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Pesquisar conversas..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </div>
 
-        {/* Navigation Tabs - Mobile friendly */}
-        <div className="p-4 shrink-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-12">
-              <TabsTrigger value="chat" className="text-xs font-medium">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Chat
-              </TabsTrigger>
-              <TabsTrigger value="reports" className="text-xs font-medium">
-                <FileText className="h-4 w-4 mr-2" />
-                Relatórios
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Action Buttons - Touch friendly */}
-        <div className="px-4 pb-4 shrink-0 space-y-3">
+        {/* New Conversation Button */}
+        <div className="p-4">
           <Button
-            onClick={handleNewChat}
-            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+            onClick={handleNewConversation}
+            disabled={createConversationMutation.isPending}
+            className="w-full justify-center"
             size="lg"
           >
-            <Plus className="h-5 w-5 mr-2" />
+            <Plus className="h-4 w-4 mr-2" />
             Nova Conversa
           </Button>
-          
-          {/* Search and Actions */}
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="flex-1 h-10"
-              title="Pesquisar conversas"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="flex-1 h-10"
-              title="Arquivar conversa"
-            >
-              <Archive className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="flex-1 h-10"
-              title="Excluir conversa"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
 
-        {/* Conversations List - Scrollable area */}
+        {/* Conversations List */}
         <div className="flex-1 overflow-hidden">
-          <div className="px-4 pb-3">
-            <h3 className="text-sm font-medium text-muted-foreground">Conversas Recentes</h3>
-          </div>
-          
-          <ScrollArea className="flex-1 px-4">
-            <div className="space-y-3 pb-4">
-              {conversations.map((conversation) => (
-                <div
-                  key={conversation.id}
-                  onClick={() => {
-                    selectConversation(conversation.id);
-                    if (onClose) onClose(); // Fecha sidebar no mobile após selecionar
-                  }}
-                  className={`
-                    p-4 rounded-xl cursor-pointer transition-all duration-200 border
-                    ${currentConversation?.id === conversation.id 
-                      ? 'bg-primary/10 border-primary/20 shadow-sm' 
-                      : 'hover:bg-muted/50 border-transparent hover:border-muted'
-                    }
-                  `}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                      <MessageSquare className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-medium text-foreground truncate leading-tight">
-                        {truncateText(conversation.title || "Nova Conversa", 28)}
-                      </h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatRelativeTime(conversation.updatedAt)}
-                      </p>
-                      <div className="flex items-center mt-2">
-                        <div className={`w-2 h-2 rounded-full mr-2 ${getStatusColor(conversation.status || 'pending')}`} />
-                        <span className="text-xs text-muted-foreground">
-                          {getStatusText(conversation.status || 'pending')}
-                        </span>
+          <ScrollArea className="h-full">
+            <div className="p-4 space-y-2">
+              {filteredConversations.length > 0 ? (
+                filteredConversations.map((conversation) => (
+                  <div
+                    key={conversation.id}
+                    className={cn(
+                      "group flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent transition-colors",
+                      location === `/chat/${conversation.id}` && "bg-accent"
+                    )}
+                  >
+                    <Link
+                      href={`/chat/${conversation.id}`}
+                      className="flex-1 min-w-0"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium truncate">
+                            {conversation.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(conversation.updatedAt).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
+                    
+                    {/* Three dots menu */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={(e) => handleArchive(conversation.id, e)}
+                          disabled={archiveConversationMutation.isPending}
+                        >
+                          <Archive className="h-4 w-4 mr-2" />
+                          Arquivar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => handleDelete(conversation.id, e)}
+                          disabled={deleteConversationMutation.isPending}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                </div>
-              ))}
-              
-              {conversations.length === 0 && (
+                ))
+              ) : (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                     <MessageSquare className="h-8 w-8 text-muted-foreground" />

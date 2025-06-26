@@ -50,17 +50,7 @@ export default function ChatPage() {
         />
       )}
 
-      {/* Sidebar - Mobile: Overlay, Desktop: Fixed */}
-      <div className={`
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:static
-        fixed inset-y-0 left-0 z-50 w-full max-w-[85vw] sm:max-w-sm
-        lg:w-80 lg:max-w-none
-        transition-transform duration-300 ease-in-out
-        lg:transition-none
-      `}>
-        <Sidebar onClose={() => setIsSidebarOpen(false)} />
-      </div>
+      <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen lg:min-h-0">
