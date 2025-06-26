@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
+import SettingsModal from './components/SettingsModal'
 import { Toaster } from './components/ui/toaster'
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
     userName: ''
   })
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   // Check authentication and load settings on app load
   useEffect(() => {
