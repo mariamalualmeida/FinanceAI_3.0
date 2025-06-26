@@ -115,6 +115,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. Backend completo implementado: banco de dados, IA real, autenticação
 - June 26, 2025. Sistema de análise financeira com OpenAI integrado e funcionando
 - June 26, 2025. API completa para conversas, mensagens, uploads e relatórios
+- June 26, 2025. Sistema de autenticação completo implementado com login/registro
+- June 26, 2025. Interface simplificada criada para resolver conflitos de compilação
+- June 26, 2025. Componentes SimpleSidebar e SimpleChatArea funcionais
 
 ## User Preferences
 
