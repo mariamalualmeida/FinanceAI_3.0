@@ -195,7 +195,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
   }
 
   return (
-    <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541] relative">
+    <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541] relative h-screen overflow-hidden">
       {/* Botões flutuantes no topo */}
       <div className="absolute top-4 left-4 z-50 flex items-center gap-2">
         <button

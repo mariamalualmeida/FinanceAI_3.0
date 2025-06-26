@@ -36,16 +36,17 @@ html, body {
 @media (max-width: 768px) {
   html, body {
     height: 100vh;
-    height: 100dvh; /* Dynamic viewport height */
     overflow-x: hidden;
-    position: relative;
+    position: fixed;
+    width: 100%;
+    overscroll-behavior: none;
   }
   
   #root {
     height: 100vh;
-    height: 100dvh;
     display: flex;
     overflow: hidden;
+    position: relative;
   }
   
   /* Sidebar mobile - ocupar tela completa */
@@ -55,21 +56,35 @@ html, body {
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    height: 100dvh !important;
     z-index: 50 !important;
   }
   
-  /* Chat areas */
+  /* Chat areas - viewport fixo para evitar movimentação */
   main[class*="flex-1"] {
     flex: 1;
     overflow: hidden;
     height: 100vh;
-    height: 100dvh;
+    position: relative;
   }
   
   main[class*="flex-1"] [class*="overflow-y-auto"] {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    height: 100vh;
+  }
+  
+  /* Safe area support para dispositivos com notch */
+  @supports (height: env(safe-area-inset-top)) {
+    #root {
+      height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    aside[class*="fixed"] {
+      height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      top: env(safe-area-inset-top) !important;
+    }
   }
 }
 
@@ -85,6 +100,24 @@ html, body {
     display: flex;
     overflow: hidden;
   }
+}
+
+/* Prevenção global de bounce e scroll instável */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  touch-action: pan-y;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Permitir seleção de texto em áreas de conteúdo */
+[class*="message"], [class*="input"], input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Força quebra de linha para textos longos */

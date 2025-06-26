@@ -99,7 +99,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   }
 
   return (
-    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-full max-h-screen overflow-hidden gemini-chat-container">
+    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-screen overflow-hidden gemini-chat-container">
       {/* Gemini Header - Fundo uniforme */}
       <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0 z-20">
         <div className="flex items-center gap-3">
