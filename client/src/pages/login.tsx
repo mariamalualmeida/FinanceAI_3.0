@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,14 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Bot, TrendingUp, Shield, BarChart3, Copy } from "lucide-react";
+import { AlertCircle, Bot, TrendingUp, Shield, BarChart3, Copy, Eye, EyeOff, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function LoginPage() {
   const { login, isLoginLoading } = useAuth();
   const { toast } = useToast();
+  const { theme, toggleMode } = useTheme();
   const [error, setError] = useState<string>("");
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("admin123");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +43,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 flex items-center justify-center p-4 relative">
+      {/* Theme Toggle */}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={toggleMode}
+        className="absolute top-4 right-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
+      >
+        {theme.mode === "dark" ? (
+          <Sun className="h-4 w-4" />
+        ) : (
+          <Moon className="h-4 w-4" />
+        )}
+      </Button>
+
       <div className="w-full max-w-4xl grid lg:grid-cols-5 gap-8 items-center">
         {/* Left side - Branding */}
         <div className="lg:col-span-3 space-y-8 text-center lg:text-left">
@@ -175,14 +192,29 @@ export default function LoginPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-slate-700 dark:text-slate-300">Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 pr-10"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-slate-500" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-slate-500" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
                 <Button
                   type="submit"
