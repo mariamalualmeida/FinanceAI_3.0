@@ -199,29 +199,24 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
-                <div className="relative px-6 py-4">
+                <div className="relative h-32">
                   {/* Botão de anexar arquivos - canto inferior esquerdo */}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-2 left-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    className="absolute bottom-3 left-4 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
                     <Paperclip size={18} />
                   </button>
                   
-                  {/* Textarea responsiva - sem bordas internas */}
+                  {/* Textarea responsiva - ocupa toda a área disponível */}
                   <textarea
                     value={inputText}
                     onChange={(e) => {
                       setInputText(e.target.value)
-                      // Auto-resize
-                      e.target.style.height = 'auto'
-                      e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
                     }}
                     placeholder=""
-                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[60px] max-h-[200px] pt-2 pb-10 px-3 leading-6 text-base scrollbar-hide overflow-y-auto"
-                    rows="3"
-                    style={{ height: '60px' }}
+                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none p-4 pb-12 leading-6 text-base scrollbar-hide overflow-y-auto"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
@@ -234,7 +229,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="submit"
                     disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="absolute bottom-2 right-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="absolute bottom-3 right-4 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <Send size={18} />
                   </button>

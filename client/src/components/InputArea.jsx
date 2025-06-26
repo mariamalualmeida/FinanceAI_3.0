@@ -106,7 +106,7 @@ export default function InputArea({ onSend, onFileUpload }) {
         )}
 
         {/* Container do input */}
-        <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
+        <div className="relative h-32 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
           
           {/* Input de arquivo oculto */}
           <input
@@ -118,25 +118,14 @@ export default function InputArea({ onSend, onFileUpload }) {
             className="hidden"
           />
           
-          {/* Botão de anexo */}
-          <button 
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
-            title="Anexar arquivo"
-          >
-            <Paperclip size={20} />
-          </button>
-
-          {/* Textarea */}
+          {/* Textarea - ocupa toda a área disponível */}
           <textarea
             ref={textareaRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="flex-1 bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 min-h-[24px] max-h-[200px] leading-6 py-1 whitespace-pre-wrap"
-            rows={1}
+            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-12 leading-6 text-base scrollbar-hide overflow-y-auto"
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
@@ -144,8 +133,18 @@ export default function InputArea({ onSend, onFileUpload }) {
             }}
           />
 
-          {/* Botões de ação */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Botão de anexo - canto inferior esquerdo */}
+          <button 
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-3 left-4 p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            title="Anexar arquivo"
+          >
+            <Paperclip size={18} />
+          </button>
+
+          {/* Botões de ação - canto inferior direito */}
+          <div className="absolute bottom-3 right-4 flex items-center gap-2">
             {/* Botão de microfone */}
             <motion.button
               type="button"
