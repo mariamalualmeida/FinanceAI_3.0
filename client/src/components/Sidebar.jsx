@@ -319,36 +319,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   />
                 </div>
 
-                {/* Tema */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Tema
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => onUpdateSettings({ theme: 'light' })}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
-                        settings.theme === 'light'
-                          ? 'bg-blue-50 border-blue-500 text-blue-700'
-                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Sun size={16} />
-                      Claro
-                    </button>
-                    <button
-                      onClick={() => onUpdateSettings({ theme: 'dark' })}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
-                        settings.theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 text-white'
-                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Moon size={16} />
-                      Escuro
-                    </button>
-                  </div>
-                </div>
+  
 
                 {/* Interface */}
                 <div>
