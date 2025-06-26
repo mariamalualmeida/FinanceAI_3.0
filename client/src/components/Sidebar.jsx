@@ -20,7 +20,7 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/60 md:hidden"
+            className="fixed inset-0 z-30 bg-black/60 md:hidden"
             onClick={() => setIsOpen(false)}
           />
         )}
@@ -33,7 +33,7 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen }) {
           x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed md:relative z-50 flex flex-col w-full md:w-64 h-full bg-[#202123]"
+        className="fixed md:relative z-40 flex flex-col w-full md:w-64 h-full bg-[#202123] md:block"
         style={{
           transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         }}

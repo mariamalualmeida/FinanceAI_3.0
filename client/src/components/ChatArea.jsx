@@ -44,16 +44,16 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen }) {
   return (
     <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541]">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-white/20">
+      <header className="relative z-10 flex items-center justify-between p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white flex items-center justify-center"
+            className="hidden md:flex relative z-20 p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white items-center justify-center min-w-[40px] min-h-[40px]"
             aria-label="Toggle sidebar"
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white md:ml-0 ml-16">
             ChatGPT
           </h1>
         </div>
