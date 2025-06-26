@@ -216,12 +216,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       setInputText(e.target.value)
                     }}
                     placeholder=""
-                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none p-4 pb-12 leading-6 text-base scrollbar-hide overflow-y-auto"
+                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none p-4 pb-16 leading-6 text-base scrollbar-hide overflow-y-auto"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
+                      if (e.key === 'Enter' && e.shiftKey) {
                         e.preventDefault()
                         handleSubmit(e)
                       }
+                      // Enter sem Shift = nova linha (comportamento padrão)
                     }}
                   />
                   
