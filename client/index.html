@@ -2,15 +2,47 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-    <title>FinanceAI - ChatGPT Clone</title>
-    <meta name="description" content="Aplicativo de análise financeira com chat baseado na interface do ChatGPT" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>FinanceAI - Análise Financeira Inteligente</title>
+    <meta name="description" content="Sistema avançado de análise financeira com IA para consultoria, score de crédito e gestão patrimonial" />
+    
+    <!-- PWA Configuration -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#343541" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="application-name" content="FinanceAI" />
+    
+    <!-- Apple App Configuration -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="FinanceAI" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    
+    <!-- Windows App Configuration -->
+    <meta name="msapplication-TileColor" content="#6366f1" />
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+    <meta name="msapplication-starturl" content="/" />
+    
+    <!-- SEO and Social -->
+    <meta property="og:title" content="FinanceAI - Análise Financeira Inteligente" />
+    <meta property="og:description" content="Sistema avançado de análise financeira com IA para consultoria e score de crédito" />
+    <meta property="og:image" content="/icons/icon-512x512.png" />
+    <meta property="og:url" content="https://financeai.replit.app" />
+    <meta property="og:type" content="website" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FinanceAI - Análise Financeira Inteligente" />
+    <meta name="twitter:description" content="Sistema avançado de análise financeira com IA" />
+    <meta name="twitter:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
   </head>
   <body>
     <div id="root"></div>
