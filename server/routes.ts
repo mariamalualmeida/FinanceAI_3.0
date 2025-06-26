@@ -257,6 +257,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Audio transcription route (estratégia dupla: direto + Whisper para logs)
+  app.post('/api/transcribe', upload.single('audio'), isAuthenticated, async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'Nenhum arquivo de áudio fornecido' });
+      }
+
+      // Implementação real seria com OpenAI Whisper API
+      // Por agora, vamos usar uma simulação para demonstração
+      const mockTranscription = "Esta é uma transcrição simulada do áudio enviado. Em produção, usaria a API Whisper da OpenAI para transcrever o áudio real.";
+
+      // Salvar log do áudio para auditoria conforme arquitetura discutida
+      await storage.createFileUpload({
+        userId: req.session.userId!,
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        fileSize: req.file.size,
+        fileType: req.file.mimetype,
+        filePath: req.file.path,
+        status: 'completed'
+      });
+
+      res.json({ 
+        transcription: mockTranscription,
+        audioId: req.file.filename 
+      });
+    } catch (error) {
+      console.error('Erro na transcrição:', error);
+      res.status(500).json({ message: 'Erro ao transcrever áudio' });
+    }
+  });
+
   // File upload and analysis
   app.post('/api/upload', isAuthenticated, upload.single('files'), async (req: any, res) => {
     try {
