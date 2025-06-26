@@ -1,0 +1,111 @@
+# FinanceAI - Intelligent Financial Analysis System
+
+## Overview
+
+FinanceAI is a comprehensive financial analysis system that combines artificial intelligence with document processing to provide intelligent credit scoring, risk assessment, and financial consultancy services. The application processes bank statements, invoices, and other financial documents to detect patterns, assess creditworthiness, and identify potential risks including gambling activities.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **UI Framework**: Radix UI components with shadcn/ui styling
+- **Styling**: Tailwind CSS with custom CSS variables for theming
+- **State Management**: TanStack Query for server state and React hooks for local state
+- **Routing**: Wouter for lightweight client-side routing
+- **Forms**: React Hook Form with Zod validation
+
+### Backend Architecture
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Express.js for REST API
+- **Database**: PostgreSQL with Drizzle ORM
+- **Database Provider**: Neon Database (@neondatabase/serverless)
+- **Authentication**: Express sessions with bcrypt password hashing
+- **File Processing**: Multer for file uploads with Python integration for document analysis
+
+### AI/ML Integration
+- **LLM Providers**: Multi-provider support including:
+  - OpenAI (GPT-4o)
+  - Anthropic Claude (claude-sonnet-4-20250514)
+  - Google Gemini (gemini-2.5-flash)
+- **Document Processing**: Python-based modules for extracting data from PDFs, spreadsheets, and images
+- **Financial Analysis**: Custom algorithms for credit scoring and risk assessment
+
+## Key Components
+
+### Data Flow
+1. **Document Upload**: Users upload financial documents through the web interface
+2. **File Processing**: Python modules extract structured data from documents
+3. **AI Analysis**: LLM providers analyze extracted data for patterns and insights
+4. **Risk Assessment**: Custom algorithms calculate credit scores and detect suspicious activities
+5. **Report Generation**: AI generates comprehensive financial reports and recommendations
+
+### Database Schema
+- **Users**: User accounts with authentication and role management
+- **Conversations**: Chat-like interface for user interactions
+- **Messages**: Individual messages in conversations with AI responses
+- **File Uploads**: Metadata and processing status for uploaded documents
+- **Financial Analyses**: Structured analysis results with scoring and risk indicators
+
+### Authentication & Authorization
+- Session-based authentication using Express sessions
+- Password hashing with bcrypt
+- Role-based access control (user/admin roles)
+- Protected API routes requiring authentication
+
+## External Dependencies
+
+### Core Dependencies
+- **Database**: PostgreSQL via Neon Database
+- **File Storage**: Local file system with configurable upload limits
+- **AI Services**: API keys required for OpenAI, Anthropic, and Google AI
+- **Document Processing**: Python runtime with specialized libraries
+
+### File Processing Support
+- PDF documents
+- Excel/CSV spreadsheets  
+- Images (JPEG, PNG)
+- Word documents
+- File size limit: 10MB per upload
+
+### Security Features
+- Input validation and sanitization
+- File type restrictions
+- SQL injection protection via parameterized queries
+- Session security with configurable secrets
+
+## Deployment Strategy
+
+### Development Environment
+- Replit-optimized configuration with hot reloading
+- Vite development server with HMR
+- Automatic database migrations
+- Environment variable management
+
+### Production Build Process
+1. Frontend build: `vite build` compiles React app to static assets
+2. Backend build: `esbuild` bundles Node.js server with external packages
+3. Database setup: Drizzle migrations ensure schema consistency
+4. Asset optimization: Static files served efficiently
+
+### Environment Requirements
+- Node.js 20+ runtime
+- PostgreSQL 16+ database
+- Python runtime for document processing
+- Required environment variables:
+  - `DATABASE_URL`: PostgreSQL connection string
+  - `SESSION_SECRET`: Session encryption key
+  - AI provider API keys (optional but recommended)
+
+### Scalability Considerations
+- Database connection pooling for high concurrency
+- Stateless session management for horizontal scaling
+- Modular AI provider system for load distribution
+- Efficient file processing with async operations
+
+## Changelog
+- June 26, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
