@@ -11,6 +11,7 @@
   word-break: break-word !important;
   white-space: pre-wrap !important;
   hyphens: auto !important;
+  max-width: 100% !important;
 }
 
 /* Estilos para markdown */
@@ -19,9 +20,24 @@
   overflow-wrap: break-word !important;
   word-break: break-word !important;
   white-space: pre-wrap !important;
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 
 .prose * {
+  max-width: 100% !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Para React Markdown especificamente */
+.prose .break-text p,
+.prose .break-text div,
+.prose .break-text span {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
   max-width: 100% !important;
 }
 

@@ -132,8 +132,13 @@ export default function InputArea({ onSend, onFileUpload, toast }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="flex-1 bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 min-h-[24px] max-h-[200px] leading-6 py-1"
+            className="flex-1 bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 min-h-[24px] max-h-[200px] leading-6 py-1 whitespace-pre-wrap"
             rows={1}
+            style={{
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
+              whiteSpace: 'pre-wrap'
+            }}
           />
 
           {/* Botões de ação */}
