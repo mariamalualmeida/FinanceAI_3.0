@@ -3,7 +3,7 @@ import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizon
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose }) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings }) {
   const [conversations, setConversations] = useState([])
   const [currentChatId, setCurrentChatId] = useState(null)
   const [showSearch, setShowSearch] = useState(false)
@@ -231,7 +231,10 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   className="mt-1 bg-gray-700 rounded-md border border-gray-600 overflow-hidden"
                 >
                   <button 
-                    onClick={() => setShowSettings(true)}
+                    onClick={() => {
+                      onOpenSettings?.() || setShowSettings(true)
+                      setShowProfileMenu(false)
+                    }}
                     className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
                   >
                     <Settings size={16} />
@@ -285,116 +288,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         }}
       />
 
-      {/* Settings Modal */}
-      <AnimatePresence>
-        {showSettings && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
-            onClick={() => setShowSettings(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Configurações
-                </h2>
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                  </svg>
-                </button>
-              </div>
 
-              <div className="space-y-6">
-                {/* Nome do usuário */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nome para tratamento personalizado
-                  </label>
-                  <input
-                    type="text"
-                    value={tempUserName}
-                    onChange={(e) => setTempUserName(e.target.value)}
-                    placeholder="Como a IA deve te chamar?"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-  
-
-                {/* Interface */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Estilo da Interface
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      key="interface-chatgpt"
-                      onClick={() => onUpdateSettings({ interface: 'chatgpt' })}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
-                        settings.interface === 'chatgpt'
-                          ? 'bg-green-50 border-green-500 text-green-700'
-                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Monitor size={16} />
-                      ChatGPT
-                    </button>
-                    <button
-                      key="interface-gemini"
-                      onClick={() => onUpdateSettings({ interface: 'gemini' })}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
-                        settings.interface === 'gemini'
-                          ? 'bg-purple-50 border-purple-500 text-purple-700'
-                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Zap size={16} />
-                      Gemini
-                    </button>
-                  </div>
-                </div>
-
-                {/* Botões de ação */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    key="settings-save"
-                    onClick={() => {
-                      onUpdateSettings({ userName: tempUserName })
-                      setShowSettings(false)
-                    }}
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Salvar
-                  </button>
-                  <button
-                    key="settings-cancel"
-                    onClick={() => {
-                      setTempUserName(settings.userName || '')
-                      setShowSettings(false)
-                    }}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }
