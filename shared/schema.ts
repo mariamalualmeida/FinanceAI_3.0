@@ -179,3 +179,92 @@ export const loginSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof loginSchema>;
+
+// Tabela de configurações de LLM
+export const llmConfig = pgTable("llm_config", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name", { length: 100 }).notNull(), // openai, anthropic, google
+  displayName: varchar("display_name", { length: 100 }).notNull(),
+  apiKey: text("api_key"),
+  baseUrl: varchar("base_url", { length: 500 }),
+  model: varchar("model", { length: 100 }).notNull(),
+  isEnabled: boolean("is_enabled").default(true),
+  isPrimary: boolean("is_primary").default(false),
+  isBackup: boolean("is_backup").default(false),
+  maxTokens: integer("max_tokens").default(4000),
+  temperature: decimal("temperature", { precision: 3, scale: 2 }).default("0.7"),
+  specialty: varchar("specialty", { length: 200 }), // financial_analysis, creative, technical
+  priority: integer("priority").default(1), // Para ordem de backup
+  config: jsonb("config"), // Configurações específicas do provider
+  updatedBy: integer("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+// Tabela de prompts do sistema
+export const systemPrompts = pgTable("system_prompts", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name", { length: 100 }).notNull(),
+  category: varchar("category", { length: 100 }).notNull(), // financial_analysis, general, etc
+  prompt1: text("prompt_1"), // Sistema base
+  prompt2: text("prompt_2"), // Extração
+  prompt3: text("prompt_3"), // Validação
+  prompt4: text("prompt_4"), // Categorização
+  prompt5: text("prompt_5"), // Análise
+  prompt6: text("prompt_6"), // Score
+  prompt7: text("prompt_7"), // Riscos
+  prompt8: text("prompt_8"), // Recomendações
+  prompt9: text("prompt_9"), // Extra 1
+  prompt10: text("prompt_10"), // Extra 2
+  prompt11: text("prompt_11"), // Extra 3
+  prompt12: text("prompt_12"), // Extra 4
+  isActive: boolean("is_active").default(true),
+  description: text("description"),
+  createdBy: integer("created_by").references(() => users.id).notNull(),
+  updatedBy: integer("updated_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+// Tabela de configurações de estratégia Multi-LLM
+export const multiLlmStrategy = pgTable("multi_llm_strategy", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name", { length: 100 }).notNull(),
+  mode: varchar("mode", { length: 50 }).notNull(), // economic, balanced, premium
+  enableSubjectRouting: boolean("enable_subject_routing").default(false),
+  enableBackupSystem: boolean("enable_backup_system").default(true),
+  enableValidation: boolean("enable_validation").default(false),
+  routingRules: jsonb("routing_rules"), // Regras de roteamento por assunto
+  validationRules: jsonb("validation_rules"), // Regras de validação
+  isActive: boolean("is_active").default(false),
+  description: text("description"),
+  createdBy: integer("created_by").references(() => users.id).notNull(),
+  updatedBy: integer("updated_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+export const insertLlmConfigSchema = createInsertSchema(llmConfig).omit({
+  id: true,
+  updatedAt: true
+});
+
+export const insertSystemPromptsSchema = createInsertSchema(systemPrompts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertMultiLlmStrategySchema = createInsertSchema(multiLlmStrategy).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type LlmConfig = typeof llmConfig.$inferSelect;
+export type InsertLlmConfig = z.infer<typeof insertLlmConfigSchema>;
+
+export type SystemPrompts = typeof systemPrompts.$inferSelect;
+export type InsertSystemPrompts = z.infer<typeof insertSystemPromptsSchema>;
+
+export type MultiLlmStrategy = typeof multiLlmStrategy.$inferSelect;
+export type InsertMultiLlmStrategy = z.infer<typeof insertMultiLlmStrategySchema>;
