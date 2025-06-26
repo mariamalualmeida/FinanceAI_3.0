@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Paperclip, Mic, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-export default function InputArea({ onSend, onFileUpload, toast }) {
+export default function InputArea({ onSend, onFileUpload }) {
   const [text, setText] = useState('')
   const [files, setFiles] = useState([])
   const [isRecording, setIsRecording] = useState(false)

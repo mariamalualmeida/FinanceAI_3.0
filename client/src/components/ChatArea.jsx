@@ -269,7 +269,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
 
       {/* Área de input */}
       <footer className="border-t border-white/20 p-4">
-        <InputArea onSend={sendMessage} toast={toast} />
+        <InputArea onSend={sendMessage} />
       </footer>
     </main>
   )
