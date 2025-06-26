@@ -1,17 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { Menu, Sun, Moon } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
 
 export default function ChatArea({ darkMode, toggleSidebar }) {
-  const [messages, setMessages] = useState([
-    { 
-      id: 1, 
-      sender: 'assistant', 
-      text: 'Olá! Sou seu assistente de IA. Como posso ajudá-lo hoje?',
-      timestamp: new Date()
-    }
-  ])
+  const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef(null)
 
@@ -45,21 +38,21 @@ export default function ChatArea({ darkMode, toggleSidebar }) {
       }
       setMessages(prev => [...prev, aiMessage])
       setIsTyping(false)
-    }, 1000 + Math.random() * 2000) // Delay realista
+    }, 1000 + Math.random() * 2000)
   }
 
   return (
-    <main className="flex flex-col flex-1 min-w-0">
+    <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541]">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#343541]">
+      <header className="flex items-center justify-between p-4 border-b border-white/20">
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
             ChatGPT
           </h1>
         </div>
@@ -67,21 +60,21 @@ export default function ChatArea({ darkMode, toggleSidebar }) {
 
       {/* Área de mensagens */}
       <section className="flex-1 overflow-y-auto">
-        {messages.length === 1 ? (
-          // Tela inicial
-          <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-            <div className="max-w-md">
-              <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+        {messages.length === 0 ? (
+          // Tela inicial exatamente como ChatGPT
+          <div className="flex flex-col items-center justify-center h-full px-6 text-center">
+            <div className="max-w-2xl">
+              <h1 className="text-3xl md:text-4xl font-semibold mb-6 text-gray-900 dark:text-white">
                 Como posso ajudar você hoje?
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-8">
+              </h1>
+              <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                 Faça uma pergunta ou descreva o que você gostaria de saber
               </p>
             </div>
           </div>
         ) : (
           // Lista de mensagens
-          <div className="max-w-3xl mx-auto p-4 space-y-6">
+          <div className="w-full">
             {messages.map((message) => (
               <MessageBubble 
                 key={message.id} 
@@ -108,7 +101,7 @@ export default function ChatArea({ darkMode, toggleSidebar }) {
       </section>
 
       {/* Área de input */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#343541]">
+      <footer className="border-t border-white/20 p-4">
         <InputArea onSend={sendMessage} />
       </footer>
     </main>

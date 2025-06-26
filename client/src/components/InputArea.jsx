@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Mic, Square } from 'lucide-react'
+import { Send, Paperclip, Mic } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function InputArea({ onSend }) {
   const [text, setText] = useState('')
-  const [isRecording, setIsRecording] = useState(false)
   const textareaRef = useRef(null)
 
   // Auto-resize textarea
@@ -29,21 +28,16 @@ export default function InputArea({ onSend }) {
     }
   }
 
-  const toggleRecording = () => {
-    setIsRecording(!isRecording)
-    // Aqui seria implementada a funcionalidade de gravação de áudio
-  }
-
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="max-w-3xl mx-auto">
       <div className="relative">
         {/* Container do input */}
-        <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-gray-600 rounded-2xl shadow-lg focus-within:border-gray-400 dark:focus-within:border-gray-500 transition-colors">
+        <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-black/10 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
           
           {/* Botão de anexo */}
           <button 
             type="button"
-            className="flex-shrink-0 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+            className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
             title="Anexar arquivo"
           >
             <Paperclip size={20} />
@@ -56,35 +50,20 @@ export default function InputArea({ onSend }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="flex-1 bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[200px] leading-6"
+            className="flex-1 bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 min-h-[24px] max-h-[200px] leading-6 py-1"
             rows={1}
           />
 
           {/* Botões de ação */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Botão de microfone/parar gravação */}
-            <motion.button
+            {/* Botão de microfone */}
+            <button
               type="button"
-              onClick={toggleRecording}
-              whileTap={{ scale: 0.95 }}
-              className={`p-2 rounded-lg transition-colors ${
-                isRecording 
-                  ? 'bg-red-500 text-white hover:bg-red-600' 
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-              }`}
-              title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
+              className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+              title="Gravar áudio"
             >
-              {isRecording ? (
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  <Square size={18} />
-                </motion.div>
-              ) : (
-                <Mic size={20} />
-              )}
-            </motion.button>
+              <Mic size={20} />
+            </button>
 
             {/* Botão de enviar */}
             <motion.button
@@ -94,8 +73,8 @@ export default function InputArea({ onSend }) {
               whileTap={{ scale: 0.95 }}
               className={`p-2 rounded-lg transition-colors ${
                 text.trim()
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  ? 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
               title="Enviar mensagem"
             >
