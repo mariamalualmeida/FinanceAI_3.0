@@ -1,6 +1,5 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import bcrypt from "bcrypt";
 import session from "express-session";
 import multer from "multer";
 import path from "path";
@@ -15,12 +14,20 @@ import {
 } from "@shared/schema";
 import { financialAnalyzer } from './financial-analyzer';
 
-// Extend session data interface
-declare module 'express-session' {
+declare module "express-session" {
   interface SessionData {
     userId?: number;
   }
 }
+
+// Authentication middleware
+const isAuthenticated = (req: any, res: Response, next: NextFunction) => {
+  if (req.session?.userId) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+};
 
 // Configure multer for file uploads
 const upload = multer({
@@ -29,166 +36,138 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.ms-excel',
-      'text/csv',
-      'image/jpeg',
-      'image/png',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-    
-    if (allowedTypes.includes(file.mimetype)) {
+    // Allow common financial document formats
+    const allowedTypes = /\.(pdf|xlsx?|csv|txt|png|jpe?g)$/i;
+    if (allowedTypes.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(null, false);
+      cb(new Error('Invalid file type. Please upload PDF, Excel, CSV, TXT, or image files.'));
     }
-  }
-});
-
-// Session configuration
-const sessionConfig = session({
-  secret: process.env.SESSION_SECRET || 'financeai-secret-key-development',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // Allow HTTP in development
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
 });
 
-// Authentication middleware
-const requireAuth = (req: any, res: any, next: any) => {
-  if (!req.session?.userId) {
-    return res.status(401).json({ message: 'Authentication required' });
-  }
-  next();
-};
-
 export async function registerRoutes(app: Express): Promise<Server> {
-  app.use(sessionConfig);
-
   // Authentication routes
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const { username, password } = loginSchema.parse(req.body);
-      
-      const user = await storage.getUserByUsername(username);
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      (req.session as any).userId = user.id;
-      
-      const { password: _, ...userWithoutPassword } = user;
-      res.json({ user: userWithoutPassword });
-    } catch (error) {
-      res.status(400).json({ message: 'Invalid request data' });
-    }
-  });
-
-  app.post('/api/auth/register', async (req, res) => {
+  app.post('/api/register', async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
       
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
-        return res.status(409).json({ message: 'Username already exists' });
+        return res.status(400).json({ message: 'Username already exists' });
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      
-      const user = await storage.createUser({
-        ...userData,
-        password: hashedPassword,
-      });
+      if (userData.email) {
+        const existingEmail = await storage.getUserByEmail(userData.email);
+        if (existingEmail) {
+          return res.status(400).json({ message: 'Email already exists' });
+        }
+      }
 
-      (req.session as any).userId = user.id;
-      
+      const user = await storage.createUser(userData);
       const { password: _, ...userWithoutPassword } = user;
+      
+      req.session.userId = user.id;
       res.json({ user: userWithoutPassword });
     } catch (error) {
-      res.status(400).json({ message: 'Invalid request data' });
+      console.error('Registration error:', error);
+      res.status(400).json({ message: 'Invalid registration data' });
     }
   });
 
-  app.post('/api/auth/logout', (req, res) => {
-    req.session.destroy((err: any) => {
-      if (err) {
-        return res.status(500).json({ message: 'Failed to logout' });
+  app.post('/api/login', async (req, res) => {
+    try {
+      const { username, password } = loginSchema.parse(req.body);
+      
+      const user = await storage.getUserByUsername(username);
+      if (!user || user.password !== password) {
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
-      res.json({ message: 'Logged out successfully' });
-    });
+
+      const { password: _, ...userWithoutPassword } = user;
+      req.session.userId = user.id;
+      res.json({ user: userWithoutPassword });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(400).json({ message: 'Invalid login data' });
+    }
   });
 
-  app.get('/api/auth/me', requireAuth, async (req: any, res) => {
+  app.get('/api/user', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUserById(req.session.userId);
+      const user = await storage.getUser(req.session.userId!);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      
-      const { password: _, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch user' });
+      console.error('Get user error:', error);
+      res.status(500).json({ message: 'Failed to get user' });
     }
   });
 
+  app.post('/api/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Could not log out' })
+      }
+      res.clearCookie('connect.sid')
+      res.json({ message: 'Logged out successfully' })
+    })
+  });
+
   // Conversation routes
-  app.get('/api/conversations', requireAuth, async (req: any, res) => {
+  app.get('/api/conversations', isAuthenticated, async (req: any, res) => {
     try {
-      const conversations = await storage.getConversationsByUserId(req.session.userId);
+      const conversations = await storage.getConversationsByUser(req.session.userId!);
       res.json(conversations);
     } catch (error) {
+      console.error('Error fetching conversations:', error);
       res.status(500).json({ message: 'Failed to fetch conversations' });
     }
   });
 
-  app.post('/api/conversations', requireAuth, async (req: any, res) => {
+  app.post('/api/conversations', isAuthenticated, async (req: any, res) => {
     try {
       const conversationData = insertConversationSchema.parse(req.body);
       const conversation = await storage.createConversation({
         ...conversationData,
-        userId: req.session.userId,
+        userId: req.session.userId!,
       });
       res.json(conversation);
     } catch (error) {
-      res.status(400).json({ message: 'Invalid request data' });
+      console.error('Error creating conversation:', error);
+      res.status(500).json({ message: 'Failed to create conversation' });
     }
   });
 
-  app.get('/api/conversations/:id/messages', requireAuth, async (req: any, res) => {
+  // Message routes
+  app.get('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
-      const messages = await storage.getMessagesByConversationId(req.params.id);
+      const conversationId = parseInt(req.params.id);
+      const messages = await storage.getMessagesByConversation(conversationId);
       res.json(messages);
     } catch (error) {
+      console.error('Error fetching messages:', error);
       res.status(500).json({ message: 'Failed to fetch messages' });
     }
   });
 
-  // Chat routes
-  app.post('/api/chat/message', requireAuth, async (req: any, res) => {
+  app.post('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
-      const { conversationId, content, context } = req.body;
-      
-      // Save user message
-      await storage.createMessage({
+      const conversationId = parseInt(req.params.id);
+      const { content } = req.body;
+
+      // Create user message
+      const userMessage = await storage.createMessage({
         conversationId,
-        role: 'user',
+        sender: 'user',
         content,
       });
 
-      // Generate AI response (simplified for now)
+      // Generate AI response
       const aiResponse = `Recebi sua mensagem: "${content}"\n\nComo assistente especializado em análise financeira, posso ajudar com:\n\n• Análise de extratos bancários\n• Avaliação de score de crédito\n• Detecção de padrões suspeitos\n• Consultoria em investimentos\n• Análise de riscos\n\nPara uma análise detalhada, envie seus documentos financeiros.`;
 
       // Save AI message
@@ -198,165 +177,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: aiResponse,
       });
 
-      res.json({ message: aiMessage });
+      res.json({ userMessage, aiMessage });
     } catch (error) {
-      console.error('Chat error:', error);
-      res.status(500).json({ message: 'Failed to process message' });
+      console.error('Error creating message:', error);
+      res.status(500).json({ message: 'Failed to create message' });
     }
   });
 
-  // File upload and processing routes
-  app.post('/api/files/upload', requireAuth, upload.single('file'), async (req: any, res) => {
+  // File upload and analysis
+  app.post('/api/upload', isAuthenticated, upload.single('files'), async (req: any, res) => {
     try {
       if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+        return res.status(400).json({ 
+          success: false, 
+          message: 'No file uploaded' 
+        });
       }
 
-      const { conversationId } = req.body;
+      const conversationId = req.body.conversationId ? parseInt(req.body.conversationId) : null;
 
       // Create file upload record
       const fileUpload = await storage.createFileUpload({
-        userId: req.session.userId,
+        userId: req.session.userId!,
         conversationId,
         originalName: req.file.originalname,
         fileName: req.file.filename,
         fileType: path.extname(req.file.originalname).toLowerCase().slice(1),
         fileSize: req.file.size,
-        mimeType: req.file.mimetype,
+        filePath: req.file.path,
+        status: 'uploaded',
       });
 
-      res.json({ fileUpload });
-
       // Process file asynchronously
-      try {
-        await storage.updateFileUpload(fileUpload.id, { status: 'processing' });
+      setTimeout(async () => {
+        try {
+          await storage.updateFileUploadStatus(fileUpload.id, 'processing');
 
-        const document = await fileProcessor.processDocument(
-          req.file.path,
-          fileUpload.fileType
-        );
+          // Read file content for analysis
+          const fileContent = await fs.readFile(req.file!.path, 'utf-8');
+          
+          // Create financial analysis
+          const analysis = await financialAnalyzer.analyzeFinancialDocument(
+            req.session.userId!,
+            conversationId || 1,
+            fileContent,
+            req.file!.originalname
+          );
+          
+          await storage.updateFileUploadStatus(fileUpload.id, 'completed');
 
-        await storage.updateFileUploadStatus(fileUpload.id, 'completed');
+          // Clean up uploaded file
+          await fs.unlink(req.file!.path).catch(() => {});
 
-        // Clean up uploaded file
-        await fs.unlink(req.file.path).catch(() => {});
+        } catch (processingError) {
+          console.error('File processing error:', processingError);
+          await storage.updateFileUploadStatus(fileUpload.id, 'error');
+          await fs.unlink(req.file!.path).catch(() => {});
+        }
+      }, 1000);
 
-        // Read file content for analysis
-        const fileContent = await fs.readFile(req.file.path, 'utf-8');
-        
-        // Create financial analysis
-        const analysis = await financialAnalyzer.analyzeFinancialDocument(
-          req.session.userId!,
-          conversationId,
-          fileContent,
-          req.file.originalname
-        );
-        
-        res.json({
-          success: true,
-          analysis: {
-            creditScore: analysis.creditScore,
-            riskLevel: analysis.riskLevel,
-            recommendations: analysis.recommendations,
-            totalIncome: analysis.totalIncome,
-            totalExpenses: analysis.totalExpenses,
-            balance: analysis.balance,
-            transactionCount: analysis.transactionCount,
-            patterns: analysis.patterns,
-            summary: `Análise completa realizada com ${analysis.transactionCount} transações processadas.`
-          }
-        });
-
-      } catch (processingError) {
-        console.error('File processing error:', processingError);
-        await storage.updateFileUploadStatus(fileUpload.id, 'error');
-        await fs.unlink(req.file.path).catch(() => {});
-      }
+      res.json({
+        success: true,
+        fileId: fileUpload.id,
+        message: 'File uploaded successfully and is being processed'
+      });
 
     } catch (error) {
       console.error('Upload error:', error);
-      res.status(500).json({ message: 'Failed to upload file' });
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to process file upload',
+        error: (error as Error).message 
+      });
     }
   });
 
-  app.get('/api/files/:id/status', requireAuth, async (req: any, res) => {
+  // Analysis endpoints
+  app.get('/api/analyses', isAuthenticated, async (req: any, res) => {
     try {
-      const fileUpload = await storage.getFileUploadById(req.params.id);
-      if (!fileUpload) {
-        return res.status(404).json({ message: 'File not found' });
-      }
-      res.json(fileUpload);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch file status' });
-    }
-  });
-
-  // Financial analysis routes
-  app.get('/api/analysis/:fileId', requireAuth, async (req: any, res) => {
-    try {
-      const analysis = await storage.getFinancialAnalysisByFileUploadId(req.params.fileId);
-      if (!analysis) {
-        return res.status(404).json({ message: 'Analysis not found' });
-      }
-      res.json(analysis);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch analysis' });
-    }
-  });
-
-  app.get('/api/analysis', requireAuth, async (req: any, res) => {
-    try {
-      const analyses = await storage.getFinancialAnalysesByUserId(req.session.userId);
+      const analyses = await storage.getAnalysesByUser(req.session.userId!);
       res.json(analyses);
     } catch (error) {
+      console.error('Error fetching analyses:', error);
       res.status(500).json({ message: 'Failed to fetch analyses' });
     }
   });
 
-  app.post('/api/analysis/generate-report', requireAuth, async (req: any, res) => {
+  app.get('/api/files/:id/status', isAuthenticated, async (req: any, res) => {
     try {
-      const { analysisId } = req.body;
-      
-      const analysis = await storage.getFinancialAnalysisByFileUploadId(analysisId);
-      if (!analysis) {
-        return res.status(404).json({ message: 'Analysis not found' });
+      const fileUpload = await storage.getFileUpload(parseInt(req.params.id));
+      if (!fileUpload || fileUpload.userId !== req.session.userId) {
+        return res.status(404).json({ message: 'File not found' });
       }
-
-      const userSettings = await storage.getUserSettings(req.session.userId);
-      const providerName = userSettings?.llmProvider || 'openai';
-      const userApiKey = userSettings?.llmApiKey;
-
-      const report = await llmService.generateFinancialReport(
-        analysis.results,
-        providerName,
-        userApiKey || undefined
-      );
-
-      res.json({ report });
+      res.json({ status: fileUpload.status });
     } catch (error) {
-      console.error('Report generation error:', error);
-      res.status(500).json({ message: 'Failed to generate report' });
-    }
-  });
-
-  // User settings routes
-  app.get('/api/settings', requireAuth, async (req: any, res) => {
-    try {
-      const settings = await storage.getUserSettings(req.session.userId);
-      res.json(settings || { llmProvider: 'openai', theme: 'dark', interface: 'simple' });
-    } catch (error) {
-      console.error('Settings error:', error);
-      res.json({ llmProvider: 'openai', theme: 'dark', interface: 'simple' });
-    }
-  });
-
-  app.put('/api/settings', requireAuth, async (req: any, res) => {
-    try {
-      const settingsData = insertUserSettingsSchema.parse(req.body);
-      const settings = await storage.updateUserSettings(req.session.userId, settingsData);
-      res.json(settings);
-    } catch (error) {
-      res.status(400).json({ message: 'Invalid settings data' });
+      console.error('Error fetching file status:', error);
+      res.status(500).json({ message: 'Failed to fetch file status' });
     }
   });
 

@@ -45,10 +45,10 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
         })
 
         // Simular progresso enquanto processa
-        const progressInterval = setInterval(() => {
+        const progressTimer = setInterval(() => {
           setUploadProgress(prev => {
             if (prev >= 90) {
-              clearInterval(progressInterval)
+              clearInterval(progressTimer)
               return 90
             }
             return prev + 15
