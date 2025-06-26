@@ -190,59 +190,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         {/* Input Area flutuante - Posicionado como overlay */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 z-40" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom))` }}>
           <div className="max-w-4xl mx-auto">
-            {/* Preview do áudio gravado */}
-            {audioBlob && (
-              <div className="mb-3 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-purple-800 dark:text-purple-200">Áudio Gravado</span>
-                  </div>
-                  <button
-                    onClick={clearAudio}
-                    className="text-gray-500 hover:text-red-500 transition-colors"
-                    title="Remover áudio"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                
-                <div className="flex items-center gap-3 mb-3">
-                  <button
-                    onClick={playAudio}
-                    className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors"
-                    title={isPlayingAudio ? 'Pausar áudio' : 'Reproduzir áudio'}
-                  >
-                    {isPlayingAudio ? <Pause size={16} /> : <Play size={16} />}
-                  </button>
-                  
-                  <div className="flex-1 text-sm text-gray-600 dark:text-gray-400">
-                    Clique no botão para ouvir sua gravação
-                  </div>
-                </div>
 
-                {isTranscribing && (
-                  <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 mb-2">
-                    <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                    Transcrevendo áudio...
-                  </div>
-                )}
-
-                {transcription && (
-                  <div className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border">
-                    <div className="text-xs text-gray-500 mb-1">Transcrição:</div>
-                    <div className="italic">"{transcription}"</div>
-                  </div>
-                )}
-
-                <audio
-                  ref={audioRef}
-                  src={audioUrl}
-                  onEnded={() => setIsPlayingAudio(false)}
-                  className="hidden"
-                />
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="relative">
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">

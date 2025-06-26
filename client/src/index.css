@@ -187,20 +187,9 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Z-index hierarchy for mobile interfaces */
-.mobile-header-buttons {
-  z-index: 60 !important;
-  position: relative;
-}
-
-/* Garantir que botões flutuantes ficam acima dos elementos do input */
-.floating-header-buttons {
+/* Z-index hierarchy for consistent layering */
+.header-buttons {
   z-index: 50 !important;
-}
-
-/* Inputs e elementos interativos devem ter z-index menor */
-.input-elements {
-  z-index: 10 !important;
 }
 
 /* Aumentar altura mínima em dispositivos móveis */
