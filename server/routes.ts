@@ -115,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: hashedPassword,
       });
 
-      req.session.userId = user.id;
+      (req.session as any).userId = user.id;
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
@@ -201,7 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content,
         providerName,
         context,
-        userApiKey
+        userApiKey ?? undefined
       );
 
       // Save AI message
@@ -236,7 +236,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fileType: path.extname(req.file.originalname).toLowerCase().slice(1),
         fileSize: req.file.size,
         mimeType: req.file.mimetype,
-        status: 'pending',
       });
 
       res.json({ fileUpload });
@@ -275,7 +274,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('File processing error:', processingError);
         await storage.updateFileUpload(fileUpload.id, {
           status: 'error',
-          processingResult: { error: processingError.message },
+          processingResult: { error: (processingError as Error).message || 'Unknown error' },
         });
         await fs.unlink(req.file.path).catch(() => {});
       }
@@ -336,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const report = await llmService.generateFinancialReport(
         analysis.results,
         providerName,
-        userApiKey
+        userApiKey ?? undefined
       );
 
       res.json({ report });
