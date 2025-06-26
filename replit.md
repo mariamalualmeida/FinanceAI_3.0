@@ -143,6 +143,12 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. Modal de configurações reorganizado com seções expansíveis
 - June 26, 2025. Campos para APIs OpenAI, Anthropic e Google adicionados
 - June 26, 2025. Acesso administrativo implementado para funções sensíveis
+- June 26, 2025. Sistema Multi-LLM completo implementado com orquestração inteligente
+- June 26, 2025. Configurações de estratégias: Econômico, Balanceado e Premium
+- June 26, 2025. Sistema de prompts com até 12 campos configuráveis em cadeia
+- June 26, 2025. Roteamento inteligente por assunto, backup e validação cruzada
+- June 26, 2025. Interface administrativa expandida para gerenciar LLMs e prompts
+- June 26, 2025. Financial-analyzer integrado com orquestrador Multi-LLM
 
 ## User Preferences
 

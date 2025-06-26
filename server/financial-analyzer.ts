@@ -100,14 +100,12 @@ ${content}
 Responda apenas com um array JSON válido de transações:`;
 
     try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        temperature: 0.1
-      });
+      const response = await multiLlmOrchestrator.processChainedPrompts(
+        'Extrair transações financeiras do documento',
+        prompt
+      );
 
-      const result = JSON.parse(response.choices[0].message.content || '{"transactions": []}');
+      const result = JSON.parse(response || '{"transactions": []}');
       return result.transactions || [];
     } catch (error) {
       console.error('Erro ao extrair transações:', error);
@@ -155,14 +153,12 @@ Considere:
 - Diversificação de gastos`;
 
     try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        temperature: 0.2
-      });
+      const response = await multiLlmOrchestrator.processChainedPrompts(
+        'Análise financeira completa e cálculo de score de crédito',
+        prompt
+      );
 
-      const analysis = JSON.parse(response.choices[0].message.content || '{}');
+      const analysis = JSON.parse(response || '{}');
       
       // Validar e ajustar resultados
       return {
@@ -277,13 +273,12 @@ Resumo Executivo, Análise Detalhada, Padrões Identificados, Score de Crédito,
 Recomendações e Conclusão.`;
 
     try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3
-      });
+      const response = await multiLlmOrchestrator.processChainedPrompts(
+        'Gerar relatório financeiro detalhado',
+        prompt
+      );
 
-      return response.choices[0].message.content || 'Erro ao gerar relatório';
+      return response || 'Erro ao gerar relatório';
     } catch (error) {
       console.error('Erro ao gerar relatório:', error);
       return 'Erro ao gerar relatório detalhado';
