@@ -52,11 +52,11 @@ const upload = multer({
 
 // Session configuration
 const sessionConfig = session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: process.env.SESSION_SECRET || 'financeai-secret-key-development',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Allow HTTP in development
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
