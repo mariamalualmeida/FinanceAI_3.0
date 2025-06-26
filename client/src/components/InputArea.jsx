@@ -9,14 +9,8 @@ export default function InputArea({ onSend, onFileUpload }) {
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
 
-  // Auto-resize textarea
-  useEffect(() => {
-    const textarea = textareaRef.current
-    if (textarea) {
-      textarea.style.height = 'auto'
-      textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
-    }
-  }, [text])
+  // Textarea ref para controle
+  // Auto-resize removido pois agora usa altura fixa com scroll
 
   const handleSend = () => {
     if (!text.trim() && files.length === 0) return
@@ -150,7 +144,7 @@ export default function InputArea({ onSend, onFileUpload }) {
               type="button"
               onClick={toggleRecording}
               whileTap={{ scale: 0.95 }}
-              className={`p-2 transition-all duration-200 rounded-xl backdrop-blur-sm ${
+              className={`p-1.5 transition-all duration-200 rounded-xl backdrop-blur-sm ${
                 isRecording 
                   ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' 
                   : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
@@ -162,10 +156,10 @@ export default function InputArea({ onSend, onFileUpload }) {
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 1, repeat: Infinity }}
                 >
-                  <Mic size={20} />
+                  <Mic size={18} />
                 </motion.div>
               ) : (
-                <Mic size={20} />
+                <Mic size={18} />
               )}
             </motion.button>
 
@@ -175,14 +169,14 @@ export default function InputArea({ onSend, onFileUpload }) {
               onClick={handleSend}
               disabled={!text.trim() && files.length === 0}
               whileTap={{ scale: 0.95 }}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-lg transition-colors ${
                 text.trim() || files.length > 0
                   ? 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                   : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
               title="Enviar mensagem"
             >
-              <Send size={20} />
+              <Send size={18} />
             </motion.button>
           </div>
         </div>
