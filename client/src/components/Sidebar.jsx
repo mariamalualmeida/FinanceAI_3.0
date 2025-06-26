@@ -82,7 +82,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
           x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed md:relative z-40 flex flex-col w-full h-full bg-[#202123] md:flex md:w-64"
+        className="fixed md:relative z-40 flex flex-col w-full h-screen md:h-full bg-white dark:bg-[#202123] border-r border-gray-200 dark:border-gray-700 md:flex md:w-64"
       >
         {/* Header com botão fechar e nova conversa */}
         <div className="flex items-center justify-between p-3">
@@ -90,14 +90,14 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
             onClick={() => {
               onNewChat?.()
             }}
-            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-500/10 text-white transition-colors text-sm"
+            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
           >
             <Plus size={16} />
             Nova conversa
           </button>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-500/10 rounded-md text-white transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-500/10 rounded-md text-gray-900 dark:text-white transition-colors"
             aria-label="Fechar sidebar"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -110,7 +110,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         <div className="px-2 pb-2">
           <button
             onClick={() => setShowSearch(true)}
-            className="flex items-center gap-3 w-full p-3 rounded-md text-gray-300 hover:bg-gray-500/10 transition-colors text-sm"
+            className="flex items-center gap-3 w-full p-3 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-500/10 transition-colors text-sm"
           >
             <Search size={16} />
             Buscar conversas...
@@ -128,14 +128,14 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                 }}
                 className={`group relative flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors ${
                   currentChatId === conv.id 
-                    ? 'bg-gray-500/20 text-white' 
-                    : 'text-gray-300 hover:bg-gray-500/10'
+                    ? 'bg-gray-200 dark:bg-gray-500/20 text-gray-900 dark:text-white' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-500/10'
                 }`}
               >
                 <MessageSquare size={16} className="flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm truncate font-medium">{conv.title}</p>
-                  <p className="text-xs text-gray-400 truncate">{conv.lastMessage}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{conv.lastMessage}</p>
                 </div>
                 <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
                   <button 
@@ -143,7 +143,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                       e.stopPropagation()
                       setShowDropdown(showDropdown === conv.id ? null : conv.id)
                     }}
-                    className="p-1 hover:bg-gray-500/20 rounded text-gray-400 hover:text-white"
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-500/20 rounded text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
                   >
                     <MoreHorizontal size={16} />
                   </button>
