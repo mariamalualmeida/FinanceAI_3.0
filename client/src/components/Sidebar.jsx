@@ -75,7 +75,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
           x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed md:relative z-40 flex flex-col w-64 h-full bg-[#202123] md:flex"
+        className="fixed md:relative z-40 flex flex-col w-64 h-screen bg-[#202123] md:flex"
       >
         {/* Header com botão fechar e nova conversa */}
         <div className="flex items-center justify-between p-3">
