@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
 import { Plus, MessageSquare, Settings, User, HelpCircle, Bot, Send, Paperclip } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -64,26 +63,6 @@ export function ProfessionalLayout() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  const welcomeScreen = (
-    <div className="flex-1 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Bot className="h-8 w-8 text-gray-900" />
-        </div>
-        <h2 className="text-xl font-bold text-white mb-2">Bem-vindo ao FinanceAI Professional</h2>
-        <p className="text-gray-400 mb-6">Análises financeiras avançadas com IA</p>
-        <button
-          onClick={handleNewConversation}
-          disabled={createConversationMutation.isPending}
-          className="bg-blue-500 hover:bg-blue-400 text-gray-900 font-bold py-3 px-6 rounded-full flex items-center gap-3 mx-auto transition-all duration-300"
-        >
-          <Plus className="h-4 w-4" />
-          Novo Chat
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4" style={{ backgroundColor: '#121212' }}>
@@ -192,7 +171,25 @@ export function ProfessionalLayout() {
           </div>
 
           {/* Content */}
-          {!conversationId ? welcomeScreen : (
+          {!conversationId ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bot className="h-8 w-8 text-gray-900" />
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">Bem-vindo ao FinanceAI Professional</h2>
+                <p className="text-gray-400 mb-6">Análises financeiras avançadas com IA</p>
+                <button
+                  onClick={handleNewConversation}
+                  disabled={createConversationMutation.isPending}
+                  className="bg-blue-500 hover:bg-blue-400 text-gray-900 font-bold py-3 px-6 rounded-full flex items-center gap-3 mx-auto transition-all duration-300"
+                >
+                  <Plus className="h-4 w-4" />
+                  Novo Chat
+                </button>
+              </div>
+            </div>
+          ) : (
             <>
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{
@@ -228,7 +225,9 @@ export function ProfessionalLayout() {
                       <div className="text-sm font-medium mb-1 opacity-80">
                         {message.role === "user" ? "Você" : "FinanceAI"}
                       </div>
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </div>
                       <div className="text-xs opacity-60 mt-2">
                         {message.createdAt ? new Date(message.createdAt).toLocaleTimeString('pt-BR', {
                           hour: '2-digit',

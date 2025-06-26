@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
 import { Menu, Send, User, Settings, HelpCircle, Plus, Paperclip, Sun, Moon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -66,25 +65,8 @@ export function SimpleLayout() {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const welcomeMessage = (
-    <div className="flex-1 flex items-center justify-center">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Bem-vindo ao FinanceAI</h2>
-        <p className="text-gray-400 mb-6">Selecione uma conversa ou inicie uma nova para começar</p>
-        <button
-          onClick={handleNewConversation}
-          disabled={createConversationMutation.isPending}
-          className="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto"
-        >
-          <Plus size={16} />
-          Nova Conversa
-        </button>
-      </div>
-    </div>
-  );
-
   return (
-    <div className={`${darkMode ? "dark" : ""}`}>
+    <div className={darkMode ? "dark" : ""}>
       <div className="flex h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
         {/* Sidebar */}
         <aside className={`fixed inset-y-0 left-0 z-30 transform md:relative md:translate-x-0 transition-transform duration-300 bg-gray-200 dark:bg-gray-800 p-4 flex flex-col justify-between ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:w-64`}>
@@ -159,7 +141,22 @@ export function SimpleLayout() {
           </header>
 
           {/* Messages or Welcome */}
-          {!conversationId ? welcomeMessage : (
+          {!conversationId ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Bem-vindo ao FinanceAI</h2>
+                <p className="text-gray-400 mb-6">Selecione uma conversa ou inicie uma nova para começar</p>
+                <button
+                  onClick={handleNewConversation}
+                  disabled={createConversationMutation.isPending}
+                  className="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto"
+                >
+                  <Plus size={16} />
+                  Nova Conversa
+                </button>
+              </div>
+            </div>
+          ) : (
             <>
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -169,13 +166,13 @@ export function SimpleLayout() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                     key={msg.id || idx}
-                    className={`max-w-2xl px-4 py-3 rounded-2xl ${
+                    className={`max-w-2xl px-4 py-3 rounded-2xl whitespace-pre-wrap ${
                       msg.role === "user" 
                         ? "bg-green-600 text-white ml-auto" 
                         : "bg-gray-300 dark:bg-gray-700 mr-auto"
                     }`}
                   >
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <div className="text-sm">{msg.content}</div>
                     <div className="text-xs opacity-70 mt-2">
                       {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString('pt-BR', {
                         hour: '2-digit',
