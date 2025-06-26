@@ -387,7 +387,7 @@ class MultiLLMOrchestrator {
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
       try {
-        currentResult = await this.processRequest(prompt, currentResult || undefined);
+        currentResult = await this.processRequest(prompt, currentResult || '');
         console.log(`Chain step ${i + 1} completed`);
       } catch (error) {
         console.error(`Chain step ${i + 1} failed:`, error);

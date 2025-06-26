@@ -237,7 +237,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
       </header>
 
       {/* Área de conteúdo principal - Fundo uniforme */}
-      <div className="flex-1 overflow-y-auto relative">
+      <div className="flex-1 overflow-y-auto relative" style={{ paddingBottom: '200px' }}>
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center px-6">
             {/* Logo central */}
@@ -303,7 +303,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         <div ref={messagesEndRef} />
         
         {/* Input Area flutuante - Posicionado como overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 floating-input-area">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 z-40" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom))` }}>
           <div className="max-w-4xl mx-auto">
             {/* Preview do áudio gravado */}
             {audioBlob && (
