@@ -47,10 +47,16 @@ export default function ChatArea({ user, settings, interface: interfaceType, onT
         })
 
         // Simular progresso enquanto processa
-        const progressTimer = setInterval(() => {
+        let progressTimer = null
+        let isCompleted = false
+        
+        progressTimer = setInterval(() => {
+          if (isCompleted) {
+            clearInterval(progressTimer)
+            return
+          }
           setUploadProgress(prev => {
-            if (prev >= 90) {
-              clearInterval(progressTimer)
+            if (prev >= 90 || isCompleted) {
               return 90
             }
             return prev + 15
@@ -61,7 +67,8 @@ export default function ChatArea({ user, settings, interface: interfaceType, onT
           const response = await uploadPromise
           const result = await response.json()
           
-          clearInterval(progressTimer)
+          isCompleted = true
+          if (progressTimer) clearInterval(progressTimer)
           setUploadProgress(100)
           
           setTimeout(() => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizontal, Edit, Trash2, Archive, Search, Monitor, Zap } from 'lucide-react'
+import { Sun, Moon, Plus, Settings, User, MessageSquare, MoreHorizontal, Edit, Trash2, Archive, Search, Monitor, Zap } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
@@ -30,7 +30,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
 
   const onNewChat = () => {
     setCurrentChatId(null)
-    window.location.reload() // Temporary solution
+    // Clear current conversation in parent component instead of reloading
+    if (onClose) onClose()
   }
 
   const onSelectChat = (chatId) => {

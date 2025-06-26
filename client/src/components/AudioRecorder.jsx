@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Mic, Play, Pause, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -36,6 +36,19 @@ export default function AudioRecorder({
   }
 
   const colorScheme = colors[variant]
+
+  // Cleanup para prevenir memory leaks
+  useEffect(() => {
+    return () => {
+      // Cleanup quando o componente é desmontado
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl)
+      }
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop()
+      }
+    }
+  }, [audioUrl, isRecording])
 
   const transcribeAudio = async (blob) => {
     setIsTranscribing(true)
