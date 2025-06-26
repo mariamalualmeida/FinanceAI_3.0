@@ -14,8 +14,8 @@ export default function LoginPage() {
   const { toast } = useToast();
   const { theme, toggleMode } = useTheme();
   const [error, setError] = useState<string>("");
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
