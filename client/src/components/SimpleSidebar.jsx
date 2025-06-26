@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Menu, X, Plus, LogOut } from 'lucide-react'
+import { Menu, X, Plus, LogOut, Settings } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import AdminPanel from './AdminPanel'
 
 export default function SimpleSidebar({ isOpen, onClose, user, onLogout }) {
   return (

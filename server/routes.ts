@@ -51,17 +51,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const FIXED_USERS = [
     {
       id: 1,
-      username: 'demo',
-      password: 'demo123',
-      email: 'demo@financeai.com',
+      username: 'Admin',
+      password: 'admin123',
+      email: 'admin@financeai.com',
       role: 'user',
-      fullName: 'Usuário Demo'
+      fullName: 'Usuário Padrão'
     },
     {
       id: 2,
-      username: 'admin',
-      password: 'SuperAdmin2025!',
-      email: 'admin@financeai.com',
+      username: 'Leonardo',
+      password: 'L30n4rd0@1004',
+      email: 'leonardo@financeai.com',
       role: 'admin',
       fullName: 'Administrador'
     }

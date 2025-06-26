@@ -127,3 +127,23 @@ Preferred communication style: Simple, everyday language.
 - No integration with Brazilian bank APIs
 - No chat sharing functionality
 - Focus on core financial analysis and consultation features
+
+### User System
+- **Standard User:** Admin / admin123 (default login, configurable via admin panel)
+- **Administrator:** Leonardo / L30n4rd0@1004 (access to admin panel only)
+
+### Admin Panel Features (Pending Implementation)
+- Configuration management (API keys, prompts)
+- User credential management
+- Knowledge base management (upload/manage documents, books, articles)
+- File upload access and management
+- User activity monitoring
+- System settings
+
+### Knowledge Base System (Pending Implementation)
+- Document upload and indexing (PDFs, books, articles)
+- Semantic search with OpenAI embeddings
+- Categorization and metadata management
+- Integration with AI for contextual responses
+- Admin interface for content management
+- Vector database for efficient searching
