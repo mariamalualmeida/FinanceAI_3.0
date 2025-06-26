@@ -277,7 +277,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-4"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-stretch md:items-center justify-center p-0 md:p-4"
         onClick={onClose}
       >
         <motion.div
@@ -285,7 +285,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col"
+          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl h-[100dvh] md:max-h-[95vh] md:h-auto overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
