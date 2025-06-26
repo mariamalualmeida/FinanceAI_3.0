@@ -3,10 +3,11 @@ import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
 
-export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, currentChatId, toast }) {
+export default function ChatArea({ user, settings, interface: interfaceType }) {
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Auto scroll para a última mensagem
@@ -41,7 +42,8 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
         // Fazer upload real e análise
         const uploadPromise = fetch('/api/upload', {
           method: 'POST',
-          body: formData
+          body: formData,
+          credentials: 'include'
         })
 
         // Simular progresso enquanto processa
@@ -67,10 +69,11 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
             
             if (result.success && result.analysis) {
               const analysis = result.analysis
+              const userName = settings.userName ? `, ${settings.userName}` : ''
               const aiMessage = {
                 id: Date.now() + 1,
                 sender: 'assistant',
-                text: `**Análise Financeira Completa**
+                text: `**Análise Financeira Completa${userName}**
 
 📊 **Score de Crédito:** ${analysis.creditScore}/1000
 ⚠️ **Nível de Risco:** ${analysis.riskLevel === 'low' ? '🟢 Baixo' : analysis.riskLevel === 'medium' ? '🟡 Médio' : '🔴 Alto'}
@@ -137,11 +140,12 @@ Se o problema persistir, entre em contato com o suporte técnico.`,
       } else {
         // Resposta apenas texto
         setTimeout(() => {
+          const userName = settings.userName ? `, ${settings.userName}` : ''
           let aiResponseText
           
           // Resposta mais inteligente baseada no conteúdo
           if (text.length > 200) {
-            aiResponseText = `**Análise Detalhada Recebida**
+            aiResponseText = `**Análise Detalhada Recebida${userName}**
 
 Analisei seu documento/formulário detalhado. Com base nas informações fornecidas, posso oferecer:
 
@@ -153,7 +157,7 @@ Analisei seu documento/formulário detalhado. Com base nas informações forneci
 
 Para uma análise completa com IA, envie seus documentos financeiros (PDF, Excel, CSV) ou faça perguntas específicas sobre o conteúdo enviado.`
           } else {
-            aiResponseText = `**Análise Preliminar**
+            aiResponseText = `**Análise Preliminar${userName}**
 
 Sou um assistente especializado em análise financeira e consultoria de crédito. Posso ajudar com:
 
@@ -189,7 +193,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
       <header className="relative z-10 flex items-center justify-center p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
         <div className="absolute left-4 md:left-4">
           <button
-            onClick={toggleSidebar}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
             aria-label="Toggle sidebar"
           >
