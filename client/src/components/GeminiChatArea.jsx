@@ -204,7 +204,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-3 left-4 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    className="absolute bottom-2 left-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
                     <Paperclip size={18} />
                   </button>
@@ -216,7 +216,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       setInputText(e.target.value)
                     }}
                     placeholder=""
-                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none p-4 pb-16 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
+                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
                     style={{
                       wordWrap: 'break-word',
                       overflowWrap: 'break-word',
@@ -238,7 +238,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   <button
                     type="submit"
                     disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="absolute bottom-3 right-4 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="absolute bottom-2 right-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <Send size={18} />
                   </button>

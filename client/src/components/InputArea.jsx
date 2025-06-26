@@ -120,7 +120,7 @@ export default function InputArea({ onSend, onFileUpload }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-16 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
+            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
@@ -135,14 +135,14 @@ export default function InputArea({ onSend, onFileUpload }) {
           <button 
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-3 left-4 p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            className="absolute bottom-2 left-3 p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
             title="Anexar arquivo"
           >
             <Paperclip size={18} />
           </button>
 
           {/* Botões de ação - canto inferior direito */}
-          <div className="absolute bottom-3 right-4 flex items-center gap-2">
+          <div className="absolute bottom-2 right-3 flex items-center gap-2">
             {/* Botão de microfone */}
             <motion.button
               type="button"
