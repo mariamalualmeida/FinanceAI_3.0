@@ -82,6 +82,7 @@ export const userSettings = pgTable("user_settings", {
   userId: integer("user_id").notNull().references(() => users.id).unique(),
   theme: varchar("theme", { length: 20 }).default("light"),
   primaryColor: varchar("primary_color", { length: 20 }).default("blue"),
+  interfaceStyle: varchar("interface_style", { length: 20 }).default("simple"),
   llmProvider: varchar("llm_provider", { length: 50 }).default("openai"),
   llmApiKey: text("llm_api_key"), // Encrypted
   anonymizationEnabled: boolean("anonymization_enabled").default(true),
