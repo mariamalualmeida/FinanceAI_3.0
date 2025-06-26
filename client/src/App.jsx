@@ -90,7 +90,7 @@ export default function App() {
   // Main app
   return (
     <Router>
-      <div className={`h-screen flex ${settings.theme === 'dark' ? 'dark' : ''}`}>
+      <div className={`h-screen max-h-screen overflow-hidden flex ${settings.theme === 'dark' ? 'dark' : ''}`}>
         <Switch>
           <Route path="/admin">
             <AdminPanel user={user} onLogout={handleLogout} />
