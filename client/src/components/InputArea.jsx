@@ -20,6 +20,9 @@ export default function InputArea({ onSend, onFileUpload, toast }) {
 
   const handleSend = () => {
     if (!text.trim() && files.length === 0) return
+    console.log('Enviando texto:', text)
+    console.log('Comprimento:', text.length)
+    console.log('Tem quebras:', text.includes('\n'))
     onSend(text, files)
     setText('')
     setFiles([])

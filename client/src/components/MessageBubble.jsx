@@ -67,31 +67,13 @@ export default function MessageBubble({ message, isTyping = false }) {
               
               {/* Texto da mensagem */}
               <div 
-                className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed break-text ${
+                className={`text-gray-800 dark:text-gray-200 leading-relaxed break-text ${
                   isUser ? 'text-right' : 'text-left'
                 }`}
               >
-                <ReactMarkdown 
-                  components={{
-                    p: ({ children }) => (
-                      <p className="break-text m-0">
-                        {children}
-                      </p>
-                    ),
-                    div: ({ children }) => (
-                      <div className="break-text">
-                        {children}
-                      </div>
-                    ),
-                    span: ({ children }) => (
-                      <span className="break-text">
-                        {children}
-                      </span>
-                    )
-                  }}
-                >
+                <pre className="whitespace-pre-wrap font-sans text-sm break-words overflow-wrap-anywhere">
                   {message.text}
-                </ReactMarkdown>
+                </pre>
               </div>
 
               {/* Timestamp */}

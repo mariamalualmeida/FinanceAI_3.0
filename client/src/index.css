@@ -41,6 +41,18 @@
   max-width: 100% !important;
 }
 
+/* Estilos para pre tag */
+pre {
+  font-family: inherit !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
 * {
   box-sizing: border-box;
 }
