@@ -136,40 +136,42 @@ export function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area - Mobile optimized */}
-      <div className="input-area bg-background border-t border-border">
-        <div className="flex items-end space-x-3 max-w-4xl mx-auto">
-          {/* Attachment Button - Touch friendly */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowFileUpload(!showFileUpload)}
-            className="touch-44 rounded-xl hover:bg-muted shrink-0"
-          >
-            <Paperclip className="h-5 w-5" />
-          </Button>
+      {/* Input Area - Full width with integrated buttons */}
+      <div className="input-area bg-background border-t border-border p-4">
+        <div className="w-full relative">
+          {/* Full-width input with integrated buttons */}
+          <div className="relative flex items-end bg-muted/30 rounded-2xl border border-border focus-within:border-primary/50 transition-colors">
+            {/* Attachment Button - Inside left */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowFileUpload(!showFileUpload)}
+              className="m-2 h-10 w-10 rounded-xl hover:bg-muted/70 shrink-0"
+            >
+              <Paperclip className="h-5 w-5" />
+            </Button>
 
-          {/* Message Input - Mobile optimized */}
-          <div className="flex-1 relative">
+            {/* Message Input - Full width */}
             <Textarea
               ref={textareaRef}
-              placeholder="Digite sua mensagem sobre análise financeira..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="input-mobile resize-none border-2 border-border rounded-xl focus:border-primary focus:ring-0 bg-background"
+              placeholder="Digite sua mensagem sobre análise financeira..."
+              className="flex-1 min-h-[52px] max-h-32 resize-none border-0 bg-transparent focus:ring-0 focus:outline-none px-0 py-3 placeholder:text-muted-foreground"
               rows={1}
             />
-          </div>
 
-          {/* Send Button - Touch friendly */}
-          <Button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isSendingMessage}
-            className="touch-44 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
-          >
-            <Send className="h-5 w-5" />
-          </Button>
+            {/* Send Button - Inside right */}
+            <Button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isSendingMessage}
+              className="m-2 h-10 w-10 rounded-xl shrink-0 bg-primary hover:bg-primary/90"
+              size="icon"
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

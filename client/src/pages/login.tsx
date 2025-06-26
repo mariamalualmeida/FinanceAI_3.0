@@ -140,43 +140,7 @@ export default function LoginPage() {
                 </Alert>
               )}
 
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm font-medium text-slate-600 dark:text-slate-300">
-                    Credenciais Padrão
-                  </Label>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2 bg-white dark:bg-slate-800 rounded-lg border">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Usuário:</span>
-                    <div className="flex items-center space-x-2">
-                      <code className="text-sm font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">admin</code>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyCredentials("admin")}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-white dark:bg-slate-800 rounded-lg border">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Senha:</span>
-                    <div className="flex items-center space-x-2">
-                      <code className="text-sm font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">admin123</code>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyCredentials("admin123")}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
@@ -187,6 +151,7 @@ export default function LoginPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    placeholder={username ? "" : "admin ou Leonardo"}
                     required
                   />
                 </div>
@@ -199,6 +164,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 pr-10"
+                      placeholder={password ? "" : "admin123 ou Leo@10041983"}
                       required
                     />
                     <Button
