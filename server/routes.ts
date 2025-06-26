@@ -162,6 +162,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const conversationId = parseInt(req.params.id);
+      if (isNaN(conversationId)) {
+        return res.status(400).json({ message: 'Invalid conversation ID' });
+      }
+      
+      // Verify conversation belongs to user
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation || conversation.userId !== req.session.userId) {
+        return res.status(404).json({ message: 'Conversation not found' });
+      }
+
+      await storage.deleteConversation(conversationId);
+      res.json({ message: 'Conversation deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      res.status(500).json({ message: 'Failed to delete conversation' });
+    }
+  });
+
+  app.put('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const conversationId = parseInt(req.params.id);
+      const { title } = req.body;
+      
+      if (isNaN(conversationId)) {
+        return res.status(400).json({ message: 'Invalid conversation ID' });
+      }
+
+      // Verify conversation belongs to user
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation || conversation.userId !== req.session.userId) {
+        return res.status(404).json({ message: 'Conversation not found' });
+      }
+
+      const updatedConversation = await storage.updateConversation(conversationId, { title });
+      res.json(updatedConversation);
+    } catch (error) {
+      console.error('Error updating conversation:', error);
+      res.status(500).json({ message: 'Failed to update conversation' });
+    }
+  });
+
   // Message routes
   app.get('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
     try {

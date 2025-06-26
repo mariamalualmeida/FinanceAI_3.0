@@ -115,7 +115,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
           <div className="space-y-0">
             {conversations?.map((conv, index) => (
               <div
-                key={conv.id || `conversation-${index}`}
+                key={conv.id || `conversation-fallback-${Date.now()}-${index}`}
                 onClick={() => {
                   onSelectChat?.(conv.id)
                 }}
@@ -146,12 +146,22 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     <div className="absolute right-0 top-full mt-1 w-40 bg-gray-700 rounded-md border border-gray-600 shadow-lg z-50">
                       <button 
                         key={`rename-${conv.id}-${index}`}
-                        onClick={() => {
-                          // Implementar funcionalidade de renomear
+                        onClick={async () => {
                           const newName = prompt('Novo nome da conversa:', conv.title)
                           if (newName && newName.trim()) {
-                            console.log('Renomeando conversa:', conv.id, 'para:', newName)
-                            // Aqui seria atualizado o estado das conversas
+                            try {
+                              const response = await fetch(`/api/conversations/${conv.id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
+                                body: JSON.stringify({ title: newName.trim() })
+                              })
+                              if (response.ok) {
+                                loadConversations()
+                              }
+                            } catch (error) {
+                              console.error('Error renaming conversation:', error)
+                            }
                           }
                           setShowDropdown(null)
                         }}
