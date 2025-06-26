@@ -24,11 +24,14 @@ html, body {
   overflow-x: hidden;
   height: 100vh;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 #root {
   height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {
@@ -39,6 +42,22 @@ html, body {
   body {
     overflow-x: hidden !important;
     overscroll-behavior: none !important;
+  }
+  
+  /* Mobile sidebar altura completa */
+  aside[class*="fixed"] {
+    height: 100vh !important;
+    height: 100dvh !important; /* Dynamic viewport height for mobile */
+  }
+  
+  /* Chat areas com rolagem móvel correta */
+  main[class*="flex-1"] {
+    overflow: hidden;
+  }
+  
+  main[class*="flex-1"] > div[class*="overflow-y-auto"] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   
   /* Prevent horizontal scroll on mobile */
