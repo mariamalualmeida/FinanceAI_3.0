@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import type { User } from "@/types";
 
 interface LoginRequest {
@@ -18,10 +18,24 @@ interface RegisterRequest {
 export function useAuth() {
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useQuery<User | null>({
+  const { data: user, isLoading, error } = useQuery<User | null>({
     queryKey: ["/api/auth/me"],
-    retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    queryFn: async ({ queryKey }) => {
+      const res = await fetch(queryKey[0] as string, {
+        credentials: "include",
+      });
+      
+      if (res.status === 401) {
+        return null;
+      }
+      
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${res.statusText}`);
+      }
+      
+      return await res.json();
+    },
+    staleTime: 5 * 60 * 1000,
   });
 
   const loginMutation = useMutation({
