@@ -6,6 +6,7 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   
   body {
@@ -20,11 +21,21 @@
   html {
     @apply h-full;
     touch-action: manipulation;
+    overflow-x: hidden;
   }
 
   body {
     @apply h-full;
     overscroll-behavior: none;
+    overflow-x: hidden;
+  }
+
+  /* Prevent horizontal overflow globally */
+  #root {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   /* Better touch targets for mobile */
@@ -45,6 +56,12 @@
   /* Focus styles for accessibility */
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  /* Prevent text areas from expanding beyond container */
+  textarea {
+    max-width: 100%;
+    width: 100%;
   }
 }
 
