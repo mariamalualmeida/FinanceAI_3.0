@@ -1,25 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Paperclip, Menu, Mic, Play, Pause, X } from 'lucide-react'
+import { Send, Paperclip, Menu } from 'lucide-react'
 import { motion } from 'framer-motion'
 import MessageBubble from './MessageBubble'
 import ThemeToggle from './ThemeToggle'
+import AudioRecorder from './AudioRecorder'
+import { useFileUpload } from '../hooks/useFileUpload'
 
 export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(null)
-  const [isRecording, setIsRecording] = useState(false)
-  const [audioBlob, setAudioBlob] = useState(null)
-  const [audioUrl, setAudioUrl] = useState(null)
-  const [transcription, setTranscription] = useState('')
-  const [isTranscribing, setIsTranscribing] = useState(false)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [audioData, setAudioData] = useState(null)
   
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
-  const mediaRecorderRef = useRef(null)
-  const audioRef = useRef(null)
+  const { uploadFiles, uploadProgress, isUploading } = useFileUpload()
 
   // Auto scroll para a última mensagem
   useEffect(() => {
@@ -28,48 +23,27 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
 
   // Função para enviar mensagem
   const sendMessage = async (text, files = []) => {
-    if (!text.trim() && files.length === 0) return
+    if (!text.trim() && files.length === 0 && !audioData) return
 
+    const finalText = text || (audioData?.transcription ? audioData.transcription : '')
     const userMessage = {
       id: Date.now(),
       sender: 'user',
-      text: text,
+      text: finalText,
       files: files.map(f => ({ name: f.name, size: f.size, type: f.type })),
       timestamp: new Date()
     }
     
     setMessages(prev => [...prev, userMessage])
     setInputText('')
+    setAudioData(null)
     setIsTyping(true)
 
     try {
       if (files.length > 0) {
-        setUploadProgress(0)
-        const formData = new FormData()
-        files.forEach(file => formData.append('files', file))
-        if (text.trim()) formData.append('message', text)
-
-        const uploadPromise = fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include'
-        })
-
-        const intervalId = setInterval(() => {
-          setUploadProgress(prev => {
-            if (prev >= 90) return prev
-            return prev + Math.random() * 10
-          })
-        }, 200)
-
-        const response = await uploadPromise
-        clearInterval(intervalId)
-        setUploadProgress(100)
-
-        setTimeout(() => setUploadProgress(null), 500)
-
-        if (response.ok) {
-          const result = await response.json()
+        const { success, result } = await uploadFiles(files, finalText)
+        
+        if (success && result.analysis) {
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',
@@ -84,7 +58,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',
-            text: `Recebi sua mensagem: "${text}". Como posso ajudá-lo com análise financeira?`,
+            text: `Recebi sua mensagem: "${finalText}". Como posso ajudá-lo com análise financeira?`,
             timestamp: new Date()
           }
           setMessages(prev => [...prev, aiMessage])
@@ -93,7 +67,6 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
       }
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
-      setUploadProgress(null)
       setIsTyping(false)
     }
   }
@@ -101,14 +74,11 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     const files = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : []
-    if (inputText.trim() || files.length > 0 || audioBlob) {
-      // Usar transcrição se disponível, senão usar texto digitado
-      const messageText = audioBlob && transcription ? transcription : inputText
-      sendMessage(messageText, files)
+    if (inputText.trim() || files.length > 0 || audioData) {
+      sendMessage(inputText, files)
       
       // Limpar campos
       setInputText('')
-      clearAudio()
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
@@ -121,95 +91,10 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
     }
   }
 
-  // Funções de áudio
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      
-      const audioChunks = []
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data)
-      }
-      
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunks, { type: 'audio/wav' })
-        const url = URL.createObjectURL(blob)
-        setAudioBlob(blob)
-        setAudioUrl(url)
-        
-        // Transcrição automática
-        await transcribeAudio(blob)
-        
-        stream.getTracks().forEach(track => track.stop())
-      }
-      
-      mediaRecorder.start()
-      setIsRecording(true)
-    } catch (error) {
-      console.error('Erro ao iniciar gravação:', error)
-      alert('Erro ao acessar o microfone. Verifique as permissões.')
-    }
-  }
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
-    }
-  }
-
-  const toggleRecording = () => {
-    if (isRecording) {
-      stopRecording()
-    } else {
-      startRecording()
-    }
-  }
-
-  const clearAudio = () => {
-    setAudioBlob(null)
-    setAudioUrl(null)
-    setTranscription('')
-    setIsPlayingAudio(false)
-    if (audioUrl) {
-      URL.revokeObjectURL(audioUrl)
-    }
-  }
-
-  const playAudio = () => {
-    if (audioRef.current) {
-      if (isPlayingAudio) {
-        audioRef.current.pause()
-        setIsPlayingAudio(false)
-      } else {
-        audioRef.current.play()
-        setIsPlayingAudio(true)
-      }
-    }
-  }
-
-  const transcribeAudio = async (blob) => {
-    setIsTranscribing(true)
-    try {
-      const formData = new FormData()
-      formData.append('audio', blob, 'recording.wav')
-      
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      })
-      
-      if (response.ok) {
-        const result = await response.json()
-        setTranscription(result.transcription)
-      }
-    } catch (error) {
-      console.error('Erro na transcrição:', error)
-    } finally {
-      setIsTranscribing(false)
+  const handleAudioReady = (audio) => {
+    setAudioData(audio)
+    if (audio?.transcription) {
+      setInputText(audio.transcription)
     }
   }
 
@@ -398,37 +283,20 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                   
                   {/* Botões de ação - canto inferior direito */}
                   <div className="absolute bottom-2 right-3 flex items-center gap-2">
-                    {/* Botão de microfone */}
-                    <motion.button
-                      type="button"
-                      onClick={toggleRecording}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-1.5 transition-all duration-200 rounded-xl backdrop-blur-sm ${
-                        isRecording 
-                          ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' 
-                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
-                      }`}
-                      title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
-                    >
-                      {isRecording ? (
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
-                        >
-                          <Mic size={18} />
-                        </motion.div>
-                      ) : (
-                        <Mic size={18} />
-                      )}
-                    </motion.button>
+                    {/* Componente de áudio */}
+                    <AudioRecorder 
+                      onAudioReady={handleAudioReady}
+                      variant="purple"
+                      size={18}
+                    />
 
                     {/* Botão de envio */}
                     <motion.button
                       type="submit"
-                      disabled={!inputText.trim() && !fileInputRef.current?.files?.length && !audioBlob}
+                      disabled={!inputText.trim() && !fileInputRef.current?.files?.length && !audioData}
                       whileTap={{ scale: 0.95 }}
                       className={`p-1.5 rounded-lg transition-colors ${
-                        inputText.trim() || fileInputRef.current?.files?.length || audioBlob
+                        inputText.trim() || fileInputRef.current?.files?.length || audioData
                           ? 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                           : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                       }`}
