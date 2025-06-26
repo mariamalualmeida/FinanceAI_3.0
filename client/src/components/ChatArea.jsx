@@ -101,9 +101,8 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
         </div>
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-            ChatGPT
+            Chat
           </h1>
-          <span className="text-sm text-gray-500 dark:text-gray-400">4o</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-gray-400">
             <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
