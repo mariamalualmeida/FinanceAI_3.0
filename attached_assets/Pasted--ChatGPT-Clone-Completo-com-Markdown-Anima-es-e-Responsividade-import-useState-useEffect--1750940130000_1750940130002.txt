@@ -1,0 +1,123 @@
+// ChatGPT Clone - Completo com Markdown, Animações e Responsividade
+
+import { useState, useEffect, useRef } from "react";
+import { Menu, Send, User, Settings, HelpCircle, Plus, Paperclip, Sun, Moon } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { motion } from "framer-motion";
+
+export default function ChatGPTClone() {
+  const [messages, setMessages] = useState([
+    { role: "assistant", content: "**Olá! Sou a Miguelita.**\n\nComo posso te ajudar hoje?" }
+  ]);
+  const [input, setInput] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const scrollRef = useRef(null);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const newMessages = [...messages, { role: "user", content: input }];
+    setMessages(newMessages);
+    setInput("");
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...newMessages,
+        { role: "assistant", content: "Estou processando sua solicitação..." }
+      ]);
+    }, 800);
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  return (
+    <div className={`${darkMode ? "dark" : ""}`}>
+      <div className="flex h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+        {/* Sidebar */}
+        <aside className={`fixed inset-y-0 left-0 z-30 transform md:relative md:translate-x-0 transition-transform duration-300 bg-gray-200 dark:bg-gray-800 p-4 flex flex-col justify-between ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:w-64`}>
+          <div className="space-y-4">
+            <button className="w-full flex items-center gap-2 bg-green-600 text-white py-2 px-3 rounded-lg">
+              <Plus size={16} /> Nova Conversa
+            </button>
+            <div className="space-y-2">
+              <div className="bg-gray-300 dark:bg-gray-700 p-3 rounded">Conversa 1</div>
+              <div className="bg-gray-300 dark:bg-gray-700 p-3 rounded">Conversa 2</div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <button className="flex items-center gap-2 text-sm">
+              <User size={16} /> Perfil
+            </button>
+            <button className="flex items-center gap-2 text-sm">
+              <Settings size={16} /> Configurações
+            </button>
+            <button className="flex items-center gap-2 text-sm">
+              <HelpCircle size={16} /> Ajuda
+            </button>
+          </div>
+        </aside>
+
+        {/* Conteúdo principal */}
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <header className="flex items-center justify-between p-4 border-b bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+            <button className="md:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+              <Menu size={24} />
+            </button>
+            <h1 className="text-lg font-semibold">Miguelita</h1>
+            <button onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+          </header>
+
+          {/* Mensagens */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.map((msg, idx) => (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                key={idx}
+                className={`max-w-2xl px-4 py-3 rounded-2xl whitespace-pre-wrap ${
+                  msg.role === "user" ? "bg-green-600 text-white ml-auto" : "bg-gray-300 dark:bg-gray-700 mr-auto"
+                }`}
+              >
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </motion.div>
+            ))}
+            <div ref={scrollRef} />
+          </div>
+
+          {/* Input */}
+          <footer className="p-4 bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700">
+            <div className="flex items-center gap-2">
+              <button className="p-2 hover:bg-gray-400 dark:hover:bg-gray-700 rounded-lg">
+                <Paperclip size={20} />
+              </button>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                rows={1}
+                placeholder="Digite sua mensagem..."
+                className="flex-1 resize-none bg-gray-300 dark:bg-gray-700 p-3 rounded-lg text-gray-900 dark:text-white focus:outline-none"
+              />
+              <button
+                onClick={handleSend}
+                className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-500"
+              >
+                <Send size={20} />
+              </button>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+  );
+}
