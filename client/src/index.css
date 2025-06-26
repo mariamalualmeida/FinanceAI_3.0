@@ -61,10 +61,22 @@ pre {
   max-width: 70%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  display: inline-block;
 }
 
 .dark .message-bubble-user {
   background: #3f3f46;
+}
+
+/* Garante que bolhas não ocupem 100% da largura */
+.message-container-user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message-container-ai {
+  display: flex;
+  justify-content: flex-start;
 }
 
 * {
