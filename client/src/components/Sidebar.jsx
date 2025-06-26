@@ -40,7 +40,6 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
           <button 
             onClick={() => {
               onNewChat?.()
-              setIsOpen(false)
             }}
             className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-500/10 text-white transition-colors text-sm"
           >
@@ -77,7 +76,6 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
                 key={conv.id}
                 onClick={() => {
                   onSelectChat?.(conv.id)
-                  setIsOpen(false)
                 }}
                 className={`group relative flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors ${
                   currentChatId === conv.id 
@@ -169,22 +167,43 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
                   exit={{ opacity: 0, height: 0 }}
                   className="mt-1 bg-gray-700 rounded-md border border-gray-600 overflow-hidden"
                 >
-                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                  <button 
+                    onClick={() => {
+                      console.log('Configurações clicado')
+                      alert('Configurações em desenvolvimento')
+                    }}
+                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
+                  >
                     <Settings size={16} />
                     Configurações
                   </button>
-                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                  <button 
+                    onClick={() => {
+                      console.log('Ajuda clicado')
+                      alert('Ajuda em desenvolvimento')
+                    }}
+                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
+                  >
                     <HelpCircle size={16} />
                     Ajuda
                   </button>
                   <button 
-                    onClick={() => setDarkMode(!darkMode)}
+                    onClick={() => {
+                      setDarkMode(!darkMode)
+                      console.log('Tema alterado para:', !darkMode ? 'escuro' : 'claro')
+                    }}
                     className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
                   >
                     {darkMode ? <Sun size={16} /> : <Moon size={16} />}
                     {darkMode ? 'Modo claro' : 'Modo escuro'}
                   </button>
-                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                  <button 
+                    onClick={() => {
+                      console.log('Interface Gemini clicado')
+                      alert('Interface Gemini será implementada em breve')
+                    }}
+                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
+                  >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                       <polyline points="22,6 12,13 2,6"/>
@@ -205,7 +224,6 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
         conversations={conversations}
         onSelectChat={(chatId) => {
           onSelectChat(chatId)
-          setIsOpen(false)
         }}
       />
     </>
