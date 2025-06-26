@@ -98,49 +98,21 @@ export function ChatInterface() {
     adjustTextareaHeight();
   }, [inputMessage]);
 
-  const quickActions = [
-    "Calcular Score de Crédito",
-    "Detectar Apostas",
-    "Análise de Risco",
-    "Gerar Relatório"
-  ];
-
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="chat-container">
+      {/* Messages Area - Mobile optimized */}
+      <div className="messages-area">
         {messages.length === 0 && (
-          <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <span className="material-icon text-white text-sm">smart_toy</span>
+          <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <span className="text-2xl text-primary">💬</span>
             </div>
-            <div className="chat-bubble-ai rounded-2xl rounded-tl-sm p-4 max-w-2xl">
-              <p className="text-foreground font-medium mb-2">
-                Olá! Sou seu assistente de análise financeira.
-              </p>
-              <p className="text-muted-foreground">Posso ajudá-lo a:</p>
-              <ul className="mt-2 space-y-1 text-muted-foreground">
-                <li className="flex items-center">
-                  <span className="material-icon text-success-500 text-sm mr-2">check_circle</span>
-                  Analisar extratos bancários e faturas
-                </li>
-                <li className="flex items-center">
-                  <span className="material-icon text-success-500 text-sm mr-2">check_circle</span>
-                  Calcular scores de crédito
-                </li>
-                <li className="flex items-center">
-                  <span className="material-icon text-success-500 text-sm mr-2">check_circle</span>
-                  Detectar movimentações suspeitas
-                </li>
-                <li className="flex items-center">
-                  <span className="material-icon text-success-500 text-sm mr-2">check_circle</span>
-                  Gerar relatórios profissionais
-                </li>
-              </ul>
-              <p className="mt-3 text-muted-foreground">
-                Comece enviando documentos ou fazendo uma pergunta!
-              </p>
-            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              Assistente Financeiro IA
+            </h3>
+            <p className="text-muted-foreground max-w-md">
+              Digite sua mensagem ou envie documentos financeiros para análise inteligente
+            </p>
           </div>
         )}
 
@@ -164,55 +136,40 @@ export function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="bg-card border-t border-border p-4">
-        <div className="flex items-end space-x-3">
-          {/* Attachment Button */}
+      {/* Input Area - Mobile optimized */}
+      <div className="input-area bg-background border-t border-border">
+        <div className="flex items-end space-x-3 max-w-4xl mx-auto">
+          {/* Attachment Button - Touch friendly */}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setShowFileUpload(!showFileUpload)}
-            className="rounded-lg hover:bg-muted"
+            className="touch-44 rounded-xl hover:bg-muted shrink-0"
           >
             <Paperclip className="h-5 w-5" />
           </Button>
 
-          {/* Message Input */}
+          {/* Message Input - Mobile optimized */}
           <div className="flex-1 relative">
             <Textarea
               ref={textareaRef}
-              placeholder="Digite sua mensagem ou pergunta sobre análise financeira..."
+              placeholder="Digite sua mensagem sobre análise financeira..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="resize-none min-h-[44px] max-h-[120px] rounded-lg border-input focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="input-mobile resize-none border-2 border-border rounded-xl focus:border-primary focus:ring-0 bg-background"
               rows={1}
             />
           </div>
 
-          {/* Send Button */}
+          {/* Send Button - Touch friendly */}
           <Button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isSendingMessage}
-            className="rounded-lg bg-primary hover:bg-primary/90"
+            className="touch-44 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
           >
             <Send className="h-5 w-5" />
           </Button>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {quickActions.map((action) => (
-            <Button
-              key={action}
-              variant="secondary"
-              size="sm"
-              onClick={() => setInputMessage(action)}
-              className="bg-muted text-muted-foreground hover:bg-muted/80 rounded-full text-sm"
-            >
-              {action}
-            </Button>
-          ))}
         </div>
       </div>
     </div>
