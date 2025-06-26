@@ -52,6 +52,11 @@ export default function App() {
     localStorage.setItem('financeai-settings', JSON.stringify(updated))
   }
 
+  const toggleTheme = () => {
+    const newTheme = settings.theme === 'light' ? 'dark' : 'light'
+    updateSettings({ theme: newTheme })
+  }
+
   const handleLogin = (userData) => {
     setUser(userData)
   }
@@ -103,13 +108,13 @@ export default function App() {
             {settings.interface === 'gemini' ? (
               <GeminiChatArea 
                 user={user}
-                settings={settings}
+                settings={{...settings, onToggleTheme: toggleTheme}}
                 onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
               />
             ) : (
               <ChatArea 
                 user={user}
-                settings={settings}
+                settings={{...settings, onToggleTheme: toggleTheme}}
                 interface={settings.interface}
                 onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
               />

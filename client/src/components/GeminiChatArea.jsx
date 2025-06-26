@@ -306,7 +306,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
               <button
                 type="submit"
                 disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
               >
                 <Send size={18} />
               </button>
