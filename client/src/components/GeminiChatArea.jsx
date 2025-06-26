@@ -214,9 +214,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   }
 
   return (
-    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900">
+    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-full max-h-screen overflow-hidden">
       {/* Gemini Header - Fundo uniforme */}
-      <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0">
+      <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0 z-20">
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleSidebar}
@@ -258,7 +258,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
             </div>
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto px-6 py-8 space-y-8 pb-32">
+          <div className="max-w-4xl mx-auto px-6 py-8 space-y-8 pb-48">
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} isGemini={true} />
             ))}

@@ -190,7 +190,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
   return (
     <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541] relative">
       {/* Botões flutuantes no topo */}
-      <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+      <div className="absolute top-4 left-4 z-50 flex items-center gap-2">
         <button
           onClick={onToggleSidebar}
           className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
