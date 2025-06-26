@@ -61,10 +61,22 @@ html, body {
     flex-direction: column !important;
   }
   
-  /* Garantir que o perfil seja sempre visível */
-  aside[class*="fixed"] > div:last-child {
-    flex-shrink: 0 !important;
-    margin-top: auto !important;
+  /* Garantir que o perfil seja sempre visível no mobile */
+  @media (max-width: 768px) {
+    aside[class*="fixed"] > div:last-child {
+      flex-shrink: 0 !important;
+      margin-top: auto !important;
+      background: inherit !important;
+      position: relative !important;
+      z-index: 10 !important;
+    }
+    
+    /* Forçar visibilidade da seção de perfil */
+    aside[class*="fixed"] .border-t {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
   }
   
   /* Chat areas - viewport fixo para evitar movimentação */
