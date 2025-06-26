@@ -109,12 +109,20 @@ export default function App() {
               onClose={() => setSidebarOpen(false)}
               onOpenSettings={() => setShowSettings(true)}
             />
-            <EnhancedChatArea 
-              user={user}
-              settings={{...settings, onToggleTheme: toggleTheme}}
-              interface={settings.interface}
-              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            />
+            {settings.interface === 'gemini' ? (
+              <GeminiChatArea 
+                user={user}
+                settings={{...settings, onToggleTheme: toggleTheme}}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              />
+            ) : (
+              <ChatArea 
+                user={user}
+                settings={{...settings, onToggleTheme: toggleTheme}}
+                interface={settings.interface}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              />
+            )}
           </Route>
         </Switch>
         <Toaster />

@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 
 const SettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange }) => {
-  const [activeTab, setActiveTab] = useState('profile');
   const [settings, setSettings] = useState({
     // Perfil do usuário
     profile: {
@@ -73,14 +72,7 @@ const SettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange }) => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
 
-  const tabs = [
-    { id: 'profile', label: 'Perfil', icon: User },
-    { id: 'interface', label: 'Interface', icon: Palette },
-    { id: 'ai', label: 'IA & Modelos', icon: Brain },
-    { id: 'notifications', label: 'Notificações', icon: Bell },
-    { id: 'privacy', label: 'Privacidade', icon: Shield },
-    { id: 'advanced', label: 'Avançado', icon: Settings }
-  ];
+
 
   const updateSetting = (category, key, value) => {
     setSettings(prev => ({
@@ -980,37 +972,62 @@ const SettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange }) => {
             </button>
           </div>
 
-          <div className="flex flex-1 overflow-hidden">
-            {/* Sidebar */}
-            <div className="w-64 bg-gray-900 border-r border-gray-700 overflow-y-auto">
-              <div className="p-4">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors mb-1 ${
-                      activeTab === tab.id
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    <tab.icon size={18} />
-                    <span className="text-sm font-medium">{tab.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Content com scroll vertical */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6 space-y-8">
+              {/* Perfil */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <User size={20} className="text-blue-500" />
+                  <h3 className="text-lg font-semibold text-white">Perfil</h3>
+                </div>
+                {renderProfileTab()}
+              </section>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-6">
-                {activeTab === 'profile' && renderProfileTab()}
-                {activeTab === 'interface' && renderInterfaceTab()}
-                {activeTab === 'ai' && renderAITab()}
-                {activeTab === 'notifications' && renderNotificationsTab()}
-                {activeTab === 'privacy' && renderPrivacyTab()}
-                {activeTab === 'advanced' && renderAdvancedTab()}
-              </div>
+              {/* Interface */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <Palette size={20} className="text-purple-500" />
+                  <h3 className="text-lg font-semibold text-white">Interface</h3>
+                </div>
+                {renderInterfaceTab()}
+              </section>
+
+              {/* IA & Modelos */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <Brain size={20} className="text-green-500" />
+                  <h3 className="text-lg font-semibold text-white">IA & Modelos</h3>
+                </div>
+                {renderAITab()}
+              </section>
+
+              {/* Notificações */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <Bell size={20} className="text-yellow-500" />
+                  <h3 className="text-lg font-semibold text-white">Notificações</h3>
+                </div>
+                {renderNotificationsTab()}
+              </section>
+
+              {/* Privacidade */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <Shield size={20} className="text-red-500" />
+                  <h3 className="text-lg font-semibold text-white">Privacidade</h3>
+                </div>
+                {renderPrivacyTab()}
+              </section>
+
+              {/* Avançado */}
+              <section>
+                <div className="flex items-center gap-3 mb-4">
+                  <Settings size={20} className="text-gray-500" />
+                  <h3 className="text-lg font-semibold text-white">Avançado</h3>
+                </div>
+                {renderAdvancedTab()}
+              </section>
             </div>
           </div>
 

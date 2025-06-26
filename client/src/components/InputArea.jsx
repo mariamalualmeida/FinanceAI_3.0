@@ -1,25 +1,133 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Mic, X } from 'lucide-react'
+import { Send, Paperclip, Mic, X, MicOff, Play, Pause } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function InputArea({ onSend, onFileUpload }) {
   const [text, setText] = useState('')
   const [files, setFiles] = useState([])
   const [isRecording, setIsRecording] = useState(false)
+  const [audioBlob, setAudioBlob] = useState(null)
+  const [audioUrl, setAudioUrl] = useState(null)
+  const [transcription, setTranscription] = useState('')
+  const [isTranscribing, setIsTranscribing] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
+  const mediaRecorderRef = useRef(null)
+  const audioRef = useRef(null)
 
   // Textarea ref para controle
   // Auto-resize removido pois agora usa altura fixa com scroll
 
   const handleSend = () => {
-    if (!text.trim() && files.length === 0) return
-    console.log('Enviando texto:', text)
-    console.log('Comprimento:', text.length)
-    console.log('Tem quebras:', text.includes('\n'))
-    onSend(text, files)
+    if (!text.trim() && files.length === 0 && !audioBlob) return
+    
+    // Enviar com áudio se houver
+    if (audioBlob) {
+      onSend(text || transcription, files, { audioBlob, audioUrl, transcription })
+    } else {
+      onSend(text, files)
+    }
+    
     setText('')
     setFiles([])
+    clearAudio()
+  }
+
+  // Estratégia dupla de áudio conforme discutido
+  const transcribeAudio = async (audioBlob) => {
+    setIsTranscribing(true)
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioBlob, 'recording.wav')
+      
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const { transcription } = await response.json()
+        setTranscription(transcription)
+        setText(transcription) // Preenche a caixa de texto para edição
+        return transcription
+      }
+    } catch (error) {
+      console.error('Erro na transcrição:', error)
+    } finally {
+      setIsTranscribing(false)
+    }
+    return ''
+  }
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      
+      const audioChunks = []
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data)
+      }
+      
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: 'audio/wav' })
+        const url = URL.createObjectURL(blob)
+        setAudioBlob(blob)
+        setAudioUrl(url)
+        
+        // Transcrição automática para logs e edição
+        await transcribeAudio(blob)
+        
+        // Parar todas as tracks
+        stream.getTracks().forEach(track => track.stop())
+      }
+      
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch (error) {
+      console.error('Erro ao iniciar gravação:', error)
+      alert('Erro ao acessar o microfone. Verifique as permissões.')
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+    }
+  }
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording()
+    } else {
+      startRecording()
+    }
+  }
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      if (isPlayingAudio) {
+        audioRef.current.pause()
+        setIsPlayingAudio(false)
+      } else {
+        audioRef.current.play()
+        setIsPlayingAudio(true)
+      }
+    }
+  }
+
+  const clearAudio = () => {
+    setAudioBlob(null)
+    setAudioUrl(null)
+    setTranscription('')
+    setIsPlayingAudio(false)
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl)
+    }
   }
 
   const handleFileSelect = (e) => {
@@ -56,20 +164,7 @@ export default function InputArea({ onSend, onFileUpload }) {
     setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
-  const toggleRecording = () => {
-    if (!isRecording) {
-      // Start recording
-      setIsRecording(true)
-      
-      // Simulate recording for demo
-      setTimeout(() => {
-        setIsRecording(false)
-      }, 3000)
-    } else {
-      // Stop recording
-      setIsRecording(false)
-    }
-  }
+
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
