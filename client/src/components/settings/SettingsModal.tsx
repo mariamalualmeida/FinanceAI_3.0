@@ -90,6 +90,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   ];
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -263,6 +264,30 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Painel Administrativo - Restrito ao Leonardo */}
+                {isAdmin && (
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3">
+                        <Settings className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                        <div>
+                          <h4 className="font-medium text-foreground">Painel Administrativo</h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Acesso restrito para configurações avançadas do sistema
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowAdminPanel(true)}
+                        className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
+                      >
+                        Acessar
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -282,5 +307,11 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Painel Administrativo - Overlay separado */}
+    {showAdminPanel && (
+      <AdminPanel onClose={() => setShowAdminPanel(false)} />
+    )}
+    </>
   );
 }
