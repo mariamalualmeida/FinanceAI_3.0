@@ -28,7 +28,7 @@ export default function MessageBubble({ message, isTyping = false }) {
         </div>
 
         {/* Mensagem */}
-        <div className="flex-1 min-w-0">
+        <div className={`flex-1 min-w-0 ${isUser ? 'flex justify-end' : ''}`}>
           {isTyping ? (
             <div className="flex items-center gap-1 py-2">
               <motion.div
@@ -48,7 +48,7 @@ export default function MessageBubble({ message, isTyping = false }) {
               />
             </div>
           ) : (
-            <div className="text-gray-900 dark:text-gray-100">
+            <div className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : ''}`}>
               {/* Arquivos anexados */}
               {message.files && message.files.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">
@@ -65,13 +65,17 @@ export default function MessageBubble({ message, isTyping = false }) {
               )}
               
               {/* Texto da mensagem */}
-              <div className="prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
+              <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed ${
+                isUser ? 'text-right' : 'text-left'
+              }`}>
                 <ReactMarkdown>{message.text}</ReactMarkdown>
               </div>
 
               {/* Timestamp */}
               {!isTyping && (
-                <div className="text-xs text-gray-400 dark:text-gray-500 mt-3 opacity-0 group-hover:opacity-70 transition-all duration-300">
+                <div className={`text-xs text-gray-400 dark:text-gray-500 mt-3 opacity-0 group-hover:opacity-70 transition-all duration-300 ${
+                  isUser ? 'text-right' : 'text-left'
+                }`}>
                   {message.timestamp?.toLocaleTimeString('pt-BR', { 
                     hour: '2-digit', 
                     minute: '2-digit' 
