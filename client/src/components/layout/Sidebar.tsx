@@ -42,7 +42,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const createConversationMutation = useMutation({
     mutationFn: () => apiRequest("/api/conversations", "POST", { title: "Nova Conversa" }),
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
       window.location.href = `/chat/${data.id}`;
     },
@@ -63,7 +63,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   });
 
   const filteredConversations = conversations.filter(conv =>
-    conv.title.toLowerCase().includes(searchQuery.toLowerCase())
+    (conv.title || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleNewConversation = () => {
@@ -166,10 +166,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium truncate">
-                            {conversation.title}
+                            {conversation.title || "Nova Conversa"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(conversation.updatedAt).toLocaleDateString('pt-BR')}
+                            {conversation.updatedAt ? new Date(conversation.updatedAt).toLocaleDateString('pt-BR') : "Hoje"}
                           </p>
                         </div>
                       </div>

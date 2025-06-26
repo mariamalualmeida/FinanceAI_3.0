@@ -69,10 +69,10 @@ function MessageBubble({ message }: { message: Message }) {
           {message.content}
         </div>
         <div className="text-xs opacity-70 mt-2">
-          {new Date(message.createdAt).toLocaleTimeString('pt-BR', {
+          {message.createdAt ? new Date(message.createdAt).toLocaleTimeString('pt-BR', {
             hour: '2-digit',
             minute: '2-digit'
-          })}
+          }) : "Agora"}
         </div>
       </div>
     </div>
