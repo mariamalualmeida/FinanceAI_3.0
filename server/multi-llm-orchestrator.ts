@@ -187,7 +187,7 @@ class MultiLLMOrchestrator {
     try {
       // Tentar usar a LLM principal
       const prompt = this.buildPrompt(input);
-      return await primaryProvider.generateResponse(prompt, context);
+      return await primaryProvider.generateResponse(prompt, context || undefined);
     } catch (error) {
       console.warn('Primary LLM failed, trying backup:', error);
       
@@ -207,7 +207,7 @@ class MultiLLMOrchestrator {
       if (routedProvider) {
         try {
           const prompt = this.buildPrompt(input);
-          return await routedProvider.generateResponse(prompt, context);
+          return await routedProvider.generateResponse(prompt, context || undefined);
         } catch (error) {
           console.warn('Routed LLM failed, trying backup:', error);
           if (this.strategy?.enableBackupSystem) {
@@ -228,7 +228,7 @@ class MultiLLMOrchestrator {
 
     if (this.strategy?.enableValidation) {
       try {
-        const validationResult = await this.validateResponse(initialResponse, input, context);
+        const validationResult = await this.validateResponse(initialResponse, input, context || undefined);
         return validationResult;
       } catch (error) {
         console.warn('Validation failed, returning initial response:', error);
@@ -247,7 +247,7 @@ class MultiLLMOrchestrator {
       if (provider && await provider.isHealthy()) {
         try {
           const prompt = this.buildPrompt(input);
-          return await provider.generateResponse(prompt, context);
+          return await provider.generateResponse(prompt, context || undefined);
         } catch (error) {
           console.warn(`Backup LLM ${config.name} failed:`, error);
           continue;
