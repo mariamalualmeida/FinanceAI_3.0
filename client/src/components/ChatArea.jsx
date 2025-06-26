@@ -67,10 +67,39 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
       } else {
         // Resposta apenas texto
         setTimeout(() => {
+          let aiResponseText
+          
+          // Resposta mais inteligente baseada no conteúdo
+          if (text.length > 200) {
+            aiResponseText = `**Análise Detalhada Recebida**
+
+Analisei seu documento/formulário detalhado. Com base nas informações fornecidas, posso oferecer:
+
+• 📊 **Análise de extratos bancários** - Padrões de entrada e saída
+• 💳 **Avaliação de score de crédito** - Baseada em histórico financeiro  
+• 🔍 **Detecção de padrões de risco** - Identificação de comportamentos suspeitos
+• 📈 **Consultoria em investimentos** - Recomendações personalizadas
+• ⚠️ **Análise de riscos** - Avaliação de inadimplência
+
+Para uma análise completa com IA, envie seus documentos financeiros (PDF, Excel, CSV) ou faça perguntas específicas sobre o conteúdo enviado.`
+          } else {
+            aiResponseText = `**Análise Preliminar**
+
+Sou um assistente especializado em análise financeira e consultoria de crédito. Posso ajudar com:
+
+• 📊 **Análise de extratos bancários**
+• 💳 **Avaliação de score de crédito** 
+• 🔍 **Detecção de padrões suspeitos**
+• 📈 **Consultoria em investimentos**
+• ⚠️ **Análise de riscos**
+
+Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel, CSV).`
+          }
+          
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',
-            text: `Recebi sua consulta: "${text}"\n\n**Análise Preliminar:**\nSou um assistente especializado em análise financeira e consultoria de crédito. Posso ajudar com:\n\n• 📊 Análise de extratos bancários\n• 💳 Avaliação de score de crédito\n• 🔍 Detecção de padrões suspeitos\n• 📈 Consultoria em investimentos\n• ⚠️ Análise de riscos\n\nPara uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel, CSV).`,
+            text: aiResponseText,
             timestamp: new Date()
           }
           setMessages(prev => [...prev, aiMessage])

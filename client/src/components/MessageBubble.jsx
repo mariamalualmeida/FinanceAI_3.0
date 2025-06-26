@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import ReactMarkdown from 'react-markdown'
 import TypingIndicator from './TypingIndicator'
+import { File } from 'lucide-react'
 
 export default function MessageBubble({ message, isTyping = false }) {
   const isUser = message.sender === 'user'
@@ -17,68 +17,63 @@ export default function MessageBubble({ message, isTyping = false }) {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`group w-full transition-all duration-300 ${
-        isUser 
-          ? 'bg-gradient-to-r from-transparent via-blue-50/20 to-transparent dark:from-transparent dark:via-blue-900/10 dark:to-transparent' 
-          : 'bg-gradient-to-r from-transparent via-gray-50/30 to-transparent dark:from-transparent dark:via-gray-700/20 dark:to-transparent'
-      }`}
-    >
-      <div className={`flex gap-4 px-4 py-8 max-w-4xl mx-auto ${
+      transition={{ duration: 0.3 }}
+      className={`flex w-full px-4 py-2 ${
+        isUser ? 'justify-end' : 'justify-start'
+      }`}>
+      
+      <div className={`flex items-start gap-3 max-w-[85%] ${
         isUser ? 'flex-row-reverse' : 'flex-row'
       }`}>
-        {/* Avatar */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 ${
-          isUser 
-            ? 'bg-gradient-to-br from-green-400 to-green-600' 
-            : 'bg-gradient-to-br from-purple-500 to-indigo-600'
-        }`}>
-          {isUser ? 'U' : 'AI'}
-        </div>
+        
+        {/* Avatar - apenas para IA */}
+        {!isUser && (
+          <div className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center text-white text-sm font-bold mt-1 ${
+            isTyping ? 'bg-gray-400 animate-pulse' : 'bg-[#ab68ff]'
+          }`}>
+            AI
+          </div>
+        )}
 
-        {/* Mensagem */}
-        <div className={`flex-1 min-w-0 ${isUser ? 'flex justify-end' : ''}`}>
+        {/* Conteúdo da mensagem */}
+        <div className={`${isUser ? 'flex justify-end' : 'flex-1'}`}>
           {isTyping ? (
-            <TypingIndicator />
+            <div className="bg-gray-200 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-md">
+              <TypingIndicator />
+            </div>
           ) : (
-            <div 
-              className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : 'max-w-full'}`}
-              style={{
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              }}
-            >
+            <div className={`${
+              isUser 
+                ? 'bg-gray-200 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-md inline-block' 
+                : 'w-full'
+            }`}>
+              
               {/* Arquivos anexados */}
               {message.files && message.files.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">
                   {message.files.map((file, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-3 py-2 rounded-lg">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                      </svg>
-                      <span className="text-sm font-medium">{file.name}</span>
-                      <span className="text-xs text-gray-500">({(file.size / 1024).toFixed(1)} KB)</span>
+                    <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                      <File size={16} className="text-gray-500" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{file.name}</span>
                     </div>
                   ))}
                 </div>
               )}
               
               {/* Texto da mensagem */}
-              <div 
-                className={`text-gray-800 dark:text-gray-200 leading-relaxed break-text ${
-                  isUser ? 'text-right' : 'text-left'
-                }`}
-              >
-                <pre className="whitespace-pre-wrap font-sans text-sm break-words overflow-wrap-anywhere">
+              <div className={`text-gray-900 dark:text-gray-100 leading-relaxed text-sm ${
+                isUser ? 'text-left' : 'text-left'
+              }`}>
+                <div className="whitespace-pre-wrap break-words">
                   {message.text}
-                </pre>
+                </div>
               </div>
 
               {/* Timestamp */}
               {!isTyping && (
-                <div className={`text-xs text-gray-400 dark:text-gray-500 mt-3 opacity-0 group-hover:opacity-70 transition-all duration-300 ${
+                <div className={`text-xs text-gray-400 dark:text-gray-500 mt-2 opacity-50 ${
                   isUser ? 'text-right' : 'text-left'
                 }`}>
                   {message.timestamp?.toLocaleTimeString('pt-BR', { 
