@@ -43,19 +43,33 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen }) {
 
   return (
     <main className="flex flex-col flex-1 min-w-0 bg-white dark:bg-[#343541]">
-      {/* Header */}
-      <header className="relative z-10 flex items-center justify-between p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
-        <div className="flex items-center gap-3">
+      {/* Header estilo ChatGPT */}
+      <header className="relative z-10 flex items-center justify-center p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
+        <div className="absolute left-4 md:left-4">
           <button
             onClick={toggleSidebar}
-            className="hidden md:flex relative z-20 p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white items-center justify-center min-w-[40px] min-h-[40px]"
+            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
             aria-label="Toggle sidebar"
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white md:ml-0 ml-16">
+        </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
             ChatGPT
           </h1>
+          <span className="text-sm text-gray-500 dark:text-gray-400">4o</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-gray-400">
+            <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div className="absolute right-4">
+          <button className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -65,12 +79,9 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen }) {
           // Tela inicial exatamente como ChatGPT
           <div className="flex flex-col items-center justify-center h-full px-6 text-center">
             <div className="max-w-2xl">
-              <h1 className="text-3xl md:text-4xl font-semibold mb-6 text-gray-900 dark:text-white">
-                Como posso ajudar você hoje?
+              <h1 className="text-3xl md:text-4xl font-semibold mb-8 text-gray-900 dark:text-white">
+                Por onde começamos?
               </h1>
-              <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-                Faça uma pergunta ou descreva o que você gostaria de saber
-              </p>
             </div>
           </div>
         ) : (

@@ -38,14 +38,22 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen }) {
           transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         }}
       >
-        {/* Header com botão Nova Conversa */}
-        <div className="p-2">
+        {/* Header com botão fechar e nova conversa */}
+        <div className="flex items-center justify-between p-3">
           <button 
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 w-full p-3 rounded-md border border-white/20 hover:bg-gray-500/10 text-white transition-colors text-sm"
+            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md border border-white/20 hover:bg-gray-500/10 text-white transition-colors text-sm"
           >
             <Plus size={16} />
             Nova conversa
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-2 hover:bg-gray-500/10 rounded-md text-white transition-colors"
+            aria-label="Fechar sidebar"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
           </button>
         </div>
 

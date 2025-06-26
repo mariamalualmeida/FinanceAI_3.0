@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
-import MobileToggle from './components/MobileToggle'
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true)
@@ -14,10 +13,6 @@ export default function App() {
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="flex h-screen bg-gray-50 dark:bg-[#343541] text-black dark:text-white overflow-hidden">
-        <MobileToggle 
-          toggleSidebar={toggleSidebar}
-          isSidebarOpen={isSidebarOpen}
-        />
         <Sidebar 
           darkMode={darkMode} 
           setDarkMode={setDarkMode}
