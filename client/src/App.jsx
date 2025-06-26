@@ -96,6 +96,8 @@ export default function App() {
           onNewChat={handleNewChat}
           currentChatId={currentChatId}
           onSelectChat={handleSelectChat}
+          conversations={conversations}
+          onDeleteConversation={handleDeleteConversation}
         />
         <ChatArea 
           darkMode={darkMode}
