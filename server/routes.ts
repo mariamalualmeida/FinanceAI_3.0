@@ -13,6 +13,7 @@ import {
   type User 
 } from "@shared/schema";
 import { financialAnalyzer } from './financial-analyzer';
+import { multiLlmOrchestrator } from './multi-llm-orchestrator';
 
 declare module "express-session" {
   interface SessionData {
@@ -240,8 +241,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content,
       });
 
-      // Generate AI response
-      const aiResponse = `Recebi sua mensagem: "${content}"\n\nComo assistente especializado em análise financeira, posso ajudar com:\n\n• Análise de extratos bancários\n• Avaliação de score de crédito\n• Detecção de padrões suspeitos\n• Consultoria em investimentos\n• Análise de riscos\n\nPara uma análise detalhada, envie seus documentos financeiros.`;
+      // Generate AI response using Multi-LLM Orchestrator
+      const aiResponse = await multiLlmOrchestrator.processRequest(content);
 
       // Save AI message
       const aiMessage = await storage.createMessage({
