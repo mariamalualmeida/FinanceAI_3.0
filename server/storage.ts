@@ -1,14 +1,16 @@
 import { 
-  users, conversations, messages, fileUploads, financialAnalyses, transactions,
+  users, conversations, messages, fileUploads, financialAnalyses, transactions, knowledgeBase, systemConfig,
   type User, type InsertUser,
   type Conversation, type InsertConversation,
   type Message, type InsertMessage,
   type FileUpload, type InsertFileUpload,
   type FinancialAnalysis, type InsertFinancialAnalysis,
-  type Transaction, type InsertTransaction
+  type Transaction, type InsertTransaction,
+  type KnowledgeBase, type InsertKnowledgeBase,
+  type SystemConfig, type InsertSystemConfig
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, or, like } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -48,6 +50,21 @@ export interface IStorage {
   getTransactionsByAnalysis(analysisId: number): Promise<Transaction[]>;
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
   createMultipleTransactions(transactions: InsertTransaction[]): Promise<Transaction[]>;
+
+  // Knowledge base operations
+  getKnowledgeBase(id: number): Promise<KnowledgeBase | undefined>;
+  getAllKnowledgeBase(): Promise<KnowledgeBase[]>;
+  createKnowledgeBase(kb: InsertKnowledgeBase): Promise<KnowledgeBase>;
+  updateKnowledgeBase(id: number, updates: Partial<InsertKnowledgeBase>): Promise<KnowledgeBase>;
+  deleteKnowledgeBase(id: number): Promise<void>;
+  searchKnowledgeBase(query: string): Promise<KnowledgeBase[]>;
+
+  // System config operations
+  getSystemConfig(key: string): Promise<SystemConfig | undefined>;
+  getAllSystemConfig(): Promise<SystemConfig[]>;
+  createSystemConfig(config: InsertSystemConfig): Promise<SystemConfig>;
+  updateSystemConfig(key: string, value: string, updatedBy: number): Promise<SystemConfig>;
+  deleteSystemConfig(key: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -213,6 +230,78 @@ export class DatabaseStorage implements IStorage {
 
   async createMultipleTransactions(transactionList: InsertTransaction[]): Promise<Transaction[]> {
     return await db.insert(transactions).values(transactionList).returning();
+  }
+
+  // Knowledge base operations
+  async getKnowledgeBase(id: number): Promise<KnowledgeBase | undefined> {
+    const [kb] = await db.select().from(knowledgeBase).where(eq(knowledgeBase.id, id));
+    return kb;
+  }
+
+  async getAllKnowledgeBase(): Promise<KnowledgeBase[]> {
+    return await db.select().from(knowledgeBase).where(eq(knowledgeBase.isActive, true));
+  }
+
+  async createKnowledgeBase(kb: InsertKnowledgeBase): Promise<KnowledgeBase> {
+    const [newKb] = await db.insert(knowledgeBase).values(kb).returning();
+    return newKb;
+  }
+
+  async updateKnowledgeBase(id: number, updates: Partial<InsertKnowledgeBase>): Promise<KnowledgeBase> {
+    const [updatedKb] = await db
+      .update(knowledgeBase)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(knowledgeBase.id, id))
+      .returning();
+    return updatedKb;
+  }
+
+  async deleteKnowledgeBase(id: number): Promise<void> {
+    await db.update(knowledgeBase).set({ isActive: false }).where(eq(knowledgeBase.id, id));
+  }
+
+  async searchKnowledgeBase(query: string): Promise<KnowledgeBase[]> {
+    return await db
+      .select()
+      .from(knowledgeBase)
+      .where(
+        and(
+          eq(knowledgeBase.isActive, true),
+          or(
+            like(knowledgeBase.title, `%${query}%`),
+            like(knowledgeBase.description, `%${query}%`),
+            like(knowledgeBase.content, `%${query}%`)
+          )
+        )
+      );
+  }
+
+  // System config operations
+  async getSystemConfig(key: string): Promise<SystemConfig | undefined> {
+    const [config] = await db.select().from(systemConfig).where(eq(systemConfig.key, key));
+    return config;
+  }
+
+  async getAllSystemConfig(): Promise<SystemConfig[]> {
+    return await db.select().from(systemConfig);
+  }
+
+  async createSystemConfig(config: InsertSystemConfig): Promise<SystemConfig> {
+    const [newConfig] = await db.insert(systemConfig).values(config).returning();
+    return newConfig;
+  }
+
+  async updateSystemConfig(key: string, value: string, updatedBy: number): Promise<SystemConfig> {
+    const [updatedConfig] = await db
+      .update(systemConfig)
+      .set({ value, updatedBy, updatedAt: new Date() })
+      .where(eq(systemConfig.key, key))
+      .returning();
+    return updatedConfig;
+  }
+
+  async deleteSystemConfig(key: string): Promise<void> {
+    await db.delete(systemConfig).where(eq(systemConfig.key, key));
   }
 }
 
