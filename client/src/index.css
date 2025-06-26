@@ -115,14 +115,42 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Esconder barra de rolagem */
+/* Esconder barra de rolagem com suporte móvel completo */
 .scrollbar-hide {
   /* Firefox */
   scrollbar-width: none;
   /* Chrome, Safari, Edge */
   -ms-overflow-style: none;
+  /* Suporte móvel iOS/Android */
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  /* Scroll suave */
+  scroll-behavior: smooth;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Classe especial para textareas com scroll móvel otimizado */
+.mobile-textarea-scroll {
+  /* Herdado de scrollbar-hide */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  /* Otimizações específicas para textarea */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: text;
+  user-select: text;
+  /* Força aceleração de hardware em mobiles */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+.mobile-textarea-scroll::-webkit-scrollbar {
   display: none;
 }

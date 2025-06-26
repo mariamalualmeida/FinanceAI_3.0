@@ -124,7 +124,10 @@ export default function InputArea({ onSend, onFileUpload }) {
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
-              whiteSpace: 'pre-wrap'
+              whiteSpace: 'pre-wrap',
+              touchAction: 'manipulation',
+              WebkitTouchCallout: 'none',
+              WebkitUserSelect: 'text'
             }}
           />
 
