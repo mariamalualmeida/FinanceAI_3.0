@@ -4,16 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
-import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 export function ChatGPTLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const { currentConversation, conversations, messages, sendMessage, createConversation, setCurrentConversation } = useChat();
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
