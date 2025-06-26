@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SettingsModal } from "@/components/settings/SettingsModal";
+import { ModernSettingsModal } from "@/components/settings/ModernSettingsModal";
 import { formatRelativeTime, truncateText } from "@/lib/authUtils";
 import { Menu, Settings, MessageSquare, FileText, X, Plus, Archive, Trash2, Search } from "lucide-react";
 
@@ -223,7 +223,7 @@ export function Sidebar({ onClose }: SidebarProps) {
       </div>
 
       {/* Settings Modal */}
-      <SettingsModal 
+      <ModernSettingsModal 
         open={showSettings} 
         onOpenChange={setShowSettings}
       />
