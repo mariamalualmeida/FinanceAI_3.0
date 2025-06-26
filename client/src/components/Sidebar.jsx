@@ -223,7 +223,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Perfil */}
-        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2 flex-shrink-0 mt-auto">
+        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2 flex-shrink-0 mt-auto sticky bottom-0 bg-white dark:bg-[#202123] z-20">
           <div className="relative">
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
