@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AdminPanel from './AdminPanel'
 
 export default function SimpleSidebar({ isOpen, onClose, user, onLogout }) {
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
   return (
     <>
       {/* Mobile Overlay */}
@@ -78,6 +79,17 @@ export default function SimpleSidebar({ isOpen, onClose, user, onLogout }) {
               </div>
             </div>
             
+            {/* Admin Panel Button - Only for admin users */}
+            {user?.role === 'admin' && (
+              <button 
+                onClick={() => setShowAdminPanel(true)}
+                className="w-full mt-3 flex items-center gap-3 p-3 text-left hover:bg-gray-800 rounded-lg transition-colors text-sm"
+              >
+                <Settings size={16} />
+                Painel Admin
+              </button>
+            )}
+            
             <button 
               onClick={onLogout}
               className="w-full mt-3 flex items-center gap-3 p-3 text-left hover:bg-gray-800 rounded-lg transition-colors text-sm"
@@ -88,6 +100,14 @@ export default function SimpleSidebar({ isOpen, onClose, user, onLogout }) {
           </div>
         </div>
       </motion.aside>
+      
+      {/* Admin Panel Modal */}
+      {showAdminPanel && (
+        <AdminPanel 
+          user={user} 
+          onClose={() => setShowAdminPanel(false)} 
+        />
+      )}
     </>
   )
 }
