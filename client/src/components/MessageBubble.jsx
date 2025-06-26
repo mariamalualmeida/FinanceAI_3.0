@@ -9,20 +9,20 @@ export default function MessageBubble({ message, isTyping = false }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`group w-full border-b border-black/10 dark:border-gray-900/50 ${
+      className={`group w-full transition-all duration-300 ${
         isUser 
-          ? 'bg-white dark:bg-[#343541]' 
-          : 'bg-gray-50 dark:bg-[#444654]'
+          ? 'bg-gradient-to-r from-transparent via-blue-50/20 to-transparent dark:from-transparent dark:via-blue-900/10 dark:to-transparent' 
+          : 'bg-gradient-to-r from-transparent via-gray-50/30 to-transparent dark:from-transparent dark:via-gray-700/20 dark:to-transparent'
       }`}
     >
-      <div className={`flex gap-4 px-4 py-6 max-w-3xl mx-auto ${
+      <div className={`flex gap-4 px-4 py-8 max-w-4xl mx-auto ${
         isUser ? 'flex-row-reverse' : 'flex-row'
       }`}>
         {/* Avatar */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center text-white text-sm font-bold ${
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 ${
           isUser 
-            ? 'bg-[#19c37d]' 
-            : 'bg-[#ab68ff]'
+            ? 'bg-gradient-to-br from-green-400 to-green-600' 
+            : 'bg-gradient-to-br from-purple-500 to-indigo-600'
         }`}>
           {isUser ? 'U' : 'AI'}
         </div>
@@ -65,13 +65,13 @@ export default function MessageBubble({ message, isTyping = false }) {
               )}
               
               {/* Texto da mensagem */}
-              <div className="prose prose-sm max-w-none dark:prose-invert">
+              <div className="prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
                 <ReactMarkdown>{message.text}</ReactMarkdown>
               </div>
 
               {/* Timestamp */}
               {!isTyping && (
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="text-xs text-gray-400 dark:text-gray-500 mt-3 opacity-0 group-hover:opacity-70 transition-all duration-300">
                   {message.timestamp?.toLocaleTimeString('pt-BR', { 
                     hour: '2-digit', 
                     minute: '2-digit' 

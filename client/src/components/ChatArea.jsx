@@ -103,7 +103,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
       </header>
 
       {/* Área de mensagens */}
-      <section className="flex-1 overflow-y-auto">
+      <section className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 dark:from-[#343541] dark:to-[#343541]/80">
         {messages.length === 0 ? (
           // Tela inicial exatamente como ChatGPT
           <div className="flex flex-col items-center justify-center h-full px-6 text-center">
