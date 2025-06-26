@@ -133,6 +133,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. Android APK project structure created with native WebView wrapper
 - June 26, 2025. Complete Android build configuration with Gradle, Kotlin, and resources
 - June 26, 2025. Native file upload support and deep linking for document handling
+- June 26, 2025. Interface melhorada: botões de envio com fundo transparente
+- June 26, 2025. Seletor de tema movido para barra superior dos chats
+- June 26, 2025. Bordas melhoradas na caixa de digitação para melhor visibilidade
 
 ## User Preferences
 
