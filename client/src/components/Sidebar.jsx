@@ -76,9 +76,6 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="fixed md:relative z-40 flex flex-col w-64 h-full bg-[#202123] md:flex"
-        style={{
-          transform: `translateX(${isOpen ? '0%' : '-100%'})`
-        }}
       >
         {/* Header com botão fechar e nova conversa */}
         <div className="flex items-center justify-between p-3">
@@ -116,9 +113,9 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         {/* Lista de conversas */}
         <div className="flex-1 overflow-y-auto px-2">
           <div className="space-y-0">
-            {conversations?.map((conv) => (
+            {conversations?.map((conv, index) => (
               <div
-                key={conv.id}
+                key={conv.id || `conversation-${index}`}
                 onClick={() => {
                   onSelectChat?.(conv.id)
                 }}
