@@ -130,7 +130,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Lista de conversas */}
-        <div className="flex-1 overflow-y-auto px-2">
+        <div className="flex-1 overflow-y-auto px-2 min-h-0">
           <div className="space-y-0">
             {conversations?.map((conv, index) => (
               <div
@@ -223,7 +223,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Perfil */}
-        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2">
+        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2 flex-shrink-0 mt-auto">
           <div className="relative">
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}

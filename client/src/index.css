@@ -57,6 +57,14 @@ html, body {
     width: 100vw !important;
     height: 100vh !important;
     z-index: 50 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Garantir que o perfil seja sempre visível */
+  aside[class*="fixed"] > div:last-child {
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
   }
   
   /* Chat areas - viewport fixo para evitar movimentação */
