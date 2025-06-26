@@ -195,10 +195,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const conversationId = parseInt(req.params.id);
+      const conversationId = req.params.id;
       const { title } = req.body;
       
-      if (isNaN(conversationId)) {
+      if (!conversationId || conversationId === 'null' || conversationId === 'undefined') {
         return res.status(400).json({ message: 'Invalid conversation ID' });
       }
 
@@ -219,7 +219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Message routes
   app.get('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
-      const conversationId = parseInt(req.params.id);
+      const conversationId = req.params.id;
       const messages = await storage.getMessagesByConversation(conversationId);
       res.json(messages);
     } catch (error) {
@@ -230,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
-      const conversationId = parseInt(req.params.id);
+      const conversationId = req.params.id;
       const { content } = req.body;
 
       // Create user message
