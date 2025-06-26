@@ -72,7 +72,7 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
         {/* Lista de conversas */}
         <div className="flex-1 overflow-y-auto px-2">
           <div className="space-y-0">
-            {conversations.map((conv) => (
+            {conversations?.map((conv) => (
               <div
                 key={conv.id}
                 onClick={() => {
@@ -94,47 +94,106 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
                   <button 
                     onClick={(e) => {
                       e.stopPropagation()
-                      // Menu de opções
+                      setShowDropdown(showDropdown === conv.id ? null : conv.id)
                     }}
                     className="p-1 hover:bg-gray-500/20 rounded text-gray-400 hover:text-white"
                   >
                     <MoreHorizontal size={16} />
                   </button>
+
+                  {/* Dropdown menu */}
+                  {showDropdown === conv.id && (
+                    <div className="absolute right-0 top-full mt-1 w-40 bg-gray-700 rounded-md border border-gray-600 shadow-lg z-50">
+                      <button 
+                        onClick={() => {
+                          setShowDropdown(null)
+                        }}
+                        className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                      >
+                        <Edit size={14} />
+                        Renomear
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowDropdown(null)
+                        }}
+                        className="w-full text-left p-2 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                      >
+                        <Archive size={14} />
+                        Arquivar
+                      </button>
+                      <button 
+                        onClick={() => {
+                          onDeleteConversation(conv.id)
+                          setShowDropdown(null)
+                        }}
+                        className="w-full text-left p-2 hover:bg-red-600 text-red-400 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
+                      >
+                        <Trash2 size={14} />
+                        Excluir
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Menu inferior */}
-        <div className="border-t border-white/20 p-2">
-          <div className="space-y-0">
-            <button className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm">
-              <User size={16} />
-              Perfil
-            </button>
-            <button className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm">
-              <Settings size={16} />
-              Configurações
-            </button>
-            <button className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm">
-              <HelpCircle size={16} />
-              Ajuda
-            </button>
+        {/* Perfil */}
+        <div className="border-t border-gray-600 px-2 py-2">
+          <div className="relative">
             <button 
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
               className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm"
             >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-              {darkMode ? 'Modo claro' : 'Modo escuro'}
-            </button>
-            <button className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
+              <User size={16} />
+              Perfil
+              <svg 
+                className={`ml-auto w-4 h-4 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+              >
+                <path d="M19 9l-7 7-7-7"/>
               </svg>
-              Interface Gemini
             </button>
+
+            {/* Profile dropdown menu */}
+            <AnimatePresence>
+              {showProfileMenu && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-1 bg-gray-700 rounded-md border border-gray-600 overflow-hidden"
+                >
+                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                    <Settings size={16} />
+                    Configurações
+                  </button>
+                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                    <HelpCircle size={16} />
+                    Ajuda
+                  </button>
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"
+                  >
+                    {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+                    {darkMode ? 'Modo claro' : 'Modo escuro'}
+                  </button>
+                  <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    Interface Gemini
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </motion.aside>
