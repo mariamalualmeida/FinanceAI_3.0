@@ -49,21 +49,102 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
           })
         }, 200)
 
-        // Simular resposta com análise de arquivo
-        setTimeout(() => {
+        // Fazer upload real e análise
+        const uploadPromise = fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+
+        // Simular progresso enquanto processa
+        const progressInterval = setInterval(() => {
+          setUploadProgress(prev => {
+            if (prev >= 90) {
+              clearInterval(progressInterval)
+              return 90
+            }
+            return prev + 15
+          })
+        }, 500)
+
+        try {
+          const response = await uploadPromise
+          const result = await response.json()
+          
+          clearInterval(progressInterval)
           setUploadProgress(100)
+          
           setTimeout(() => {
             setUploadProgress(null)
-            const aiMessage = {
-              id: Date.now() + 1,
-              sender: 'assistant',
-              text: `Análise concluída! Processsei ${files.length} arquivo(s):\n\n${files.map(f => `📄 **${f.name}**`).join('\n')}\n\n**Resumo da Análise Financeira:**\n- Transações analisadas: 247\n- Score de crédito estimado: 742\n- Padrões de risco identificados: Baixo\n- Recomendações: Portfolio bem diversificado\n\n*Esta é uma análise simulada. Em breve será conectada ao sistema real de IA financeira.*`,
-              timestamp: new Date()
+            
+            if (result.success && result.analysis) {
+              const analysis = result.analysis
+              const aiMessage = {
+                id: Date.now() + 1,
+                sender: 'assistant',
+                text: `**Análise Financeira Completa**
+
+📊 **Score de Crédito:** ${analysis.creditScore}/1000
+⚠️ **Nível de Risco:** ${analysis.riskLevel === 'low' ? '🟢 Baixo' : analysis.riskLevel === 'medium' ? '🟡 Médio' : '🔴 Alto'}
+
+💰 **Resumo Financeiro:**
+• Receitas Totais: R$ ${analysis.totalIncome?.toLocaleString('pt-BR') || '0,00'}
+• Gastos Totais: R$ ${analysis.totalExpenses?.toLocaleString('pt-BR') || '0,00'}
+• Saldo: R$ ${analysis.balance?.toLocaleString('pt-BR') || '0,00'}
+• Transações Analisadas: ${analysis.transactionCount || 0}
+
+🔍 **Padrões Identificados:**
+${analysis.patterns?.gambling ? '• ⚠️ Atividades de apostas detectadas' : '• ✅ Sem atividades de apostas'}
+${analysis.patterns?.highRisk ? '• ⚠️ Comportamento de alto risco' : '• ✅ Comportamento financeiro estável'}
+• Fluxo de Caixa: ${analysis.patterns?.cashFlow === 'positive' ? '🟢 Positivo' : analysis.patterns?.cashFlow === 'negative' ? '🔴 Negativo' : '🟡 Estável'}
+
+📋 **Recomendações:**
+${Array.isArray(analysis.recommendations) ? analysis.recommendations.map(rec => `• ${rec}`).join('\n') : '• Análise detalhada disponível'}
+
+${analysis.summary || 'Análise completa realizada com sucesso.'}`,
+                timestamp: new Date()
+              }
+              setMessages(prev => [...prev, aiMessage])
+            } else {
+              // Análise falhou
+              const aiMessage = {
+                id: Date.now() + 1,
+                sender: 'assistant',
+                text: `❌ **Erro na Análise**
+
+Houve um problema ao processar seus arquivos. Possíveis causas:
+• Formato de arquivo não suportado
+• Arquivo corrompido ou ilegível
+• Conteúdo não reconhecido como documento financeiro
+
+📋 **Formatos Suportados:**
+• PDF (extratos, faturas, contracheques)
+• Excel/CSV (planilhas financeiras)
+• Imagens (JPG, PNG) com texto legível
+
+Tente novamente com um arquivo diferente ou entre em contato para suporte.`,
+                timestamp: new Date()
+              }
+              setMessages(prev => [...prev, aiMessage])
             }
-            setMessages(prev => [...prev, aiMessage])
             setIsTyping(false)
-          }, 500)
-        }, 2000)
+          }, 800)
+        } catch (error) {
+          clearInterval(progressInterval)
+          setUploadProgress(null)
+          setIsTyping(false)
+          
+          const aiMessage = {
+            id: Date.now() + 1,
+            sender: 'assistant',
+            text: `❌ **Erro de Conexão**
+
+Não foi possível processar o arquivo devido a um erro de rede. Verifique sua conexão e tente novamente.
+
+Se o problema persistir, entre em contato com o suporte técnico.`,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiMessage])
+        }
       } else {
         // Resposta apenas texto
         setTimeout(() => {
