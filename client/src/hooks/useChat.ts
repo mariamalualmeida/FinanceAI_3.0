@@ -23,7 +23,7 @@ export function useChat() {
   // Create conversation mutation
   const createConversationMutation = useMutation({
     mutationFn: async (title?: string) => {
-      const response = await apiRequest("POST", "/api/conversations", {
+      const response = await apiRequest("/api/conversations", "POST", {
         title: title || "Nova Conversa",
         status: "active",
       });
@@ -42,7 +42,7 @@ export function useChat() {
         throw new Error("No conversation selected");
       }
 
-      const response = await apiRequest("POST", "/api/chat/message", {
+      const response = await apiRequest("/api/chat/message", "POST", {
         conversationId: currentConversationId,
         content,
         context,
