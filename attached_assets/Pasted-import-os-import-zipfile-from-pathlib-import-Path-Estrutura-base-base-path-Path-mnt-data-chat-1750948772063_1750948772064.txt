@@ -1,0 +1,158 @@
+import os
+import zipfile
+from pathlib import Path
+
+# Estrutura base
+base_path = Path("/mnt/data/chatgpt-clone-pwa")
+components_path = base_path / "src/components"
+public_path = base_path / "public"
+base_path.mkdir(parents=True, exist_ok=True)
+components_path.mkdir(parents=True, exist_ok=True)
+public_path.mkdir(parents=True, exist_ok=True)
+
+# Arquivos do projeto
+project_files = {
+    "src/App.jsx": """import { useState } from 'react'
+import Sidebar from './components/Sidebar'
+import ChatArea from './components/ChatArea'
+
+export default function App() {
+  const [darkMode, setDarkMode] = useState(true)
+
+  return (
+    <div className={darkMode ? 'dark' : ''}>
+      <div className="flex h-screen bg-white dark:bg-[#1e1e1e] text-black dark:text-white">
+        <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
+        <ChatArea />
+      </div>
+    </div>
+  )
+}
+""",
+    "src/main.jsx": """import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
+""",
+    "src/index.css": """@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+""",
+    "src/components/Sidebar.jsx": """import { Sun, Moon, Plus, Settings, User, HelpCircle } from 'lucide-react'
+
+export default function Sidebar({ darkMode, setDarkMode }) {
+  return (
+    <aside className="hidden md:flex flex-col w-64 bg-gray-100 dark:bg-gray-800 p-4">
+      <button className="flex items-center gap-2 p-2 rounded-md bg-green-600 text-white mb-4">
+        <Plus size={20}/> Nova Conversa
+      </button>
+      <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
+        <div className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">Conversa anterior</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <button className="flex items-center gap-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"><User size={18}/> Perfil</button>
+        <button className="flex items-center gap-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"><Settings size={18}/> Configurações</button>
+        <button className="flex items-center gap-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"><HelpCircle size={18}/> Ajuda</button>
+        <button className="flex items-center gap-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md" onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? <Sun size={18}/> : <Moon size={18}/>} {darkMode ? 'Modo Claro' : 'Modo Escuro'}
+        </button>
+      </div>
+    </aside>
+  )
+}
+""",
+    "src/components/ChatArea.jsx": """import { useState, useEffect, useRef } from 'react'
+import MessageBubble from './MessageBubble'
+import InputArea from './InputArea'
+import ReactMarkdown from 'react-markdown'
+
+export default function ChatArea() {
+  const [messages, setMessages] = useState([{ sender: 'ia', text: 'Olá! Sou sua assistente. Como posso ajudar hoje?' }])
+  const scrollRef = useRef(null)
+  useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: "smooth" }) }, [messages])
+  const sendMessage = (text) => { setMessages(prev => [...prev, { sender: 'user', text }]); setTimeout(() => { setMessages(prev => [...prev, { sender: 'ia', text: 'Recebi sua mensagem!' }]) }, 1000) }
+
+  return (
+    <main className="flex flex-col flex-1">
+      <header className="p-4 border-b border-gray-300 dark:border-gray-700"><h1 className="text-lg font-semibold">ChatGPT Clone</h1></header>
+      <section className="flex-1 overflow-y-auto p-4 space-y-4">{messages.map((msg, i) => (<MessageBubble key={i} sender={msg.sender}><ReactMarkdown>{msg.text}</ReactMarkdown></MessageBubble>))}<div ref={scrollRef}></div></section>
+      <footer className="p-4 border-t border-gray-300 dark:border-gray-700"><InputArea onSend={sendMessage}/></footer>
+    </main>
+  )
+}
+""",
+    "src/components/MessageBubble.jsx": """import { motion } from 'framer-motion'
+
+export default function MessageBubble({ sender, children }) {
+  const isUser = sender === 'user'
+  return (<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-3 rounded-xl max-w-[70%] ${isUser ? 'bg-green-600 text-white ml-auto' : 'bg-gray-200 dark:bg-gray-700'}`}>{children}</motion.div>)
+}
+""",
+    "src/components/InputArea.jsx": """import { useState } from 'react'
+import { SendHorizonal, Paperclip } from 'lucide-react'
+
+export default function InputArea({ onSend }) {
+  const [text, setText] = useState('')
+  const handleSend = () => { if (!text.trim()) return; onSend(text); setText('') }
+  const handleKeyDown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }
+
+  return (
+    <div className="flex items-center gap-2">
+      <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-green-500"><Paperclip size={20}/></button>
+      <textarea value={text} onChange={(e) => setText(e.target.value)} onKeyDown={handleKeyDown} rows={1} className="flex-1 p-2 bg-gray-100 dark:bg-gray-700 rounded-md resize-none outline-none" placeholder="Digite sua mensagem..."/>
+      <button onClick={handleSend} className="p-2 text-green-600 hover:text-green-800"><SendHorizonal size={20}/></button>
+    </div>
+  )
+}
+""",
+    "public/manifest.json": """{
+  "name": "ChatGPT Clone",
+  "short_name": "ChatGPT",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1e1e1e",
+  "theme_color": "#10a37f",
+  "description": "Aplicativo de chat baseado na interface do ChatGPT",
+  "icons": []
+}
+""",
+    "public/index.html": """<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatGPT Clone</title>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
+"""
+}
+
+# Criar arquivos
+for rel_path, content in project_files.items():
+    file_path = base_path / rel_path
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(content, encoding="utf-8")
+
+# Criar arquivo ZIP
+zip_path = "/mnt/data/chatgpt-clone-pwa.zip"
+with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    for root, _, files in os.walk(base_path):
+        for file in files:
+            full_path = os.path.join(root, file)
+            zipf.write(full_path, os.path.relpath(full_path, base_path))
+
+zip_path
