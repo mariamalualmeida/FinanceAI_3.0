@@ -1,115 +1,126 @@
-import {
-  users,
-  conversations,
-  messages,
-  fileUploads,
-  financialAnalyses,
-  userSettings,
-  type User,
-  type InsertUser,
-  type Conversation,
-  type InsertConversation,
-  type Message,
-  type InsertMessage,
-  type FileUpload,
-  type InsertFileUpload,
-  type FinancialAnalysis,
-  type InsertFinancialAnalysis,
-  type UserSettings,
-  type InsertUserSettings,
+import { 
+  users, conversations, messages, fileUploads, financialAnalyses, transactions,
+  type User, type InsertUser,
+  type Conversation, type InsertConversation,
+  type Message, type InsertMessage,
+  type FileUpload, type InsertFileUpload,
+  type FinancialAnalysis, type InsertFinancialAnalysis,
+  type Transaction, type InsertTransaction
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
-  getUserById(id: number): Promise<User | undefined>;
+  getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+  updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
+
   // Conversation operations
-  getConversationsByUserId(userId: number): Promise<Conversation[]>;
-  getConversationById(id: string): Promise<Conversation | undefined>;
-  createConversation(conversation: InsertConversation & { userId: number }): Promise<Conversation>;
-  updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation | undefined>;
-  
+  getConversation(id: number): Promise<Conversation | undefined>;
+  getConversationsByUser(userId: number): Promise<Conversation[]>;
+  createConversation(conversation: InsertConversation): Promise<Conversation>;
+  updateConversation(id: number, updates: Partial<InsertConversation>): Promise<Conversation>;
+  deleteConversation(id: number): Promise<void>;
+
   // Message operations
-  getMessagesByConversationId(conversationId: string): Promise<Message[]>;
+  getMessage(id: number): Promise<Message | undefined>;
+  getMessagesByConversation(conversationId: number): Promise<Message[]>;
   createMessage(message: InsertMessage): Promise<Message>;
-  
+  deleteMessage(id: number): Promise<void>;
+
   // File upload operations
-  createFileUpload(fileUpload: InsertFileUpload & { userId: number }): Promise<FileUpload>;
-  getFileUploadById(id: string): Promise<FileUpload | undefined>;
-  updateFileUpload(id: string, updates: Partial<FileUpload>): Promise<FileUpload | undefined>;
-  getFileUploadsByUserId(userId: number): Promise<FileUpload[]>;
-  
+  getFileUpload(id: number): Promise<FileUpload | undefined>;
+  getFileUploadsByUser(userId: number): Promise<FileUpload[]>;
+  createFileUpload(fileUpload: InsertFileUpload): Promise<FileUpload>;
+  updateFileUploadStatus(id: number, status: string): Promise<FileUpload>;
+
   // Financial analysis operations
-  createFinancialAnalysis(analysis: InsertFinancialAnalysis & { userId: number }): Promise<FinancialAnalysis>;
-  getFinancialAnalysesByUserId(userId: number): Promise<FinancialAnalysis[]>;
-  getFinancialAnalysisByFileUploadId(fileUploadId: string): Promise<FinancialAnalysis | undefined>;
-  
-  // User settings operations
-  getUserSettings(userId: number): Promise<UserSettings | undefined>;
-  updateUserSettings(userId: number, settings: Partial<InsertUserSettings>): Promise<UserSettings>;
+  getFinancialAnalysis(id: number): Promise<FinancialAnalysis | undefined>;
+  getAnalysesByUser(userId: number): Promise<FinancialAnalysis[]>;
+  createFinancialAnalysis(analysis: InsertFinancialAnalysis): Promise<FinancialAnalysis>;
+  updateFinancialAnalysis(id: number, updates: Partial<InsertFinancialAnalysis>): Promise<FinancialAnalysis>;
+
+  // Transaction operations
+  getTransaction(id: number): Promise<Transaction | undefined>;
+  getTransactionsByAnalysis(analysisId: number): Promise<Transaction[]>;
+  createTransaction(transaction: InsertTransaction): Promise<Transaction>;
+  createMultipleTransactions(transactions: InsertTransaction[]): Promise<Transaction[]>;
 }
 
 export class DatabaseStorage implements IStorage {
   // User operations
-  async getUserById(id: number): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db.insert(users).values(user).returning();
+    return newUser;
+  }
+
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser;
+  }
+
   // Conversation operations
-  async getConversationsByUserId(userId: number): Promise<Conversation[]> {
-    return db
+  async getConversation(id: number): Promise<Conversation | undefined> {
+    const [conversation] = await db.select().from(conversations).where(eq(conversations.id, id));
+    return conversation;
+  }
+
+  async getConversationsByUser(userId: number): Promise<Conversation[]> {
+    return await db
       .select()
       .from(conversations)
       .where(eq(conversations.userId, userId))
       .orderBy(desc(conversations.updatedAt));
   }
 
-  async getConversationById(id: string): Promise<Conversation | undefined> {
-    const [conversation] = await db
-      .select()
-      .from(conversations)
-      .where(eq(conversations.id, id));
-    return conversation || undefined;
-  }
-
-  async createConversation(conversation: InsertConversation & { userId: number }): Promise<Conversation> {
-    const [newConversation] = await db
-      .insert(conversations)
-      .values(conversation)
-      .returning();
+  async createConversation(conversation: InsertConversation): Promise<Conversation> {
+    const [newConversation] = await db.insert(conversations).values(conversation).returning();
     return newConversation;
   }
 
-  async updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation | undefined> {
+  async updateConversation(id: number, updates: Partial<InsertConversation>): Promise<Conversation> {
     const [updatedConversation] = await db
       .update(conversations)
       .set({ ...updates, updatedAt: new Date() })
       .where(eq(conversations.id, id))
       .returning();
-    return updatedConversation || undefined;
+    return updatedConversation;
+  }
+
+  async deleteConversation(id: number): Promise<void> {
+    await db.delete(conversations).where(eq(conversations.id, id));
   }
 
   // Message operations
-  async getMessagesByConversationId(conversationId: string): Promise<Message[]> {
-    return db
+  async getMessage(id: number): Promise<Message | undefined> {
+    const [message] = await db.select().from(messages).where(eq(messages.id, id));
+    return message;
+  }
+
+  async getMessagesByConversation(conversationId: number): Promise<Message[]> {
+    return await db
       .select()
       .from(messages)
       .where(eq(messages.conversationId, conversationId))
@@ -117,91 +128,91 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createMessage(message: InsertMessage): Promise<Message> {
-    const [newMessage] = await db
-      .insert(messages)
-      .values(message)
-      .returning();
+    const [newMessage] = await db.insert(messages).values(message).returning();
     return newMessage;
   }
 
+  async deleteMessage(id: number): Promise<void> {
+    await db.delete(messages).where(eq(messages.id, id));
+  }
+
   // File upload operations
-  async createFileUpload(fileUpload: InsertFileUpload & { userId: number }): Promise<FileUpload> {
-    const [newFileUpload] = await db
-      .insert(fileUploads)
-      .values(fileUpload)
-      .returning();
-    return newFileUpload;
+  async getFileUpload(id: number): Promise<FileUpload | undefined> {
+    const [fileUpload] = await db.select().from(fileUploads).where(eq(fileUploads.id, id));
+    return fileUpload;
   }
 
-  async getFileUploadById(id: string): Promise<FileUpload | undefined> {
-    const [fileUpload] = await db
-      .select()
-      .from(fileUploads)
-      .where(eq(fileUploads.id, id));
-    return fileUpload || undefined;
-  }
-
-  async updateFileUpload(id: string, updates: Partial<FileUpload>): Promise<FileUpload | undefined> {
-    const [updatedFileUpload] = await db
-      .update(fileUploads)
-      .set(updates)
-      .where(eq(fileUploads.id, id))
-      .returning();
-    return updatedFileUpload || undefined;
-  }
-
-  async getFileUploadsByUserId(userId: number): Promise<FileUpload[]> {
-    return db
+  async getFileUploadsByUser(userId: number): Promise<FileUpload[]> {
+    return await db
       .select()
       .from(fileUploads)
       .where(eq(fileUploads.userId, userId))
       .orderBy(desc(fileUploads.createdAt));
   }
 
-  // Financial analysis operations
-  async createFinancialAnalysis(analysis: InsertFinancialAnalysis & { userId: number }): Promise<FinancialAnalysis> {
-    const [newAnalysis] = await db
-      .insert(financialAnalyses)
-      .values(analysis)
-      .returning();
-    return newAnalysis;
+  async createFileUpload(fileUpload: InsertFileUpload): Promise<FileUpload> {
+    const [newFileUpload] = await db.insert(fileUploads).values(fileUpload).returning();
+    return newFileUpload;
   }
 
-  async getFinancialAnalysesByUserId(userId: number): Promise<FinancialAnalysis[]> {
-    return db
+  async updateFileUploadStatus(id: number, status: string): Promise<FileUpload> {
+    const [updatedFileUpload] = await db
+      .update(fileUploads)
+      .set({ status })
+      .where(eq(fileUploads.id, id))
+      .returning();
+    return updatedFileUpload;
+  }
+
+  // Financial analysis operations
+  async getFinancialAnalysis(id: number): Promise<FinancialAnalysis | undefined> {
+    const [analysis] = await db.select().from(financialAnalyses).where(eq(financialAnalyses.id, id));
+    return analysis;
+  }
+
+  async getAnalysesByUser(userId: number): Promise<FinancialAnalysis[]> {
+    return await db
       .select()
       .from(financialAnalyses)
       .where(eq(financialAnalyses.userId, userId))
       .orderBy(desc(financialAnalyses.createdAt));
   }
 
-  async getFinancialAnalysisByFileUploadId(fileUploadId: string): Promise<FinancialAnalysis | undefined> {
-    const [analysis] = await db
-      .select()
-      .from(financialAnalyses)
-      .where(eq(financialAnalyses.fileUploadId, fileUploadId));
-    return analysis || undefined;
+  async createFinancialAnalysis(analysis: InsertFinancialAnalysis): Promise<FinancialAnalysis> {
+    const [newAnalysis] = await db.insert(financialAnalyses).values(analysis).returning();
+    return newAnalysis;
   }
 
-  // User settings operations
-  async getUserSettings(userId: number): Promise<UserSettings | undefined> {
-    const [settings] = await db
-      .select()
-      .from(userSettings)
-      .where(eq(userSettings.userId, userId));
-    return settings || undefined;
-  }
-
-  async updateUserSettings(userId: number, settings: Partial<InsertUserSettings>): Promise<UserSettings> {
-    const [updatedSettings] = await db
-      .insert(userSettings)
-      .values({ ...settings, userId })
-      .onConflictDoUpdate({
-        target: userSettings.userId,
-        set: { ...settings, updatedAt: new Date() },
-      })
+  async updateFinancialAnalysis(id: number, updates: Partial<InsertFinancialAnalysis>): Promise<FinancialAnalysis> {
+    const [updatedAnalysis] = await db
+      .update(financialAnalyses)
+      .set(updates)
+      .where(eq(financialAnalyses.id, id))
       .returning();
-    return updatedSettings;
+    return updatedAnalysis;
+  }
+
+  // Transaction operations
+  async getTransaction(id: number): Promise<Transaction | undefined> {
+    const [transaction] = await db.select().from(transactions).where(eq(transactions.id, id));
+    return transaction;
+  }
+
+  async getTransactionsByAnalysis(analysisId: number): Promise<Transaction[]> {
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.analysisId, analysisId))
+      .orderBy(desc(transactions.date));
+  }
+
+  async createTransaction(transaction: InsertTransaction): Promise<Transaction> {
+    const [newTransaction] = await db.insert(transactions).values(transaction).returning();
+    return newTransaction;
+  }
+
+  async createMultipleTransactions(transactionList: InsertTransaction[]): Promise<Transaction[]> {
+    return await db.insert(transactions).values(transactionList).returning();
   }
 }
 
