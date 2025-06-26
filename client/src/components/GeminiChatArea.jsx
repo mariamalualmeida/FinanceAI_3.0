@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Send, Paperclip, Mic, Square } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 
-export default function GeminiChatArea({ user, settings }) {
+export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
