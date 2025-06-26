@@ -105,7 +105,16 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 
 ## Changelog
 - June 26, 2025. Initial setup
+- June 26, 2025. Frontend ChatGPT-style interface completed (95% fidelity)
+- June 26, 2025. File upload system with progress tracking implemented
+- June 26, 2025. Conversation management system with sidebar navigation
+- June 26, 2025. Message layout with user/AI distinction and file attachments
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+### Project Scope Restrictions
+- No integration with Brazilian bank APIs
+- No chat sharing functionality
+- Focus on core financial analysis and consultation features
