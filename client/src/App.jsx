@@ -93,36 +93,38 @@ export default function App() {
   // Main app
   return (
     <Router>
-      <div className={`h-screen max-h-screen overflow-hidden flex ${settings.theme === 'dark' ? 'dark' : ''}`}>
+      <div className={`w-full h-full ${settings.theme === 'dark' ? 'dark' : ''}`}>
         <Switch>
           <Route path="/admin">
             <AdminPanel user={user} onLogout={handleLogout} />
           </Route>
           <Route>
-            <Sidebar 
-              user={user} 
-              onLogout={handleLogout}
-              settings={settings}
-              onUpdateSettings={updateSettings}
-              isOpen={sidebarOpen}
-              onToggle={() => setSidebarOpen(!sidebarOpen)}
-              onClose={() => setSidebarOpen(false)}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-            {settings.interface === 'gemini' ? (
-              <GeminiChatArea 
-                user={user}
-                settings={{...settings, onToggleTheme: toggleTheme}}
-                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            <div className="flex h-full w-full">
+              <Sidebar 
+                user={user} 
+                onLogout={handleLogout}
+                settings={settings}
+                onUpdateSettings={updateSettings}
+                isOpen={sidebarOpen}
+                onToggle={() => setSidebarOpen(!sidebarOpen)}
+                onClose={() => setSidebarOpen(false)}
+                onOpenSettings={() => setShowSettings(true)}
               />
-            ) : (
-              <ChatArea 
-                user={user}
-                settings={{...settings, onToggleTheme: toggleTheme}}
-                interface={settings.interface}
-                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-              />
-            )}
+              {settings.interface === 'gemini' ? (
+                <GeminiChatArea 
+                  user={user}
+                  settings={{...settings, onToggleTheme: toggleTheme}}
+                  onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                />
+              ) : (
+                <ChatArea 
+                  user={user}
+                  settings={{...settings, onToggleTheme: toggleTheme}}
+                  interface={settings.interface}
+                  onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                />
+              )}
+            </div>
           </Route>
         </Switch>
         <Toaster />
