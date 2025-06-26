@@ -198,18 +198,18 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg focus-within:shadow-xl transition-all">
-                <div className="flex items-center px-6 py-4">
-                  {/* Botão de anexar arquivos - posição correta */}
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
+                <div className="relative px-6 py-4">
+                  {/* Botão de anexar arquivos - canto inferior esquerdo */}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mr-3"
+                    className="absolute bottom-3 left-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
-                    <Paperclip size={22} />
+                    <Paperclip size={20} />
                   </button>
                   
-                  {/* Textarea responsiva */}
+                  {/* Textarea responsiva - sem bordas internas */}
                   <textarea
                     value={inputText}
                     onChange={(e) => {
@@ -219,7 +219,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
                     }}
                     placeholder="Peça ao Mig"
-                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[28px] max-h-[120px] py-2 leading-6 text-base"
+                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[28px] max-h-[120px] py-2 pl-12 pr-12 leading-6 text-base"
                     rows="1"
                     style={{ height: '28px' }}
                     onKeyDown={(e) => {
@@ -230,13 +230,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                     }}
                   />
                   
-                  {/* Botão de envio */}
+                  {/* Botão de envio - canto inferior direito */}
                   <button
                     type="submit"
                     disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="p-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ml-3"
+                    className="absolute bottom-3 right-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    <Send size={22} />
+                    <Send size={20} />
                   </button>
                   
                   {/* Input de arquivo oculto */}
