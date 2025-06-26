@@ -72,10 +72,11 @@ export default function InputArea({ onSend, onFileUpload }) {
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
+    // Enter sem Shift = nova linha (comportamento padrão)
   }
 
   return (
@@ -119,7 +120,7 @@ export default function InputArea({ onSend, onFileUpload }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Envie uma mensagem..."
-            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-12 leading-6 text-base scrollbar-hide overflow-y-auto"
+            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 p-4 pb-16 leading-6 text-base scrollbar-hide overflow-y-auto"
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
@@ -183,7 +184,7 @@ export default function InputArea({ onSend, onFileUpload }) {
 
         {/* Dica de atalho */}
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-          Enter para enviar • Shift + Enter para nova linha • Ctrl + K para abrir/fechar sidebar • Ctrl + N para nova conversa
+          Shift + Enter para enviar • Enter para nova linha • Ctrl + K para abrir/fechar sidebar • Ctrl + N para nova conversa
         </div>
       </div>
     </div>
