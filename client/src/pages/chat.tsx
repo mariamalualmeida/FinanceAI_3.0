@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useInterfaceStyle } from "@/hooks/useInterfaceStyle";
-import { SimpleLayout } from "@/components/chat/SimpleLayout";
-import { ProfessionalLayout } from "@/components/chat/ProfessionalLayout";
+import { SimpleLayout, ProfessionalLayout } from "@/components/chat";
 
 export default function ChatPage() {
   const { conversationId } = useParams<{ conversationId: string }>();

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams } from "wouter";
-import SimpleSidebar from "./simple/SimpleSidebar";
-import SimpleChatArea from "./simple/SimpleChatArea";
+import { SimpleSidebar, SimpleChatArea } from "./simple";
 
 export function SimpleLayout() {
   const { conversationId } = useParams<{ conversationId?: string }>();

@@ -3,8 +3,7 @@ import { Menu, Plus, Sun, Moon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import SimpleMessageBubble from "./SimpleMessageBubble";
-import SimpleInputArea from "./SimpleInputArea";
+import { SimpleMessageBubble, SimpleInputArea } from ".";
 import type { Message } from "@shared/schema";
 
 interface SimpleChatAreaProps {

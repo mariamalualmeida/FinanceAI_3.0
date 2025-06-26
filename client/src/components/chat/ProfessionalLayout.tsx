@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams } from "wouter";
-import ProfessionalSidebar from "./professional/ProfessionalSidebar";
-import ProfessionalChatArea from "./professional/ProfessionalChatArea";
+import { ProfessionalSidebar, ProfessionalChatArea } from "./professional";
 
 export function ProfessionalLayout() {
   const { conversationId } = useParams<{ conversationId?: string }>();
