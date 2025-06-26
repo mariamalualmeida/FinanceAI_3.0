@@ -140,7 +140,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Conversation routes
   app.get('/api/conversations', isAuthenticated, async (req: any, res) => {
     try {
-      const conversations = await storage.getConversationsByUser(req.session.userId!);
+      let conversations = await storage.getConversationsByUser(req.session.userId!);
+      
+      // Se não há conversas, criar uma conversa inicial
+      if (conversations.length === 0) {
+        const initialConversation = await storage.createConversation({
+          userId: req.session.userId!,
+          title: 'Nova Conversa',
+        });
+        conversations = [initialConversation];
+      }
+      
       res.json(conversations);
     } catch (error) {
       console.error('Error fetching conversations:', error);
