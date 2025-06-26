@@ -126,6 +126,52 @@ export type InsertFinancialAnalysis = z.infer<typeof insertFinancialAnalysisSche
 export type Transaction = typeof transactions.$inferSelect;
 export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
 
+// Tabela de base de conhecimento
+export const knowledgeBase = pgTable("knowledge_base", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  content: text("content").notNull(),
+  fileType: varchar("file_type", { length: 50 }).notNull(),
+  category: varchar("category", { length: 100 }).default("general"),
+  tags: varchar("tags", { length: 500 }),
+  uploadedBy: integer("uploaded_by").references(() => users.id).notNull(),
+  filePath: varchar("file_path", { length: 500 }),
+  fileSize: integer("file_size"),
+  embedding: text("embedding"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+// Tabela de configurações do sistema
+export const systemConfig = pgTable("system_config", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  key: varchar("key", { length: 100 }).unique().notNull(),
+  value: text("value"),
+  description: text("description"),
+  category: varchar("category", { length: 50 }).default("general"),
+  isSecret: boolean("is_secret").default(false),
+  updatedBy: integer("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+export const insertKnowledgeBaseSchema = createInsertSchema(knowledgeBase).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertSystemConfigSchema = createInsertSchema(systemConfig).omit({
+  id: true,
+  updatedAt: true
+});
+
+export type KnowledgeBase = typeof knowledgeBase.$inferSelect;
+export type InsertKnowledgeBase = z.infer<typeof insertKnowledgeBaseSchema>;
+export type SystemConfig = typeof systemConfig.$inferSelect;
+export type InsertSystemConfig = z.infer<typeof insertSystemConfigSchema>;
+
 // Login schema
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
