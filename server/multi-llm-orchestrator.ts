@@ -239,7 +239,7 @@ class MultiLLMOrchestrator {
     return initialResponse;
   }
 
-  private async useBackupLLM(input: string, context?: string): Promise<string> {
+  private async useBackupLLM(input: string, context?: string | null): Promise<string> {
     const backupConfigs = await storage.getBackupLlmConfigs();
     
     for (const config of backupConfigs) {
