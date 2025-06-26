@@ -216,12 +216,12 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       setInputText(e.target.value)
                       // Auto-resize
                       e.target.style.height = 'auto'
-                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
+                      e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
                     }}
-                    placeholder="Peça ao Mig"
-                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[28px] max-h-[120px] py-2 pl-12 pr-12 leading-6 text-base"
-                    rows="1"
-                    style={{ height: '28px' }}
+                    placeholder=""
+                    className="w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[60px] max-h-[200px] py-4 pl-12 pr-12 leading-6 text-base scrollbar-hide overflow-y-auto"
+                    rows="3"
+                    style={{ height: '60px' }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
