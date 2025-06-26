@@ -15,6 +15,7 @@ export default function App() {
     interface: 'chatgpt', // 'chatgpt' or 'gemini'
     userName: ''
   })
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Check authentication and load settings on app load
   useEffect(() => {
@@ -95,17 +96,22 @@ export default function App() {
               onLogout={handleLogout}
               settings={settings}
               onUpdateSettings={updateSettings}
+              isOpen={sidebarOpen}
+              onToggle={() => setSidebarOpen(!sidebarOpen)}
+              onClose={() => setSidebarOpen(false)}
             />
             {settings.interface === 'gemini' ? (
               <GeminiChatArea 
                 user={user}
                 settings={settings}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
               />
             ) : (
               <ChatArea 
                 user={user}
                 settings={settings}
                 interface={settings.interface}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
               />
             )}
           </Route>

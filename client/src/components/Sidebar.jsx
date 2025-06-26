@@ -3,10 +3,9 @@ import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizon
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings }) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose }) {
   const [conversations, setConversations] = useState([])
   const [currentChatId, setCurrentChatId] = useState(null)
-  const [isOpen, setIsOpen] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showDropdown, setShowDropdown] = useState(null)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -73,10 +72,13 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings }) 
       <motion.aside
         initial={false}
         animate={{
-          x: 0
+          x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="relative z-40 flex flex-col w-64 h-full bg-[#202123] hidden md:flex"
+        className="fixed md:relative z-40 flex flex-col w-64 h-full bg-[#202123] md:flex"
+        style={{
+          transform: `translateX(${isOpen ? '0%' : '-100%'})`
+        }}
       >
         {/* Header com botão fechar e nova conversa */}
         <div className="flex items-center justify-between p-3">
@@ -90,7 +92,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings }) 
             Nova conversa
           </button>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="p-2 hover:bg-gray-500/10 rounded-md text-white transition-colors"
             aria-label="Fechar sidebar"
           >

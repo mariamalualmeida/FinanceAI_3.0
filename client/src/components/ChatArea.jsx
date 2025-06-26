@@ -3,11 +3,10 @@ import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
 
-export default function ChatArea({ user, settings, interface: interfaceType }) {
+export default function ChatArea({ user, settings, interface: interfaceType, onToggleSidebar }) {
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(null)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Auto scroll para a última mensagem
@@ -193,7 +192,7 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
       <header className="relative z-10 flex items-center justify-center p-4 border-b border-white/20 bg-white dark:bg-[#343541]">
         <div className="absolute left-4 md:left-4">
           <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={onToggleSidebar}
             className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
             aria-label="Toggle sidebar"
           >
