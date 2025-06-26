@@ -1,12 +1,58 @@
-import { useState } from 'react'
-import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizontal, Edit, Trash2, Archive, Search } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizontal, Edit, Trash2, Archive, Search, Monitor, Zap } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
-export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNewChat, currentChatId, onSelectChat, conversations, onDeleteConversation }) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings }) {
+  const [conversations, setConversations] = useState([])
+  const [currentChatId, setCurrentChatId] = useState(null)
+  const [isOpen, setIsOpen] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showDropdown, setShowDropdown] = useState(null)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [tempUserName, setTempUserName] = useState(settings.userName || '')
+
+  // Load conversations
+  useEffect(() => {
+    loadConversations()
+  }, [])
+
+  const loadConversations = async () => {
+    try {
+      const response = await fetch('/api/conversations', { credentials: 'include' })
+      if (response.ok) {
+        const data = await response.json()
+        setConversations(data)
+      }
+    } catch (error) {
+      console.error('Error loading conversations:', error)
+    }
+  }
+
+  const onNewChat = () => {
+    setCurrentChatId(null)
+    window.location.reload() // Temporary solution
+  }
+
+  const onSelectChat = (chatId) => {
+    setCurrentChatId(chatId)
+    // Navigate to chat
+  }
+
+  const onDeleteConversation = async (conversationId) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+      if (response.ok) {
+        loadConversations()
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error)
+    }
+  }
 
   return (
     <>

@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react'
+import { Router, Route, Switch } from 'wouter'
 import Login from './components/Login'
-import SimpleSidebar from './components/SimpleSidebar'
-import SimpleChatArea from './components/SimpleChatArea'
+import Sidebar from './components/Sidebar'
+import ChatArea from './components/ChatArea'
+import AdminPanel from './components/AdminPanel'
+import { Toaster } from './components/ui/toaster'
 
 export default function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [settings, setSettings] = useState({
+    theme: 'light',
+    interface: 'chatgpt', // 'chatgpt' or 'gemini'
+    userName: ''
+  })
 
-  // Check authentication on app load
+  // Check authentication and load settings on app load
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -26,8 +33,22 @@ export default function App() {
       }
     }
 
+    const loadSettings = () => {
+      const saved = localStorage.getItem('financeai-settings')
+      if (saved) {
+        setSettings({ ...settings, ...JSON.parse(saved) })
+      }
+    }
+
     checkAuth()
+    loadSettings()
   }, [])
+
+  const updateSettings = (newSettings) => {
+    const updated = { ...settings, ...newSettings }
+    setSettings(updated)
+    localStorage.setItem('financeai-settings', JSON.stringify(updated))
+  }
 
   const handleLogin = (userData) => {
     setUser(userData)
@@ -45,15 +66,11 @@ export default function App() {
     }
   }
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
-
   // Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-gray-600">Carregando...</div>
+      <div className={`flex items-center justify-center h-screen ${settings.theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     )
   }
@@ -65,20 +82,28 @@ export default function App() {
 
   // Main app
   return (
-    <div className="flex h-screen bg-white">
-      <SimpleSidebar 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)}
-        user={user}
-        onLogout={handleLogout}
-      />
-      
-      <div className="flex-1 flex flex-col">
-        <SimpleChatArea 
-          toggleSidebar={toggleSidebar} 
-          user={user}
-        />
+    <Router>
+      <div className={`h-screen flex ${settings.theme === 'dark' ? 'dark' : ''}`}>
+        <Switch>
+          <Route path="/admin">
+            <AdminPanel user={user} onLogout={handleLogout} />
+          </Route>
+          <Route>
+            <Sidebar 
+              user={user} 
+              onLogout={handleLogout}
+              settings={settings}
+              onUpdateSettings={updateSettings}
+            />
+            <ChatArea 
+              user={user}
+              settings={settings}
+              interface={settings.interface}
+            />
+          </Route>
+        </Switch>
+        <Toaster />
       </div>
-    </div>
+    </Router>
   )
 }
