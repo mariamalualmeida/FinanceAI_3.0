@@ -36,78 +36,77 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   };
 
   return (
-    <div className="bg-card border-b border-border px-4 py-3 flex items-center justify-between min-h-[64px]">
-      <div className="flex items-center space-x-3">
+    <div className="bg-card border-b border-border px-3 py-2 flex items-center justify-between min-h-[56px] sticky top-0 z-30 backdrop-blur-sm bg-card/95">
+      <div className="flex items-center space-x-2 min-w-0 flex-1">
         <Button 
           variant="ghost" 
           size="icon" 
-          className="lg:hidden shrink-0"
+          className="lg:hidden shrink-0 h-9 w-9"
           onClick={onMenuClick}
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-4 w-4" />
         </Button>
-        <h2 className="text-lg font-semibold text-foreground truncate">
-          Análise Financeira Conversacional
-        </h2>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-base font-semibold text-foreground truncate sm:text-lg">
+            <span className="hidden sm:inline">Análise Financeira Conversacional</span>
+            <span className="sm:hidden">FinanceAI</span>
+          </h2>
+        </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-1 shrink-0">
         {/* Theme Toggle */}
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleMode}
-          title={theme.mode === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+          className="h-9 w-9"
+          title={theme.mode === 'light' ? 'Tema escuro' : 'Tema claro'}
         >
           {theme.mode === 'light' ? (
-            <Moon className="h-5 w-5" />
+            <Moon className="h-4 w-4" />
           ) : (
-            <Sun className="h-5 w-5" />
+            <Sun className="h-4 w-4" />
           )}
         </Button>
 
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" title="Notificações" className="relative">
-          <Bell className="h-5 w-5" />
-          <Badge 
-            variant="destructive" 
-            className="absolute -top-1 -right-1 w-2 h-2 p-0 text-xs"
-          >
-            <span className="sr-only">Nova notificação</span>
-          </Badge>
-        </Button>
-
-        {/* User Menu */}
+        {/* User Menu - Mobile optimized with avatar */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
+              <div className="h-7 w-7 bg-primary rounded-full flex items-center justify-center">
+                <span className="text-xs text-primary-foreground font-medium">
+                  {user?.firstName?.[0] || user?.username?.[0] || "U"}
+                </span>
+              </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="px-3 py-2">
-              <p className="font-medium text-foreground">
+          <DropdownMenuContent align="end" className="w-64 mr-2">
+            <div className="px-3 py-3 border-b border-border">
+              <p className="font-medium text-foreground text-sm">
                 {user?.firstName && user?.lastName 
                   ? `${user.firstName} ${user.lastName}`
                   : user?.username || "Usuário"}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-1">
                 {user?.email || "Consultor Financeiro"}
               </p>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="h-4 w-4 mr-2" />
-              Perfil
+            <DropdownMenuItem className="py-3 focus:bg-muted">
+              <User className="h-4 w-4 mr-3" />
+              <span className="text-sm">Perfil</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="h-4 w-4 mr-2" />
-              Configurações
+            <DropdownMenuItem className="py-3 focus:bg-muted">
+              <Settings className="h-4 w-4 mr-3" />
+              <span className="text-sm">Configurações</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
+            <DropdownMenuItem 
+              onClick={handleLogout} 
+              className="text-red-600 py-3 focus:bg-red-50 focus:text-red-700"
+            >
+              <LogOut className="h-4 w-4 mr-3" />
+              <span className="text-sm">Sair</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
