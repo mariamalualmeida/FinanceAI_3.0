@@ -39,6 +39,12 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
   }
 
   const onDeleteConversation = async (conversationId) => {
+    // Validar se o ID é válido
+    if (!conversationId || conversationId === null || conversationId === undefined) {
+      console.warn('Tentativa de excluir conversa com ID inválido:', conversationId)
+      return
+    }
+
     try {
       const response = await fetch(`/api/conversations/${conversationId}`, {
         method: 'DELETE',
@@ -46,6 +52,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
       })
       if (response.ok) {
         loadConversations()
+      } else {
+        console.error('Erro na resposta do servidor:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error deleting conversation:', error)
@@ -184,7 +192,9 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                       <button 
                         key={`delete-${conv.id}-${index}`}
                         onClick={() => {
-                          onDeleteConversation(conv.id)
+                          if (conv.id && confirm('Tem certeza que deseja excluir esta conversa?')) {
+                            onDeleteConversation(conv.id)
+                          }
                           setShowDropdown(null)
                         }}
                         className="w-full text-left p-2 hover:bg-red-600 text-red-400 hover:text-white transition-colors rounded text-sm flex items-center gap-2"
