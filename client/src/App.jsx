@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from '@/components/ui/toaster'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from './hooks/use-toast'
 import SimpleSidebar from './components/SimpleSidebar'
 import SimpleChatArea from './components/SimpleChatArea'
 import Login from './components/Login'
@@ -80,7 +79,7 @@ function AppContent() {
         <SimpleChatArea toggleSidebar={toggleSidebar} toast={toast} />
       </div>
       
-      <Toaster />
+      {/* Toaster placeholder */}
     </div>
   )
 }
