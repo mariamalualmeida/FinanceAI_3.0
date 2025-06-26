@@ -3,6 +3,7 @@ import { Router, Route, Switch } from 'wouter'
 import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
+import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
 import { Toaster } from './components/ui/toaster'
 
@@ -95,11 +96,18 @@ export default function App() {
               settings={settings}
               onUpdateSettings={updateSettings}
             />
-            <ChatArea 
-              user={user}
-              settings={settings}
-              interface={settings.interface}
-            />
+            {settings.interface === 'gemini' ? (
+              <GeminiChatArea 
+                user={user}
+                settings={settings}
+              />
+            ) : (
+              <ChatArea 
+                user={user}
+                settings={settings}
+                interface={settings.interface}
+              />
+            )}
           </Route>
         </Switch>
         <Toaster />

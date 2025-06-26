@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import TypingIndicator from './TypingIndicator'
 import { File } from 'lucide-react'
 
-export default function MessageBubble({ message, isTyping = false }) {
+export default function MessageBubble({ message, isTyping = false, isGemini = false }) {
   const isUser = message.sender === 'user'
   
   // Log para debug
@@ -30,10 +30,12 @@ export default function MessageBubble({ message, isTyping = false }) {
         
         {/* Avatar - apenas para IA */}
         {!isUser && (
-          <div className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center text-white text-sm font-bold mt-1 ${
-            isTyping ? 'bg-gray-400 animate-pulse' : 'bg-[#ab68ff]'
+          <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center text-white text-sm font-bold mt-1 ${
+            isGemini 
+              ? 'bg-gradient-to-r from-blue-500 to-purple-600 rounded-full'
+              : `rounded-sm ${isTyping ? 'bg-gray-400 animate-pulse' : 'bg-[#ab68ff]'}`
           }`}>
-            AI
+            {isGemini ? 'G' : 'AI'}
           </div>
         )}
 
