@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { formatRelativeTime, truncateText } from "@/lib/authUtils";
-import { Menu, Settings, MessageSquare, FileText, Bot, X, Plus } from "lucide-react";
+import { Menu, Settings, MessageSquare, FileText, X, Plus, Archive, Trash2, Search } from "lucide-react";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -59,12 +59,9 @@ export function Sidebar({ onClose }: SidebarProps) {
     <>
       {/* Mobile Sidebar - Full screen overlay */}
       <div className="fixed inset-0 z-50 bg-background flex flex-col lg:relative lg:w-80 lg:bg-card lg:border-r lg:border-border">
-        {/* Header - Mobile optimized */}
+        {/* Header - Clean and minimal */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-card/95 backdrop-blur-sm shrink-0">
           <div className="flex items-center space-x-3 min-w-0">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
-              <Bot className="h-6 w-6 text-primary-foreground" />
-            </div>
             <div className="min-w-0">
               <h1 className="text-lg font-semibold text-foreground truncate">FinanceAI</h1>
               <p className="text-xs text-muted-foreground truncate">Análise Inteligente</p>
