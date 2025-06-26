@@ -90,9 +90,20 @@ export function useChat() {
     [createConversationMutation]
   );
 
+  const setCurrentConversation = useCallback(
+    (id: string) => {
+      const conversation = conversations.find(c => c.id === id);
+      if (conversation) {
+        setCurrentConversationState(conversation);
+        setCurrentConversationId(id);
+      }
+    },
+    [conversations]
+  );
+
   const selectConversation = useCallback((id: string) => {
-    setCurrentConversationId(id);
-  }, []);
+    setCurrentConversation(id);
+  }, [setCurrentConversation]);
 
   const sendMessage = useCallback(
     async (content: string, context?: any) => {
@@ -137,13 +148,14 @@ export function useChat() {
 
   return {
     conversations,
-    currentConversation,
+    currentConversation: currentConversationState || currentConversation,
     messages,
     isLoading: isConversationsLoading || isMessagesLoading,
     isSendingMessage: sendMessageMutation.isPending,
     isUploadingFile: uploadFileMutation.isPending,
     createConversation,
     selectConversation,
+    setCurrentConversation,
     sendMessage,
     uploadFile,
   };
