@@ -11,6 +11,26 @@ export default function App() {
   })
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [currentChatId, setCurrentChatId] = useState(null)
+  const [conversations, setConversations] = useState([
+    {
+      id: 1,
+      title: 'Análise Financeira Pessoal',
+      lastMessage: 'Baseado nos seus dados...',
+      timestamp: new Date()
+    },
+    {
+      id: 2,
+      title: 'Score de Crédito',
+      lastMessage: 'Seu score atual é...',
+      timestamp: new Date()
+    },
+    {
+      id: 3,
+      title: 'Planejamento de Investimentos',
+      lastMessage: 'Para diversificar...',
+      timestamp: new Date()
+    }
+  ])
   const { toasts, removeToast, success, error, info } = useToast()
 
   // Persist dark mode preference
@@ -55,6 +75,14 @@ export default function App() {
 
   const handleSelectChat = (chatId) => {
     setCurrentChatId(chatId)
+  }
+
+  const handleDeleteConversation = (chatId) => {
+    setConversations(prev => prev.filter(conv => conv.id !== chatId))
+    if (currentChatId === chatId) {
+      setCurrentChatId(null)
+    }
+    success('Conversa excluída')
   }
 
   return (

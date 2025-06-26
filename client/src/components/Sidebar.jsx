@@ -3,15 +3,10 @@ import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizon
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
-export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNewChat, currentChatId, onSelectChat }) {
+export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNewChat, currentChatId, onSelectChat, conversations, onDeleteConversation }) {
   const [showSearch, setShowSearch] = useState(false)
-  const [conversations] = useState([
-    { id: 1, title: 'Análise Financeira - Relatório Q3', lastMessage: 'Baseado nos dados...' },
-    { id: 2, title: 'Avaliação de Crédito Cliente X', lastMessage: 'Score calculado: 750' },
-    { id: 3, title: 'Detecção de Fraudes', lastMessage: 'Padrões suspeitos identificados' },
-    { id: 4, title: 'Consultoria Investimentos', lastMessage: 'Recomendo diversificar...' },
-    { id: 5, title: 'Análise de Risco Portfolio', lastMessage: 'Volatilidade moderada' },
-  ])
+  const [showDropdown, setShowDropdown] = useState(null)
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
 
   return (
     <>
@@ -47,7 +42,7 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
               onNewChat?.()
               setIsOpen(false)
             }}
-            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md border border-white/20 hover:bg-gray-500/10 text-white transition-colors text-sm"
+            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-500/10 text-white transition-colors text-sm"
           >
             <Plus size={16} />
             Nova conversa
