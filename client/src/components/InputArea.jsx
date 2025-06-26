@@ -106,7 +106,7 @@ export default function InputArea({ onSend, onFileUpload }) {
         )}
 
         {/* Container do input */}
-        <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-black/10 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
+        <div className="flex items-end gap-3 p-3 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
           
           {/* Input de arquivo oculto */}
           <input
