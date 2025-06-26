@@ -22,7 +22,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
     const userMessage = {
       id: Date.now(),
       sender: 'user',
-      text: text.trim(),
+      text: text, // Preservar quebras de linha
       files: files.map(f => ({ name: f.name, size: f.size, type: f.type })),
       timestamp: new Date()
     }
@@ -36,7 +36,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
         setUploadProgress(0)
         const formData = new FormData()
         files.forEach(file => formData.append('files', file))
-        if (text.trim()) formData.append('message', text.trim())
+        if (text.trim()) formData.append('message', text)
 
         // Simular progresso de upload
         const progressInterval = setInterval(() => {
