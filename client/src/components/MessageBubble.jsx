@@ -68,6 +68,16 @@ export default function MessageBubble({ message, isTyping = false }) {
               <div className="prose prose-sm max-w-none dark:prose-invert">
                 <ReactMarkdown>{message.text}</ReactMarkdown>
               </div>
+
+              {/* Timestamp */}
+              {!isTyping && (
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {message.timestamp?.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>

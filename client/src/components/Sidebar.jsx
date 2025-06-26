@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizontal, Edit, Trash2, Archive } from 'lucide-react'
+import { Sun, Moon, Plus, Settings, User, HelpCircle, MessageSquare, MoreHorizontal, Edit, Trash2, Archive, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import SearchModal from './SearchModal'
 
 export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNewChat, currentChatId, onSelectChat }) {
+  const [showSearch, setShowSearch] = useState(false)
   const [conversations] = useState([
     { id: 1, title: 'Análise Financeira - Relatório Q3', lastMessage: 'Baseado nos dados...' },
     { id: 2, title: 'Avaliação de Crédito Cliente X', lastMessage: 'Score calculado: 750' },
@@ -58,6 +60,17 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12"/>
             </svg>
+          </button>
+        </div>
+
+        {/* Buscar conversas */}
+        <div className="px-2 pb-2">
+          <button
+            onClick={() => setShowSearch(true)}
+            className="flex items-center gap-3 w-full p-3 rounded-md text-gray-300 hover:bg-gray-500/10 transition-colors text-sm"
+          >
+            <Search size={16} />
+            Buscar conversas...
           </button>
         </div>
 
@@ -120,9 +133,27 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen, onNe
               {darkMode ? <Sun size={16} /> : <Moon size={16} />}
               {darkMode ? 'Modo claro' : 'Modo escuro'}
             </button>
+            <button className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-500/10 text-gray-300 transition-colors text-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Interface Gemini
+            </button>
           </div>
         </div>
       </motion.aside>
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={showSearch}
+        onClose={() => setShowSearch(false)}
+        conversations={conversations}
+        onSelectChat={(chatId) => {
+          onSelectChat(chatId)
+          setIsOpen(false)
+        }}
+      />
     </>
   )
 }

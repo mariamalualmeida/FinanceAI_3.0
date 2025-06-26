@@ -3,7 +3,7 @@ import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
 
-export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, currentChatId }) {
+export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, currentChatId, toast }) {
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(null)
@@ -62,6 +62,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
             }
             setMessages(prev => [...prev, aiMessage])
             setIsTyping(false)
+            toast?.success('Análise financeira concluída!')
           }, 500)
         }, 2000)
       } else {
@@ -81,6 +82,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
       console.error('Erro ao processar mensagem:', error)
       setIsTyping(false)
       setUploadProgress(null)
+      toast?.error('Erro ao processar sua mensagem. Tente novamente.')
     }
   }
 
@@ -106,7 +108,23 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
             <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <div className="absolute right-4">
+        <div className="absolute right-4 flex items-center gap-2">
+          <button 
+            onClick={() => {
+              if (messages.length > 0) {
+                const chatContent = messages.map(m => `${m.sender}: ${m.text}`).join('\n\n')
+                navigator.clipboard.writeText(chatContent)
+                toast?.success('Conversa copiada para área de transferência')
+              }
+            }}
+            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
+            title="Copiar conversa"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
           <button className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="3"/>
@@ -180,7 +198,7 @@ export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen, curre
 
       {/* Área de input */}
       <footer className="border-t border-white/20 p-4">
-        <InputArea onSend={sendMessage} />
+        <InputArea onSend={sendMessage} toast={toast} />
       </footer>
     </main>
   )
