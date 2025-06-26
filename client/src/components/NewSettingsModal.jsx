@@ -213,7 +213,11 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
 
   useEffect(() => {
     // Verificar se o usuário é admin
-    setIsAdmin(user?.role === 'admin');
+    console.log('User:', user);
+    console.log('User role:', user?.role);
+    const adminStatus = user?.role === 'admin';
+    console.log('Is admin:', adminStatus);
+    setIsAdmin(adminStatus);
   }, [user]);
 
   const updateSetting = (section, key, value) => {
@@ -273,7 +277,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-4"
         onClick={onClose}
       >
         <motion.div
@@ -281,7 +285,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -290,6 +294,11 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Configurações
               </h2>
+              {isAdmin && (
+                <span className="px-2 py-1 text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded-full">
+                  Admin
+                </span>
+              )}
             </div>
             <button
               onClick={onClose}
@@ -300,7 +309,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
             
             {/* Perfil do Usuário */}
             <ExpandableSection title="Perfil do Usuário" icon={User} defaultOpen={true}>
@@ -775,21 +784,21 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-            <div className="flex items-center gap-3">
+          <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 md:p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div className="flex items-center justify-center sm:justify-start">
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-sm"
               >
                 <RotateCcw size={16} />
                 Restaurar Padrões
               </button>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 justify-center sm:justify-end">
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-sm"
               >
                 Cancelar
               </button>
@@ -797,10 +806,11 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
                 onClick={handleSave}
                 data-save-button
                 disabled={!hasChanges}
-                className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 md:px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm"
               >
                 <Save size={16} />
-                Salvar Configurações
+                <span className="hidden sm:inline">Salvar Configurações</span>
+                <span className="sm:hidden">Salvar</span>
               </button>
             </div>
           </div>
