@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import bcrypt from "bcrypt";
 import session from "express-session";
@@ -17,6 +17,13 @@ import {
   insertUserSettingsSchema,
   type User 
 } from "@shared/schema";
+
+// Extend session data interface
+declare module 'express-session' {
+  interface SessionData {
+    userId?: number;
+  }
+}
 
 // Configure multer for file uploads
 const upload = multer({
@@ -38,7 +45,7 @@ const upload = multer({
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Tipo de arquivo não suportado'), false);
+      cb(null, false);
     }
   }
 });
@@ -81,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      req.session.userId = user.id;
+      (req.session as any).userId = user.id;
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
