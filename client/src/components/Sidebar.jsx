@@ -9,8 +9,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
   const [showSearch, setShowSearch] = useState(false)
   const [showDropdown, setShowDropdown] = useState(null)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
-  const [tempUserName, setTempUserName] = useState(settings.userName || '')
+
 
   // Load conversations
   useEffect(() => {
@@ -232,7 +231,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                 >
                   <button 
                     onClick={() => {
-                      onOpenSettings?.() || setShowSettings(true)
+                      onOpenSettings?.()
                       setShowProfileMenu(false)
                     }}
                     className="flex items-center gap-3 w-full p-3 hover:bg-gray-600 text-gray-300 transition-colors text-sm"

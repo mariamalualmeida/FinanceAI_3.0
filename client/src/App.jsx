@@ -4,6 +4,7 @@ import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
+import EnhancedChatArea from './components/EnhancedChatArea'
 import AdminPanel from './components/AdminPanel'
 import SettingsModal from './components/SettingsModal'
 import { Toaster } from './components/ui/toaster'
@@ -108,20 +109,12 @@ export default function App() {
               onClose={() => setSidebarOpen(false)}
               onOpenSettings={() => setShowSettings(true)}
             />
-            {settings.interface === 'gemini' ? (
-              <GeminiChatArea 
-                user={user}
-                settings={{...settings, onToggleTheme: toggleTheme}}
-                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-              />
-            ) : (
-              <ChatArea 
-                user={user}
-                settings={{...settings, onToggleTheme: toggleTheme}}
-                interface={settings.interface}
-                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-              />
-            )}
+            <EnhancedChatArea 
+              user={user}
+              settings={{...settings, onToggleTheme: toggleTheme}}
+              interface={settings.interface}
+              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            />
           </Route>
         </Switch>
         <Toaster />
