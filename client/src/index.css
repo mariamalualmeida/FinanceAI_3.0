@@ -114,3 +114,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Esconder barra de rolagem */
+.scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+  /* Chrome, Safari, Edge */
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
