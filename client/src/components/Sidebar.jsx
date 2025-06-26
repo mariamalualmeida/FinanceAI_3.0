@@ -33,17 +33,14 @@ export default function Sidebar({ darkMode, setDarkMode, isOpen, setIsOpen }) {
           x: isOpen ? 0 : '-100%'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className={`
-          fixed md:relative z-50 flex flex-col 
-          w-full md:w-64 h-full
-          bg-[#202123] 
-          md:translate-x-0 md:z-auto
-          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
+        className="fixed md:relative z-50 flex flex-col w-full md:w-64 h-full bg-[#202123] md:translate-x-0 md:z-auto"
       >
         {/* Header com botão Nova Conversa */}
         <div className="p-2">
-          <button className="flex items-center gap-3 w-full p-3 rounded-md border border-white/20 hover:bg-gray-500/10 text-white transition-colors text-sm">
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 w-full p-3 rounded-md border border-white/20 hover:bg-gray-500/10 text-white transition-colors text-sm"
+          >
             <Plus size={16} />
             Nova conversa
           </button>

@@ -3,7 +3,7 @@ import { Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import InputArea from './InputArea'
 
-export default function ChatArea({ darkMode, toggleSidebar }) {
+export default function ChatArea({ darkMode, toggleSidebar, isSidebarOpen }) {
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef(null)
@@ -48,7 +48,7 @@ export default function ChatArea({ darkMode, toggleSidebar }) {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="md:hidden p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
+            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
           >
             <Menu size={20} />
           </button>
