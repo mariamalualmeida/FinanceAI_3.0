@@ -195,6 +195,60 @@ export default function InputArea({ onSend, onFileUpload }) {
           </div>
         )}
 
+        {/* Preview do áudio gravado */}
+        {audioBlob && (
+          <div className="mb-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Áudio Gravado</span>
+              </div>
+              <button
+                onClick={clearAudio}
+                className="text-gray-500 hover:text-red-500 transition-colors"
+                title="Remover áudio"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3 mb-3">
+              <button
+                onClick={playAudio}
+                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors"
+                title={isPlayingAudio ? 'Pausar áudio' : 'Reproduzir áudio'}
+              >
+                {isPlayingAudio ? <Pause size={16} /> : <Play size={16} />}
+              </button>
+              
+              <div className="flex-1 text-sm text-gray-600 dark:text-gray-400">
+                Clique no botão para ouvir sua gravação
+              </div>
+            </div>
+
+            {isTranscribing && (
+              <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 mb-2">
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                Transcrevendo áudio...
+              </div>
+            )}
+
+            {transcription && (
+              <div className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border">
+                <div className="text-xs text-gray-500 mb-1">Transcrição (editável):</div>
+                <div className="italic">"{transcription}"</div>
+              </div>
+            )}
+
+            <audio
+              ref={audioRef}
+              src={audioUrl}
+              onEnded={() => setIsPlayingAudio(false)}
+              className="hidden"
+            />
+          </div>
+        )}
+
         {/* Container do input */}
         <div className="relative h-32 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all">
           
@@ -266,10 +320,10 @@ export default function InputArea({ onSend, onFileUpload }) {
             <motion.button
               type="button"
               onClick={handleSend}
-              disabled={!text.trim() && files.length === 0}
+              disabled={!text.trim() && files.length === 0 && !audioBlob}
               whileTap={{ scale: 0.95 }}
               className={`p-1.5 rounded-lg transition-colors ${
-                text.trim() || files.length > 0
+                text.trim() || files.length > 0 || audioBlob
                   ? 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                   : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
