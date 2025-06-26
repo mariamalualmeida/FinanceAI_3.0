@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
 import { storage } from './storage';
+import { multiLlmOrchestrator } from './multi-llm-orchestrator';
 import type { InsertFinancialAnalysis, InsertTransaction } from '@shared/schema';
 
 interface ExtractedTransaction {
@@ -29,12 +29,9 @@ interface FinancialAnalysisResult {
 }
 
 export class FinancialAnalyzer {
-  private openai: OpenAI;
-
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    // Inicializar o orquestrador Multi-LLM
+    multiLlmOrchestrator.initialize().catch(console.error);
   }
 
   async analyzeFinancialDocument(
