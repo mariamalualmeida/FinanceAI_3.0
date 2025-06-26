@@ -155,7 +155,7 @@ class MultiLLMOrchestrator {
     }
   }
 
-  async processRequest(input: string, context?: string): Promise<string> {
+  async processRequest(input: string, context?: string | null): Promise<string> {
     if (!this.strategy) {
       throw new Error('No strategy configured');
     }
@@ -172,7 +172,7 @@ class MultiLLMOrchestrator {
     }
   }
 
-  private async economicMode(input: string, context?: string): Promise<string> {
+  private async economicMode(input: string, context?: string | null): Promise<string> {
     // Modo econômico: Uma LLM principal + backup
     const primaryConfig = await storage.getPrimaryLlmConfig();
     if (!primaryConfig) {
@@ -200,7 +200,7 @@ class MultiLLMOrchestrator {
     }
   }
 
-  private async balancedMode(input: string, context?: string): Promise<string> {
+  private async balancedMode(input: string, context?: string | null): Promise<string> {
     // Modo balanceado: Roteamento inteligente + backup
     if (this.strategy?.enableSubjectRouting) {
       const routedProvider = this.routeBySubject(input);
@@ -222,7 +222,7 @@ class MultiLLMOrchestrator {
     return this.economicMode(input, context);
   }
 
-  private async premiumMode(input: string, context?: string): Promise<string> {
+  private async premiumMode(input: string, context?: string | null): Promise<string> {
     // Modo premium: Sistema completo com validação
     const initialResponse = await this.balancedMode(input, context);
 
@@ -387,7 +387,7 @@ class MultiLLMOrchestrator {
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
       try {
-        currentResult = await this.processRequest(prompt, currentResult);
+        currentResult = await this.processRequest(prompt, currentResult || '');
         console.log(`Chain step ${i + 1} completed`);
       } catch (error) {
         console.error(`Chain step ${i + 1} failed:`, error);
