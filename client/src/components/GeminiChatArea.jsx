@@ -106,13 +106,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   }
 
   return (
-    <main className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Gemini Header - Estilo minimalista */}
-      <header className="flex items-center justify-between py-3 px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900">
+      {/* Gemini Header - Fundo uniforme */}
+      <header className="flex items-center justify-between py-3 px-6 bg-white dark:bg-gray-900">
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleSidebar}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
             aria-label="Toggle sidebar"
           >
             <Menu size={20} />
@@ -128,10 +128,10 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         <div className="w-20" />
       </header>
 
-      {/* Área de conteúdo principal - Layout Gemini autêntico */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Área de conteúdo principal - Fundo uniforme */}
+      <div className="flex-1 overflow-y-auto relative">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center px-6 py-12">
+          <div className="h-full flex flex-col items-center justify-center px-6">
             {/* Logo central */}
             <div className="mb-8">
               <svg width="64" height="64" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
@@ -150,7 +150,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
             </div>
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
+          <div className="max-w-4xl mx-auto px-6 py-8 space-y-8 pb-32">
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} isGemini={true} />
             ))}
@@ -193,20 +193,28 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
           </div>
         )}
         <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input Area - Estilo Gemini limpo sem linha separadora */}
-      <div className="p-6 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-3xl mx-auto">
-          <form onSubmit={handleSubmit} className="relative">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm focus-within:shadow-md transition-all">
-              <div className="flex items-end">
-                <div className="flex-1 relative">
+        
+        {/* Input Area flutuante - Posicionado como overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-gray-900">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="relative">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-lg focus-within:shadow-xl transition-all">
+                <div className="flex items-center px-4 py-3">
+                  {/* Botão de anexar arquivos - posição correta */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mr-2"
+                  >
+                    <Paperclip size={20} />
+                  </button>
+                  
+                  {/* Textarea sem bordas */}
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder={`Escreva uma mensagem para o Gemini...`}
-                    className="w-full min-h-[52px] max-h-32 px-4 py-4 pr-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none"
+                    placeholder="Peça ao Gemini"
+                    className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none min-h-[24px] max-h-32 py-1"
                     rows="1"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -215,6 +223,17 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                       }
                     }}
                   />
+                  
+                  {/* Botão de envio */}
+                  <button
+                    type="submit"
+                    disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ml-2"
+                  >
+                    <Send size={20} />
+                  </button>
+                  
+                  {/* Input de arquivo oculto */}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -223,24 +242,10 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute right-12 top-1/2 -translate-y-1/2 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                  >
-                    <Paperclip size={18} />
-                  </button>
                 </div>
-                <button
-                  type="submit"
-                  disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                  className="p-3 m-1 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <Send size={18} />
-                </button>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </main>
