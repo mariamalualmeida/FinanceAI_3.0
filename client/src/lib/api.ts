@@ -10,21 +10,21 @@ import type {
 // Authentication API
 export const authAPI = {
   login: async (username: string, password: string) => {
-    const response = await apiRequest("POST", "/api/auth/login", { username, password });
+    const response = await apiRequest("/api/auth/login", "POST", { username, password });
     return response.json();
   },
 
   register: async (userData: any) => {
-    const response = await apiRequest("POST", "/api/auth/register", userData);
+    const response = await apiRequest("/api/auth/register", "POST", userData);
     return response.json();
   },
 
   logout: async () => {
-    await apiRequest("POST", "/api/auth/logout");
+    await apiRequest("/api/auth/logout", "POST");
   },
 
   getMe: async () => {
-    const response = await apiRequest("GET", "/api/auth/me");
+    const response = await apiRequest("/api/auth/me", "GET");
     return response.json();
   },
 };
@@ -32,12 +32,12 @@ export const authAPI = {
 // Conversations API
 export const conversationAPI = {
   getAll: async (): Promise<Conversation[]> => {
-    const response = await apiRequest("GET", "/api/conversations");
+    const response = await apiRequest("/api/conversations", "GET");
     return response.json();
   },
 
   create: async (title?: string): Promise<Conversation> => {
-    const response = await apiRequest("POST", "/api/conversations", {
+    const response = await apiRequest("/api/conversations", "POST", {
       title: title || "Nova Conversa",
       status: "active",
     });
@@ -45,7 +45,7 @@ export const conversationAPI = {
   },
 
   getMessages: async (conversationId: string): Promise<Message[]> => {
-    const response = await apiRequest("GET", `/api/conversations/${conversationId}/messages`);
+    const response = await apiRequest(`/api/conversations/${conversationId}/messages`, "GET");
     return response.json();
   },
 };
