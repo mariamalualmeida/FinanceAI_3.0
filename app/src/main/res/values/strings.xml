@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinanceAI</string>
+    <string name="app_subtitle">Análise Financeira Inteligente</string>
+    <string name="loading">Carregando...</string>
+    <string name="connection_error">Erro de conexão. Verifique sua internet.</string>
+    <string name="file_upload_error">Erro ao fazer upload do arquivo</string>
+    <string name="reload">Recarregar</string>
+</resources>
