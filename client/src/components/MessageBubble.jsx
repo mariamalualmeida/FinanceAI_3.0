@@ -33,7 +33,13 @@ export default function MessageBubble({ message, isTyping = false }) {
           {isTyping ? (
             <TypingIndicator />
           ) : (
-            <div className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : 'max-w-full'}`}>
+            <div 
+              className={`text-gray-900 dark:text-gray-100 ${isUser ? 'max-w-2xl' : 'max-w-full'}`}
+              style={{
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              }}
+            >
               {/* Arquivos anexados */}
               {message.files && message.files.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">
@@ -50,10 +56,32 @@ export default function MessageBubble({ message, isTyping = false }) {
               )}
               
               {/* Texto da mensagem */}
-              <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap break-words ${
-                isUser ? 'text-right' : 'text-left'
-              }`}>
-                <ReactMarkdown>{message.text}</ReactMarkdown>
+              <div 
+                className={`prose prose-sm max-w-none dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed break-text ${
+                  isUser ? 'text-right' : 'text-left'
+                }`}
+              >
+                <ReactMarkdown 
+                  components={{
+                    p: ({ children }) => (
+                      <p className="break-text m-0">
+                        {children}
+                      </p>
+                    ),
+                    div: ({ children }) => (
+                      <div className="break-text">
+                        {children}
+                      </div>
+                    ),
+                    span: ({ children }) => (
+                      <span className="break-text">
+                        {children}
+                      </span>
+                    )
+                  }}
+                >
+                  {message.text}
+                </ReactMarkdown>
               </div>
 
               {/* Timestamp */}
