@@ -15,7 +15,7 @@ export const users = pgTable("users", {
 
 // Tabela de conversas
 export const conversations = pgTable("conversations", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: integer("user_id").references(() => users.id).notNull(),
   title: varchar("title", { length: 200 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -25,7 +25,7 @@ export const conversations = pgTable("conversations", {
 // Tabela de mensagens
 export const messages = pgTable("messages", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  conversationId: integer("conversation_id").references(() => conversations.id).notNull(),
+  conversationId: uuid("conversation_id").references(() => conversations.id).notNull(),
   sender: varchar("sender", { length: 20 }).notNull(), // 'user' ou 'assistant'
   content: text("content").notNull(),
   metadata: jsonb("metadata"), // Para arquivos anexados, etc.
@@ -36,7 +36,7 @@ export const messages = pgTable("messages", {
 export const fileUploads = pgTable("file_uploads", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  conversationId: integer("conversation_id").references(() => conversations.id),
+  conversationId: uuid("conversation_id").references(() => conversations.id),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   originalName: varchar("original_name", { length: 255 }).notNull(),
   fileSize: integer("file_size").notNull(),

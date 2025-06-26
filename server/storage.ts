@@ -25,15 +25,15 @@ export interface IStorage {
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
 
   // Conversation operations
-  getConversation(id: number): Promise<Conversation | undefined>;
+  getConversation(id: string): Promise<Conversation | undefined>;
   getConversationsByUser(userId: number): Promise<Conversation[]>;
   createConversation(conversation: InsertConversation): Promise<Conversation>;
-  updateConversation(id: number, updates: Partial<InsertConversation>): Promise<Conversation>;
-  deleteConversation(id: number): Promise<void>;
+  updateConversation(id: string, updates: Partial<InsertConversation>): Promise<Conversation>;
+  deleteConversation(id: string): Promise<void>;
 
   // Message operations
   getMessage(id: number): Promise<Message | undefined>;
-  getMessagesByConversation(conversationId: number): Promise<Message[]>;
+  getMessagesByConversation(conversationId: string): Promise<Message[]>;
   createMessage(message: InsertMessage): Promise<Message>;
   deleteMessage(id: number): Promise<void>;
 
@@ -131,7 +131,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Conversation operations
-  async getConversation(id: number): Promise<Conversation | undefined> {
+  async getConversation(id: string): Promise<Conversation | undefined> {
     const [conversation] = await db.select().from(conversations).where(eq(conversations.id, id));
     return conversation;
   }
@@ -149,7 +149,7 @@ export class DatabaseStorage implements IStorage {
     return newConversation;
   }
 
-  async updateConversation(id: number, updates: Partial<InsertConversation>): Promise<Conversation> {
+  async updateConversation(id: string, updates: Partial<InsertConversation>): Promise<Conversation> {
     const [updatedConversation] = await db
       .update(conversations)
       .set({ ...updates, updatedAt: new Date() })
@@ -158,7 +158,7 @@ export class DatabaseStorage implements IStorage {
     return updatedConversation;
   }
 
-  async deleteConversation(id: number): Promise<void> {
+  async deleteConversation(id: string): Promise<void> {
     await db.delete(conversations).where(eq(conversations.id, id));
   }
 
@@ -168,7 +168,7 @@ export class DatabaseStorage implements IStorage {
     return message;
   }
 
-  async getMessagesByConversation(conversationId: number): Promise<Message[]> {
+  async getMessagesByConversation(conversationId: string): Promise<Message[]> {
     return await db
       .select()
       .from(messages)

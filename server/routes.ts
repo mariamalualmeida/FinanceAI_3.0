@@ -174,8 +174,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const conversationId = parseInt(req.params.id);
-      if (isNaN(conversationId)) {
+      const conversationId = req.params.id;
+      if (!conversationId || conversationId === 'null' || conversationId === 'undefined') {
         return res.status(400).json({ message: 'Invalid conversation ID' });
       }
       
