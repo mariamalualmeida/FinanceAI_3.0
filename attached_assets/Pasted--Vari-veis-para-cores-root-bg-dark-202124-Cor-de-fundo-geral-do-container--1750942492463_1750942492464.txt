@@ -1,0 +1,331 @@
+/* Variáveis para cores */
+:root {
+    --bg-dark: #202124; /* Cor de fundo geral do container */
+    --sidebar-bg: #1A1A1D; /* Cor de fundo da sidebar */
+    --chat-bg: #242528; /* Cor de fundo da área principal do chat */
+    --text-color: #E8EAED; /* Cor do texto padrão */
+    --input-bg: #303134; /* Cor de fundo da caixa de input */
+    --button-bg: #8AB4F8; /* Cor do botão primário (enviar, novo chat) */
+    --button-text: #1A1A1D; /* Cor do texto em botões */
+    --user-bubble: #004D40; /* Cor do balão de mensagem do usuário (tom escuro de verde) */
+    --ia-bubble: #3C4043; /* Cor do balão de mensagem da IA (cinza mais claro) */
+    --hover-color: #3C4043; /* Cor para hover em itens da sidebar */
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212; /* Fundo do body para preencher */
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden; /* Evita scroll indesejado do body */
+}
+
+.container {
+    display: flex;
+    width: 95vw; /* Ocupa a maior parte da largura da viewport */
+    height: 95vh; /* Ocupa a maior parte da altura da viewport */
+    border-radius: 10px;
+    overflow: hidden; /* Garante que os cantos arredondados sejam respeitados pelos filhos */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    background-color: var(--bg-dark);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 280px; /* Largura fixa da sidebar */
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empurra footer para baixo */
+    border-right: 1px solid rgba(255, 255, 255, 0.05); /* Pequena borda para separar */
+    box-sizing: border-box; /* Inclui padding na largura */
+}
+
+.new-chat-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.new-chat-button:hover {
+    background-color: #A0C3FF; /* Tom mais claro no hover */
+}
+
+.chat-history h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.chat-history ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: background-color 0.2s ease;
+    font-size: 15px;
+    color: var(--text-color);
+    white-space: nowrap; /* Evita quebra de linha */
+    overflow: hidden; /* Esconde o excesso */
+    text-overflow: ellipsis; /* Adiciona "..." */
+}
+
+.chat-item:hover {
+    background-color: var(--hover-color);
+}
+
+.chat-item.active {
+    background-color: var(--hover-color); /* Mesma cor de hover para o ativo */
+    font-weight: bold;
+}
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-footer a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    transition: color 0.2s ease;
+}
+
+.sidebar-footer a:hover {
+    color: var(--button-bg); /* Cor do botão ao passar o mouse */
+}
+
+/* --- Área Principal do Chat --- */
+.chat-main {
+    flex-grow: 1; /* Ocupa o espaço restante */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--chat-bg);
+}
+
+.chat-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: var(--sidebar-bg); /* Um pouco mais escuro para o cabeçalho */
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.messages-display {
+    flex-grow: 1; /* Ocupa o máximo de espaço possível */
+    padding: 20px 25px;
+    overflow-y: auto; /* Habilita scroll se as mensagens excederem a altura */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaçamento entre as mensagens */
+    /* Estilos para a barra de rolagem */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--ia-bubble) transparent; /* Firefox */
+}
+
+.messages-display::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages-display::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages-display::-webkit-scrollbar-thumb {
+    background-color: var(--ia-bubble);
+    border-radius: 10px;
+    border: 2px solid var(--chat-bg);
+}
+
+/* Estilo das mensagens */
+.message {
+    display: flex;
+    align-items: flex-start; /* Alinha o avatar e o balão no topo */
+    max-width: 80%; /* Limita a largura do balão */
+}
+
+.message.ia-message {
+    justify-content: flex-start; /* Alinha mensagens da IA à esquerda */
+    margin-right: auto; /* Empurra para a esquerda */
+}
+
+.message.user-message {
+    justify-content: flex-end; /* Alinha mensagens do usuário à direita */
+    margin-left: auto; /* Empurra para a direita */
+}
+
+.message .avatar {
+    width: 30px;
+    height: 30px;
+    min-width: 30px; /* Garante que o avatar não encolha */
+    border-radius: 50%;
+    background-color: var(--input-bg); /* Fundo do avatar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--button-bg); /* Cor do ícone no avatar */
+    font-size: 16px;
+    margin-right: 10px; /* Espaçamento entre avatar e balão IA */
+}
+
+.message.user-message .avatar {
+    margin-right: 0;
+    margin-left: 10px; /* Espaçamento entre avatar e balão usuário */
+}
+
+.message-content {
+    padding: 12px 18px;
+    border-radius: 18px;
+    line-height: 1.5;
+    word-wrap: break-word; /* Quebra palavras longas */
+}
+
+.ia-message .message-content {
+    background-color: var(--ia-bubble);
+    color: var(--text-color);
+    border-bottom-left-radius: 4px; /* Pequeno ajuste no canto do balão IA */
+}
+
+.user-message .message-content {
+    background-color: var(--user-bubble);
+    color: var(--text-color);
+    border-bottom-right-radius: 4px; /* Pequeno ajuste no canto do balão usuário */
+}
+
+.sender-name {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* --- Área de Input --- */
+.input-area {
+    padding: 15px 25px;
+    background-color: var(--sidebar-bg); /* Mesmo fundo da sidebar para harmonizar */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#user-input {
+    flex-grow: 1; /* Ocupa o máximo de espaço */
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 20px;
+    font-size: 16px;
+    resize: none; /* Desabilita redimensionamento manual */
+    outline: none; /* Remove borda de foco padrão */
+    max-height: 120px; /* Limita a altura do textarea */
+    overflow-y: auto; /* Adiciona scroll se o texto exceder */
+    line-height: 1.5;
+    box-sizing: border-box; /* Inclui padding na altura */
+}
+
+#user-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.send-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 50%; /* Botão redondo */
+    width: 45px;
+    height: 45px;
+    min-width: 45px; /* Garante que não encolha */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #A0C3FF;
+}
+
+/* --- Responsividade Básica --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px; /* Sidebar menor em telas menores */
+        padding: 10px;
+    }
+
+    .new-chat-button span,
+    .chat-history h3,
+    .chat-item span,
+    .sidebar-footer a span {
+        display: none; /* Esconde texto para ícones apenas */
+    }
+
+    .new-chat-button, .chat-item, .sidebar-footer a {
+        justify-content: center; /* Centraliza ícones */
+        padding: 10px;
+    }
+
+    .chat-history {
+        margin-top: 20px;
+    }
+
+    .container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .chat-header h2 {
+        font-size: 16px;
+    }
+
+    .message {
+        max-width: 90%; /* Mais largura para mensagens em telas pequenas */
+    }
+
+    .input-area {
+        padding: 10px 15px;
+    }
+}
