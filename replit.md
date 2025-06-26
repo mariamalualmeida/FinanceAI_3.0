@@ -61,6 +61,18 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - **AI Services**: API keys required for OpenAI, Anthropic, and Google AI
 - **Document Processing**: Python runtime with specialized libraries
 
+### Android APK Build System
+- Complete Android Studio project structure with Gradle build configuration
+- Native WebView wrapper providing seamless mobile experience
+- File upload integration with Android's native file picker system
+- Splash screen with branded loading experience
+- Proper mobile app lifecycle management and background handling
+- Optimized APK generation with debug and release build variants
+- Deep linking support for PDF and Excel file associations
+- Material Design theming consistent with web application branding
+- Pull-to-refresh functionality and native back button navigation
+- Complete documentation in ANDROID_APK_BUILD.md for deployment
+
 ### File Processing Support
 - PDF documents
 - Excel/CSV spreadsheets  
@@ -118,6 +130,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 26, 2025. Sistema de autenticação completo implementado com login/registro
 - June 26, 2025. Interface simplificada criada para resolver conflitos de compilação
 - June 26, 2025. Componentes SimpleSidebar e SimpleChatArea funcionais
+- June 26, 2025. Android APK project structure created with native WebView wrapper
+- June 26, 2025. Complete Android build configuration with Gradle, Kotlin, and resources
+- June 26, 2025. Native file upload support and deep linking for document handling
 
 ## User Preferences
 
