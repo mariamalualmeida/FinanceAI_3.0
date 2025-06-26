@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Paperclip, Menu } from 'lucide-react'
+import { Send, Paperclip, Menu, Mic, Play, Pause, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 import MessageBubble from './MessageBubble'
 import ThemeToggle from './ThemeToggle'
 
@@ -8,8 +9,17 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(null)
+  const [isRecording, setIsRecording] = useState(false)
+  const [audioBlob, setAudioBlob] = useState(null)
+  const [audioUrl, setAudioUrl] = useState(null)
+  const [transcription, setTranscription] = useState('')
+  const [isTranscribing, setIsTranscribing] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
+  const mediaRecorderRef = useRef(null)
+  const audioRef = useRef(null)
 
   // Auto scroll para a última mensagem
   useEffect(() => {
@@ -91,8 +101,14 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     const files = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : []
-    if (inputText.trim() || files.length > 0) {
-      sendMessage(inputText, files)
+    if (inputText.trim() || files.length > 0 || audioBlob) {
+      // Usar transcrição se disponível, senão usar texto digitado
+      const messageText = audioBlob && transcription ? transcription : inputText
+      sendMessage(messageText, files)
+      
+      // Limpar campos
+      setInputText('')
+      clearAudio()
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
@@ -102,6 +118,98 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
     if (files.length > 0 && !inputText.trim()) {
       sendMessage('', files)
       e.target.value = ''
+    }
+  }
+
+  // Funções de áudio
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      
+      const audioChunks = []
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data)
+      }
+      
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: 'audio/wav' })
+        const url = URL.createObjectURL(blob)
+        setAudioBlob(blob)
+        setAudioUrl(url)
+        
+        // Transcrição automática
+        await transcribeAudio(blob)
+        
+        stream.getTracks().forEach(track => track.stop())
+      }
+      
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch (error) {
+      console.error('Erro ao iniciar gravação:', error)
+      alert('Erro ao acessar o microfone. Verifique as permissões.')
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+    }
+  }
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording()
+    } else {
+      startRecording()
+    }
+  }
+
+  const clearAudio = () => {
+    setAudioBlob(null)
+    setAudioUrl(null)
+    setTranscription('')
+    setIsPlayingAudio(false)
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl)
+    }
+  }
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      if (isPlayingAudio) {
+        audioRef.current.pause()
+        setIsPlayingAudio(false)
+      } else {
+        audioRef.current.play()
+        setIsPlayingAudio(true)
+      }
+    }
+  }
+
+  const transcribeAudio = async (blob) => {
+    setIsTranscribing(true)
+    try {
+      const formData = new FormData()
+      formData.append('audio', blob, 'recording.wav')
+      
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        setTranscription(result.transcription)
+      }
+    } catch (error) {
+      console.error('Erro na transcrição:', error)
+    } finally {
+      setIsTranscribing(false)
     }
   }
 
@@ -197,6 +305,60 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         {/* Input Area flutuante - Posicionado como overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto">
+            {/* Preview do áudio gravado */}
+            {audioBlob && (
+              <div className="mb-3 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-purple-800 dark:text-purple-200">Áudio Gravado</span>
+                  </div>
+                  <button
+                    onClick={clearAudio}
+                    className="text-gray-500 hover:text-red-500 transition-colors"
+                    title="Remover áudio"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                
+                <div className="flex items-center gap-3 mb-3">
+                  <button
+                    onClick={playAudio}
+                    className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors"
+                    title={isPlayingAudio ? 'Pausar áudio' : 'Reproduzir áudio'}
+                  >
+                    {isPlayingAudio ? <Pause size={16} /> : <Play size={16} />}
+                  </button>
+                  
+                  <div className="flex-1 text-sm text-gray-600 dark:text-gray-400">
+                    Clique no botão para ouvir sua gravação
+                  </div>
+                </div>
+
+                {isTranscribing && (
+                  <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 mb-2">
+                    <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                    Transcrevendo áudio...
+                  </div>
+                )}
+
+                {transcription && (
+                  <div className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border">
+                    <div className="text-xs text-gray-500 mb-1">Transcrição:</div>
+                    <div className="italic">"{transcription}"</div>
+                  </div>
+                )}
+
+                <audio
+                  ref={audioRef}
+                  src={audioUrl}
+                  onEnded={() => setIsPlayingAudio(false)}
+                  className="hidden"
+                />
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="relative">
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
                 <div className="relative h-32">
@@ -234,14 +396,47 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
                     }}
                   />
                   
-                  {/* Botão de envio - canto inferior direito */}
-                  <button
-                    type="submit"
-                    disabled={!inputText.trim() && !fileInputRef.current?.files?.length}
-                    className="absolute bottom-2 right-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <Send size={18} />
-                  </button>
+                  {/* Botões de ação - canto inferior direito */}
+                  <div className="absolute bottom-2 right-3 flex items-center gap-2">
+                    {/* Botão de microfone */}
+                    <motion.button
+                      type="button"
+                      onClick={toggleRecording}
+                      whileTap={{ scale: 0.95 }}
+                      className={`p-1.5 transition-all duration-200 rounded-xl backdrop-blur-sm ${
+                        isRecording 
+                          ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' 
+                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
+                      }`}
+                      title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
+                    >
+                      {isRecording ? (
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                        >
+                          <Mic size={18} />
+                        </motion.div>
+                      ) : (
+                        <Mic size={18} />
+                      )}
+                    </motion.button>
+
+                    {/* Botão de envio */}
+                    <motion.button
+                      type="submit"
+                      disabled={!inputText.trim() && !fileInputRef.current?.files?.length && !audioBlob}
+                      whileTap={{ scale: 0.95 }}
+                      className={`p-1.5 rounded-lg transition-colors ${
+                        inputText.trim() || fileInputRef.current?.files?.length || audioBlob
+                          ? 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                          : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      }`}
+                      title="Enviar mensagem"
+                    >
+                      <Send size={18} />
+                    </motion.button>
+                  </div>
                   
                   {/* Input de arquivo oculto */}
                   <input
