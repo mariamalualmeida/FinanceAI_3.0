@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Paperclip, Mic, Square } from 'lucide-react'
+import { Send, Paperclip, Mic, Square, Menu } from 'lucide-react'
 import MessageBubble from './MessageBubble'
+import ThemeToggle from './ThemeToggle'
 
 export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   const [messages, setMessages] = useState([])
@@ -188,13 +189,24 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
   return (
     <main className="flex-1 flex flex-col bg-white dark:bg-gray-900">
       {/* Gemini Header */}
-      <header className="flex items-center justify-center py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+      <header className="flex items-center justify-between py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleSidebar}
+            className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-gray-900 dark:text-white"
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={20} />
+          </button>
+          <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+        </div>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">G</span>
           </div>
           <h1 className="text-lg font-medium text-gray-900 dark:text-white">Gemini FinanceAI</h1>
         </div>
+        <div className="w-20" /> {/* Espaçador para centralizar o título */}
       </header>
 
       {/* Messages Area */}
