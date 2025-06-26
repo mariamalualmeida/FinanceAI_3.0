@@ -335,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const report = await llmService.generateFinancialReport(
         analysis.results,
         providerName,
-        userApiKey ?? undefined
+        userApiKey || undefined
       );
 
       res.json({ report });
