@@ -1,7 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Menu, Settings, User, HelpCircle, Sun, Moon, Paperclip, RotateCcw } from 'lucide-react';
+import { Send, Plus, Menu, Settings, User, HelpCircle, Sun, Moon, Paperclip, RotateCcw, MoreHorizontal, Share, Edit3, FolderPlus, Archive, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator 
+} from '@/components/ui/dropdown-menu';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -11,6 +18,8 @@ export function ChatGPTLayout() {
   const [message, setMessage] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [editingConversation, setEditingConversation] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
   const { currentConversation, conversations, messages, sendMessage, createConversation, setCurrentConversation, isSendingMessage } = useChat();
   const { user, logout } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,6 +54,38 @@ export function ChatGPTLayout() {
       textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
     }
   }, [message]);
+
+  // Conversation menu handlers
+  const handleRenameConversation = (id: string, currentTitle: string) => {
+    setEditingConversation(id);
+    setEditTitle(currentTitle);
+  };
+
+  const handleSaveRename = async (id: string) => {
+    if (editTitle.trim()) {
+      // TODO: Implement updateConversation in useChat hook
+      console.log('Renaming conversation:', id, 'to:', editTitle);
+    }
+    setEditingConversation(null);
+    setEditTitle('');
+  };
+
+  const handleDeleteConversation = async (id: string) => {
+    if (confirm('Tem certeza que deseja excluir esta conversa?')) {
+      // TODO: Implement deleteConversation in useChat hook
+      console.log('Deleting conversation:', id);
+    }
+  };
+
+  const handleArchiveConversation = async (id: string) => {
+    // TODO: Implement archiveConversation in useChat hook
+    console.log('Archiving conversation:', id);
+  };
+
+  const handleShareConversation = async (id: string) => {
+    // TODO: Implement conversation sharing
+    console.log('Sharing conversation:', id);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -106,21 +147,102 @@ export function ChatGPTLayout() {
             {conversations.map((conv) => (
               <div
                 key={conv.id}
-                onClick={() => {
-                  setCurrentConversation(conv.id);
-                  setSidebarOpen(false);
-                }}
                 className={cn(
-                  "w-full p-3 rounded-lg mb-2 text-left cursor-pointer transition-colors",
+                  "group relative w-full p-3 rounded-lg mb-2 transition-colors",
                   currentConversation?.id === conv.id 
                     ? "bg-gray-700" 
                     : "hover:bg-gray-700"
                 )}
               >
-                <div className="font-medium text-sm truncate">{conv.title}</div>
-                <div className="text-xs text-gray-400 mt-1">
-                  {new Date(conv.createdAt).toLocaleDateString('pt-BR')}
-                </div>
+                {editingConversation === conv.id ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveRename(conv.id);
+                        } else if (e.key === 'Escape') {
+                          setEditingConversation(null);
+                        }
+                      }}
+                      onBlur={() => handleSaveRename(conv.id)}
+                      className="flex-1 bg-gray-600 text-white text-sm border-none outline-none rounded px-2 py-1"
+                      autoFocus
+                    />
+                  </div>
+                ) : (
+                  <div 
+                    onClick={() => {
+                      setCurrentConversation(conv.id);
+                      setSidebarOpen(false);
+                    }}
+                    className="cursor-pointer flex items-center justify-between"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm truncate">{conv.title}</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {new Date(conv.createdAt).toLocaleDateString('pt-BR')}
+                      </div>
+                    </div>
+                    
+                    {/* Menu de três pontos */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-white hover:bg-gray-600 ml-2 h-6 w-6"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal size={14} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        align="end" 
+                        className="w-48 bg-gray-800 border-gray-700 text-white"
+                      >
+                        <DropdownMenuItem 
+                          onClick={() => handleShareConversation(conv.id)}
+                          className="hover:bg-gray-700 cursor-pointer"
+                        >
+                          <Share size={14} className="mr-2" />
+                          Compartilhar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleRenameConversation(conv.id, conv.title || 'Nova Conversa')}
+                          className="hover:bg-gray-700 cursor-pointer"
+                        >
+                          <Edit3 size={14} className="mr-2" />
+                          Renomear
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => console.log('Add to project:', conv.id)}
+                          className="hover:bg-gray-700 cursor-pointer"
+                        >
+                          <FolderPlus size={14} className="mr-2" />
+                          Adicionar ao projeto
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-gray-700" />
+                        <DropdownMenuItem 
+                          onClick={() => handleArchiveConversation(conv.id)}
+                          className="hover:bg-gray-700 cursor-pointer"
+                        >
+                          <Archive size={14} className="mr-2" />
+                          Arquivar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleDeleteConversation(conv.id)}
+                          className="hover:bg-gray-700 cursor-pointer text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 size={14} className="mr-2" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
               </div>
             ))}
           </div>
