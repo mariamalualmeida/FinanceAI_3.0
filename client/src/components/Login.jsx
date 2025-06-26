@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 export default function Login({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    username: '',
+    username: 'demo',
     email: '',
-    password: ''
+    password: 'demo123'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,10 +70,10 @@ export default function Login({ onLogin }) {
             
             {/* Demo Users */}
             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-2">Usuários de Demonstração:</p>
-              <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
-                <div><strong>Admin:</strong> admin / admin123</div>
-                <div><strong>User:</strong> user / user123</div>
+              <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-2">Acesso Demo:</p>
+              <div className="text-xs text-blue-600 dark:text-blue-400">
+                <div>Credenciais já preenchidas abaixo</div>
+                <div className="text-xs text-gray-500 mt-1">Para admin: substitua por credenciais administrativas</div>
               </div>
             </div>
           </div>
