@@ -5,7 +5,7 @@ interface SimpleMessageBubbleProps {
   message: Message;
 }
 
-export default function SimpleMessageBubble({ message }: SimpleMessageBubbleProps) {
+function SimpleMessageBubble({ message }: SimpleMessageBubbleProps) {
   const isUser = message.role === "user";
 
   return (
@@ -29,3 +29,5 @@ export default function SimpleMessageBubble({ message }: SimpleMessageBubbleProp
     </motion.div>
   );
 }
+
+export default SimpleMessageBubble;

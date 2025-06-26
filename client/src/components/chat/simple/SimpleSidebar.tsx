@@ -11,7 +11,7 @@ interface SimpleSidebarProps {
   conversationId?: string;
 }
 
-export default function SimpleSidebar({ 
+function SimpleSidebar({ 
   darkMode, 
   setDarkMode, 
   sidebarOpen, 
@@ -86,3 +86,5 @@ export default function SimpleSidebar({
     </aside>
   );
 }
+
+export default SimpleSidebar;

@@ -6,7 +6,7 @@ interface SimpleInputAreaProps {
   disabled?: boolean;
 }
 
-export default function SimpleInputArea({ onSend, disabled }: SimpleInputAreaProps) {
+function SimpleInputArea({ onSend, disabled }: SimpleInputAreaProps) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
@@ -46,3 +46,5 @@ export default function SimpleInputArea({ onSend, disabled }: SimpleInputAreaPro
     </div>
   );
 }
+
+export default SimpleInputArea;
