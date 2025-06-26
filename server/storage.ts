@@ -1,5 +1,6 @@
 import { 
   users, conversations, messages, fileUploads, financialAnalyses, transactions, knowledgeBase, systemConfig,
+  llmConfig, systemPrompts, multiLlmStrategy,
   type User, type InsertUser,
   type Conversation, type InsertConversation,
   type Message, type InsertMessage,
@@ -7,7 +8,10 @@ import {
   type FinancialAnalysis, type InsertFinancialAnalysis,
   type Transaction, type InsertTransaction,
   type KnowledgeBase, type InsertKnowledgeBase,
-  type SystemConfig, type InsertSystemConfig
+  type SystemConfig, type InsertSystemConfig,
+  type LlmConfig, type InsertLlmConfig,
+  type SystemPrompts, type InsertSystemPrompts,
+  type MultiLlmStrategy, type InsertMultiLlmStrategy
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, like } from "drizzle-orm";
@@ -65,6 +69,34 @@ export interface IStorage {
   createSystemConfig(config: InsertSystemConfig): Promise<SystemConfig>;
   updateSystemConfig(key: string, value: string, updatedBy: number): Promise<SystemConfig>;
   deleteSystemConfig(key: string): Promise<void>;
+
+  // LLM config operations
+  getLlmConfig(id: number): Promise<LlmConfig | undefined>;
+  getAllLlmConfigs(): Promise<LlmConfig[]>;
+  getEnabledLlmConfigs(): Promise<LlmConfig[]>;
+  getPrimaryLlmConfig(): Promise<LlmConfig | undefined>;
+  getBackupLlmConfigs(): Promise<LlmConfig[]>;
+  createLlmConfig(config: InsertLlmConfig): Promise<LlmConfig>;
+  updateLlmConfig(id: number, updates: Partial<InsertLlmConfig>): Promise<LlmConfig>;
+  deleteLlmConfig(id: number): Promise<void>;
+
+  // System prompts operations
+  getSystemPrompts(id: number): Promise<SystemPrompts | undefined>;
+  getAllSystemPrompts(): Promise<SystemPrompts[]>;
+  getActiveSystemPrompts(): Promise<SystemPrompts[]>;
+  getSystemPromptsByCategory(category: string): Promise<SystemPrompts[]>;
+  createSystemPrompts(prompts: InsertSystemPrompts): Promise<SystemPrompts>;
+  updateSystemPrompts(id: number, updates: Partial<InsertSystemPrompts>): Promise<SystemPrompts>;
+  deleteSystemPrompts(id: number): Promise<void>;
+
+  // Multi-LLM strategy operations
+  getMultiLlmStrategy(id: number): Promise<MultiLlmStrategy | undefined>;
+  getAllMultiLlmStrategies(): Promise<MultiLlmStrategy[]>;
+  getActiveMultiLlmStrategy(): Promise<MultiLlmStrategy | undefined>;
+  createMultiLlmStrategy(strategy: InsertMultiLlmStrategy): Promise<MultiLlmStrategy>;
+  updateMultiLlmStrategy(id: number, updates: Partial<InsertMultiLlmStrategy>): Promise<MultiLlmStrategy>;
+  setActiveStrategy(id: number): Promise<MultiLlmStrategy>;
+  deleteMultiLlmStrategy(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -302,6 +334,136 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSystemConfig(key: string): Promise<void> {
     await db.delete(systemConfig).where(eq(systemConfig.key, key));
+  }
+
+  // LLM config operations
+  async getLlmConfig(id: number): Promise<LlmConfig | undefined> {
+    const [config] = await db.select().from(llmConfig).where(eq(llmConfig.id, id));
+    return config;
+  }
+
+  async getAllLlmConfigs(): Promise<LlmConfig[]> {
+    return await db.select().from(llmConfig).orderBy(llmConfig.priority);
+  }
+
+  async getEnabledLlmConfigs(): Promise<LlmConfig[]> {
+    return await db.select().from(llmConfig).where(eq(llmConfig.isEnabled, true)).orderBy(llmConfig.priority);
+  }
+
+  async getPrimaryLlmConfig(): Promise<LlmConfig | undefined> {
+    const [config] = await db.select().from(llmConfig).where(
+      and(eq(llmConfig.isEnabled, true), eq(llmConfig.isPrimary, true))
+    );
+    return config;
+  }
+
+  async getBackupLlmConfigs(): Promise<LlmConfig[]> {
+    return await db.select().from(llmConfig).where(
+      and(eq(llmConfig.isEnabled, true), eq(llmConfig.isBackup, true))
+    ).orderBy(llmConfig.priority);
+  }
+
+  async createLlmConfig(config: InsertLlmConfig): Promise<LlmConfig> {
+    const [newConfig] = await db.insert(llmConfig).values(config).returning();
+    return newConfig;
+  }
+
+  async updateLlmConfig(id: number, updates: Partial<InsertLlmConfig>): Promise<LlmConfig> {
+    const [updatedConfig] = await db
+      .update(llmConfig)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(llmConfig.id, id))
+      .returning();
+    return updatedConfig;
+  }
+
+  async deleteLlmConfig(id: number): Promise<void> {
+    await db.delete(llmConfig).where(eq(llmConfig.id, id));
+  }
+
+  // System prompts operations
+  async getSystemPrompts(id: number): Promise<SystemPrompts | undefined> {
+    const [prompts] = await db.select().from(systemPrompts).where(eq(systemPrompts.id, id));
+    return prompts;
+  }
+
+  async getAllSystemPrompts(): Promise<SystemPrompts[]> {
+    return await db.select().from(systemPrompts).orderBy(systemPrompts.category, systemPrompts.name);
+  }
+
+  async getActiveSystemPrompts(): Promise<SystemPrompts[]> {
+    return await db.select().from(systemPrompts).where(eq(systemPrompts.isActive, true))
+      .orderBy(systemPrompts.category, systemPrompts.name);
+  }
+
+  async getSystemPromptsByCategory(category: string): Promise<SystemPrompts[]> {
+    return await db.select().from(systemPrompts).where(
+      and(eq(systemPrompts.category, category), eq(systemPrompts.isActive, true))
+    );
+  }
+
+  async createSystemPrompts(prompts: InsertSystemPrompts): Promise<SystemPrompts> {
+    const [newPrompts] = await db.insert(systemPrompts).values(prompts).returning();
+    return newPrompts;
+  }
+
+  async updateSystemPrompts(id: number, updates: Partial<InsertSystemPrompts>): Promise<SystemPrompts> {
+    const [updatedPrompts] = await db
+      .update(systemPrompts)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(systemPrompts.id, id))
+      .returning();
+    return updatedPrompts;
+  }
+
+  async deleteSystemPrompts(id: number): Promise<void> {
+    await db.delete(systemPrompts).where(eq(systemPrompts.id, id));
+  }
+
+  // Multi-LLM strategy operations
+  async getMultiLlmStrategy(id: number): Promise<MultiLlmStrategy | undefined> {
+    const [strategy] = await db.select().from(multiLlmStrategy).where(eq(multiLlmStrategy.id, id));
+    return strategy;
+  }
+
+  async getAllMultiLlmStrategies(): Promise<MultiLlmStrategy[]> {
+    return await db.select().from(multiLlmStrategy).orderBy(multiLlmStrategy.name);
+  }
+
+  async getActiveMultiLlmStrategy(): Promise<MultiLlmStrategy | undefined> {
+    const [strategy] = await db.select().from(multiLlmStrategy).where(eq(multiLlmStrategy.isActive, true));
+    return strategy;
+  }
+
+  async createMultiLlmStrategy(strategy: InsertMultiLlmStrategy): Promise<MultiLlmStrategy> {
+    const [newStrategy] = await db.insert(multiLlmStrategy).values(strategy).returning();
+    return newStrategy;
+  }
+
+  async updateMultiLlmStrategy(id: number, updates: Partial<InsertMultiLlmStrategy>): Promise<MultiLlmStrategy> {
+    const [updatedStrategy] = await db
+      .update(multiLlmStrategy)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(multiLlmStrategy.id, id))
+      .returning();
+    return updatedStrategy;
+  }
+
+  async setActiveStrategy(id: number): Promise<MultiLlmStrategy> {
+    // Desativar todas as estratégias
+    await db.update(multiLlmStrategy).set({ isActive: false });
+    
+    // Ativar a estratégia selecionada
+    const [activeStrategy] = await db
+      .update(multiLlmStrategy)
+      .set({ isActive: true, updatedAt: new Date() })
+      .where(eq(multiLlmStrategy.id, id))
+      .returning();
+    return activeStrategy;
+  }
+
+  async deleteMultiLlmStrategy(id: number): Promise<void> {
+    await db.delete(multiLlmStrategy).where(eq(multiLlmStrategy.id, id));
   }
 }
 

@@ -381,6 +381,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // LLM Configuration routes
+  app.get('/api/admin/llm-configs', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      const configs = await storage.getAllLlmConfigs();
+      res.json(configs);
+    } catch (error) {
+      console.error('Error fetching LLM configs:', error);
+      res.status(500).json({ message: 'Failed to fetch LLM configurations' });
+    }
+  });
+
+  app.post('/api/admin/llm-configs', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      
+      const config = await storage.createLlmConfig({
+        ...req.body,
+        updatedBy: req.session.userId
+      });
+      res.json(config);
+    } catch (error) {
+      console.error('Error creating LLM config:', error);
+      res.status(500).json({ message: 'Failed to create LLM configuration' });
+    }
+  });
+
+  app.put('/api/admin/llm-configs/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      
+      const config = await storage.updateLlmConfig(parseInt(req.params.id), {
+        ...req.body,
+        updatedBy: req.session.userId
+      });
+      res.json(config);
+    } catch (error) {
+      console.error('Error updating LLM config:', error);
+      res.status(500).json({ message: 'Failed to update LLM configuration' });
+    }
+  });
+
+  // System Prompts routes
+  app.get('/api/admin/system-prompts', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      const prompts = await storage.getAllSystemPrompts();
+      res.json(prompts);
+    } catch (error) {
+      console.error('Error fetching system prompts:', error);
+      res.status(500).json({ message: 'Failed to fetch system prompts' });
+    }
+  });
+
+  app.post('/api/admin/system-prompts', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      
+      const prompts = await storage.createSystemPrompts({
+        ...req.body,
+        createdBy: req.session.userId,
+        updatedBy: req.session.userId
+      });
+      res.json(prompts);
+    } catch (error) {
+      console.error('Error creating system prompts:', error);
+      res.status(500).json({ message: 'Failed to create system prompts' });
+    }
+  });
+
+  app.put('/api/admin/system-prompts/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      
+      const prompts = await storage.updateSystemPrompts(parseInt(req.params.id), {
+        ...req.body,
+        updatedBy: req.session.userId
+      });
+      res.json(prompts);
+    } catch (error) {
+      console.error('Error updating system prompts:', error);
+      res.status(500).json({ message: 'Failed to update system prompts' });
+    }
+  });
+
+  // Multi-LLM Strategy routes
+  app.get('/api/admin/multi-llm-strategies', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      const strategies = await storage.getAllMultiLlmStrategies();
+      res.json(strategies);
+    } catch (error) {
+      console.error('Error fetching multi-LLM strategies:', error);
+      res.status(500).json({ message: 'Failed to fetch multi-LLM strategies' });
+    }
+  });
+
+  app.get('/api/multi-llm-strategies/active', isAuthenticated, async (req: any, res) => {
+    try {
+      const strategy = await storage.getActiveMultiLlmStrategy();
+      res.json(strategy);
+    } catch (error) {
+      console.error('Error fetching active strategy:', error);
+      res.status(500).json({ message: 'Failed to fetch active strategy' });
+    }
+  });
+
+  app.post('/api/admin/multi-llm-strategies/:id/activate', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      
+      const strategy = await storage.setActiveStrategy(parseInt(req.params.id));
+      res.json(strategy);
+    } catch (error) {
+      console.error('Error activating strategy:', error);
+      res.status(500).json({ message: 'Failed to activate strategy' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
