@@ -15,7 +15,9 @@ export default function MessageBubble({ message, isTyping = false }) {
           : 'bg-gray-50 dark:bg-[#444654]'
       }`}
     >
-      <div className="flex gap-4 px-4 py-6 max-w-3xl mx-auto">
+      <div className={`flex gap-4 px-4 py-6 max-w-3xl mx-auto ${
+        isUser ? 'flex-row-reverse' : 'flex-row'
+      }`}>
         {/* Avatar */}
         <div className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center text-white text-sm font-bold ${
           isUser 
@@ -46,7 +48,9 @@ export default function MessageBubble({ message, isTyping = false }) {
               />
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none dark:prose-invert text-gray-900 dark:text-gray-100">
+            <div className={`prose prose-sm max-w-none dark:prose-invert text-gray-900 dark:text-gray-100 ${
+              isUser ? 'text-right' : 'text-left'
+            }`}>
               <ReactMarkdown>{message.text}</ReactMarkdown>
             </div>
           )}
