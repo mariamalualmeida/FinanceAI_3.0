@@ -182,7 +182,7 @@ export default function InputArea({ onSend, onFileUpload, toast }) {
 
         {/* Dica de atalho */}
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-          Enter para enviar • Shift + Enter para nova linha • Ctrl + K para sidebar • Ctrl + N para nova conversa
+          Enter para enviar • Shift + Enter para nova linha • Ctrl + K para abrir/fechar sidebar • Ctrl + N para nova conversa
         </div>
       </div>
     </div>
