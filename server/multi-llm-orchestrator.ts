@@ -381,13 +381,13 @@ class MultiLLMOrchestrator {
       return this.processRequest(input, context);
     }
 
-    let currentResult = context || input;
+    let currentResult: string = context || input;
     
     // Processar prompts em sequência
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
       try {
-        currentResult = await this.processRequest(prompt, currentResult || undefined);
+        currentResult = await this.processRequest(prompt, currentResult || '');
         console.log(`Chain step ${i + 1} completed`);
       } catch (error) {
         console.error(`Chain step ${i + 1} failed:`, error);
