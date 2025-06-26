@@ -1,37 +1,33 @@
-import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Mic, X, MicOff, Play, Pause } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Send, Paperclip, X } from 'lucide-react'
 import { motion } from 'framer-motion'
+import AudioRecorder from './AudioRecorder'
 
 export default function InputArea({ onSend, onFileUpload }) {
   const [text, setText] = useState('')
   const [files, setFiles] = useState([])
-  const [isRecording, setIsRecording] = useState(false)
-  const [audioBlob, setAudioBlob] = useState(null)
-  const [audioUrl, setAudioUrl] = useState(null)
-  const [transcription, setTranscription] = useState('')
-  const [isTranscribing, setIsTranscribing] = useState(false)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [audioData, setAudioData] = useState(null)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
-  const mediaRecorderRef = useRef(null)
-  const audioRef = useRef(null)
 
   // Textarea ref para controle
   // Auto-resize removido pois agora usa altura fixa com scroll
 
   const handleSend = () => {
-    if (!text.trim() && files.length === 0 && !audioBlob) return
+    if (!text.trim() && files.length === 0 && !audioData) return
     
-    // Enviar com áudio se houver
-    if (audioBlob) {
-      onSend(text || transcription, files, { audioBlob, audioUrl, transcription })
+    const finalText = text || (audioData?.transcription ? audioData.transcription : '')
+    
+    // Enviar com dados de áudio se houver
+    if (audioData) {
+      onSend(finalText, files, audioData)
     } else {
-      onSend(text, files)
+      onSend(finalText, files)
     }
     
     setText('')
     setFiles([])
-    clearAudio()
+    setAudioData(null)
   }
 
   // Estratégia dupla de áudio conforme discutido
