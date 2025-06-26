@@ -8,7 +8,7 @@ export default function App() {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <div className="flex h-screen bg-white dark:bg-[#343541] text-black dark:text-white overflow-hidden">
+      <div className="flex h-screen bg-gray-50 dark:bg-[#343541] text-black dark:text-white overflow-hidden">
         <Sidebar 
           darkMode={darkMode} 
           setDarkMode={setDarkMode}
