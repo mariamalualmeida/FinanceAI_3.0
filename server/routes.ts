@@ -349,9 +349,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/settings', requireAuth, async (req: any, res) => {
     try {
       const settings = await storage.getUserSettings(req.session.userId);
-      res.json(settings || {});
+      res.json(settings || { llmProvider: 'openai', theme: 'dark', interface: 'simple' });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch settings' });
+      console.error('Settings error:', error);
+      res.json({ llmProvider: 'openai', theme: 'dark', interface: 'simple' });
     }
   });
 

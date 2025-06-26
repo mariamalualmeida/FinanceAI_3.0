@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react";
-import { useParams } from "wouter";
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useInterfaceStyle } from "@/hooks/useInterfaceStyle";
-import { SimpleLayout, ProfessionalLayout } from "@/components/chat";
+import { ChatGPTLayout } from "@/components/chat/ChatGPTLayout";
 
 export default function ChatPage() {
-  const { conversationId } = useParams<{ conversationId: string }>();
   const { isAuthenticated, isLoading } = useAuth();
-  const { interfaceStyle } = useInterfaceStyle();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -27,10 +23,5 @@ export default function ChatPage() {
     return null;
   }
 
-  // Render the appropriate interface based on user preference
-  return interfaceStyle === "professional" ? (
-    <ProfessionalLayout />
-  ) : (
-    <SimpleLayout />
-  );
+  return <ChatGPTLayout />;
 }

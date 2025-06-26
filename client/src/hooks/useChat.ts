@@ -6,6 +6,7 @@ import type { Conversation, Message, FileUpload } from "@/types";
 export function useChat() {
   const queryClient = useQueryClient();
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [currentConversationState, setCurrentConversationState] = useState<Conversation | null>(null);
 
   // Fetch conversations
   const { data: conversations = [], isLoading: isConversationsLoading } = useQuery<Conversation[]>({
