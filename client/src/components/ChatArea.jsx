@@ -61,7 +61,7 @@ export default function ChatArea({ user, settings, interface: interfaceType, onT
           const response = await uploadPromise
           const result = await response.json()
           
-          clearInterval(progressInterval)
+          clearInterval(progressTimer)
           setUploadProgress(100)
           
           setTimeout(() => {
@@ -121,7 +121,7 @@ Tente novamente com um arquivo diferente ou entre em contato para suporte.`,
             setIsTyping(false)
           }, 800)
         } catch (error) {
-          clearInterval(progressInterval)
+          clearInterval(progressTimer)
           setUploadProgress(null)
           setIsTyping(false)
           
