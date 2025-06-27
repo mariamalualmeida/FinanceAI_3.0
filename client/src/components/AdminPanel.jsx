@@ -269,63 +269,57 @@ export default function AdminPanel({ onClose, user }) {
           </div>
         )
       case 'users':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Gerenciamento de Usuários</h3>
-            <p className="text-gray-600 dark:text-gray-400">Gerencie usuários e permissões do sistema.</p>
-            <div className="text-center py-8 text-gray-500">
-              Seção em desenvolvimento
-            </div>
-          </div>
-        )
+        return <UserManagementSection />
       default:
         return <LLMConfigSection />
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-xl shadow-2xl w-full sm:max-w-2xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-xl">
+          <div className="flex items-center gap-3">
+            <Shield size={20} />
+            <h2 className="text-lg font-bold">Painel Admin</h2>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <div className="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
-            <nav className="space-y-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <Icon size={20} />
-                    <span className="font-medium">{tab.label}</span>
-                  </button>
-                )
-              })}
-            </nav>
+        {/* Mobile-First Tabs Navigation */}
+        <div className="overflow-x-auto border-b border-gray-200 dark:border-gray-700">
+          <div className="flex min-w-max px-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-3 py-3 border-b-2 transition-colors whitespace-nowrap text-sm ${
+                    activeTab === tab.id
+                      ? 'border-purple-600 text-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <Icon size={16} />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                </button>
+              )
+            })}
           </div>
+        </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-6">
-              {renderTabContent()}
-            </div>
+        {/* Content - Mobile-First Vertical Layout */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4">
+            {renderTabContent()}
           </div>
         </div>
       </div>
