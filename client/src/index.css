@@ -320,7 +320,49 @@ body {
   display: none;
 }
 
-/* Mobile optimizations for layout and z-index */
+/* Correções para problemas móveis identificados */
+@media screen and (max-width: 768px) {
+  /* Prevenção de zoom em inputs móveis */
+  input[type="text"],
+  input[type="email"], 
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+    transform-origin: left top;
+  }
+  
+  /* Força quebra de palavras globalmente em mobile */
+  * {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Container principal responsivo */
+  .mobile-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  
+  /* Correção para teclado virtual */
+  .chat-container {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height */
+    position: relative;
+  }
+  
+  /* Área de input com suporte ao teclado virtual */
+  .input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: env(keyboard-inset-height, 0px);
+    transition: padding-bottom 0.3s ease;
+  }
+}
 .mobile-safe-area {
   padding-bottom: env(safe-area-inset-bottom);
 }
