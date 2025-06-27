@@ -169,6 +169,14 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Sistema de gerenciamento de usuários funcional no AdminPanel
 - June 27, 2025. Interface otimizada para dispositivos móveis conforme solicitado
 - June 27, 2025. Correções de extensões .jsx → .tsx para compatibilidade com servidor
+- June 27, 2025. Sistema completo de upload no chat com drag & drop implementado
+- June 27, 2025. Análise financeira integrada ao sistema de upload em tempo real
+- June 27, 2025. Sistema de Prompts implementado: configuração de 12 campos de cadeia
+- June 27, 2025. Estratégias Multi-LLM funcionais: Econômico, Balanceado e Premium
+- June 27, 2025. Configurações do Sistema completas: upload, performance, segurança
+- June 27, 2025. Interface de upload com preview, progress e validação de arquivos
+- June 27, 2025. Orquestração inteligente por assunto com backup e validação cruzada
+- June 27, 2025. Sistema de notificações visuais para processamento de arquivos
 
 ## User Preferences
 
