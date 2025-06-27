@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
 import { 
-  X, Settings, User, Shield, Database, Bell, 
+  X, Settings, User, Database, Bell, 
   Globe, Lock, Eye, EyeOff, Save, RotateCcw, 
   Key, Server, Zap, Brain, ChevronDown, ChevronRight,
   Mail, Phone, MapPin, Calendar, Camera, Edit3
@@ -118,10 +118,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
     }
   };
 
-  const openAdminPanel = () => {
-    setLocation('/admin');
-    onClose();
-  };
+
 
   if (!isOpen) return null;
 
@@ -148,15 +145,6 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Configurações</h2>
             </div>
             <div className="flex items-center gap-2">
-              {isAdmin && (
-                <button
-                  onClick={openAdminPanel}
-                  className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-                  title="Painel Administrativo"
-                >
-                  <Shield size={20} />
-                </button>
-              )}
               <button
                 onClick={onClose}
                 className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
