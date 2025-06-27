@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import TypingIndicator from './TypingIndicator'
-import { File, Copy, Edit, Check, X } from 'lucide-react'
+import { File, Check, X } from 'lucide-react'
+import { CopyIcon, EditIcon, SpeakerIcon } from './CustomIcons'
 
 export default function MessageBubble({ message, isTyping = false, isGemini = false, onEdit, onDelete }) {
   const isUser = message.sender === 'user'
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(message.text || '')
   const [copied, setCopied] = useState(false)
+  const [showActions, setShowActions] = useState(false)
   
   // Log para debug
   if (message.text) {
@@ -45,6 +47,20 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
     setIsEditing(false)
     setEditText(message.text || '')
   }
+
+  const handlePlayAudio = () => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(message.text)
+      utterance.lang = 'pt-BR'
+      speechSynthesis.speak(utterance)
+    }
+  }
+
+  const handleMessageClick = () => {
+    if (isUser && !isEditing) {
+      setShowActions(!showActions)
+    }
+  }
   
   return (
     <motion.div
@@ -77,11 +93,14 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
               <TypingIndicator />
             </div>
           ) : (
-            <div className={`${
-              isUser 
-                ? 'bg-gray-200 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-md inline-block' 
-                : 'w-full'
-            }`}>
+            <div 
+              className={`${
+                isUser 
+                  ? 'bg-gray-200 dark:bg-gray-700 rounded-2xl px-4 py-3 max-w-md inline-block cursor-pointer' 
+                  : 'w-full'
+              }`}
+              onClick={handleMessageClick}
+            >
               
               {/* Arquivos anexados */}
               {message.files && message.files.length > 0 && (
@@ -142,6 +161,57 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
                     minute: '2-digit' 
                   })}
                 </div>
+              )}
+
+              {/* Botões de ação - aparecem só quando necessário */}
+              {!isTyping && !isEditing && (
+                <>
+                  {/* Botões para mensagens do usuário - aparecem ao clicar */}
+                  {isUser && showActions && (
+                    <div className="flex gap-2 mt-2 justify-end">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCopy()
+                        }}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title={copied ? "Copiado!" : "Copiar"}
+                      >
+                        <CopyIcon size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleEdit()
+                        }}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Editar"
+                      >
+                        <EditIcon size={16} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Botões para mensagens da IA - sempre visíveis */}
+                  {!isUser && (
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={handleCopy}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title={copied ? "Copiado!" : "Copiar"}
+                      >
+                        <CopyIcon size={16} />
+                      </button>
+                      <button
+                        onClick={handlePlayAudio}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Ouvir"
+                      >
+                        <SpeakerIcon size={16} />
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
