@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
-import { useSettings } from '../contexts/SettingsContext';
+// import { useSettings } from '../contexts/SettingsContext';
 import { 
   X, Settings, User, Shield, Database, Bell, Palette, 
   Globe, Lock, Eye, EyeOff, Save, RotateCcw, 
@@ -66,10 +66,33 @@ const ExpandableSection = ({ title, icon: Icon, children, defaultOpen = false })
   );
 };
 
-const UnifiedSettingsModal = ({ isOpen, onClose, user }) => {
+const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }) => {
   const [location, setLocation] = useLocation();
-  const { settings, hasChanges, updateSetting, updateTheme, updateInterface, saveSettings, resetSettings } = useSettings();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [settings, setSettings] = useState({
+    theme: currentTheme || 'light',
+    interface: 'chatgpt',
+    profile: {
+      name: user?.username || '',
+      email: user?.email || ''
+    },
+    interfaceSettings: {
+      compact_mode: false,
+      show_sidebar: true,
+      auto_scroll: true
+    },
+    notifications: {
+      desktop: true,
+      sound: true,
+      analysis_complete: true
+    },
+    system: {
+      auto_save: true,
+      cache_enabled: true,
+      debug_mode: false
+    }
+  });
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     setIsAdmin(user?.role === 'admin');

@@ -1,11 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const SettingsContext = createContext();
+const SettingsContext = createContext(null);
 
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (!context) {
-    throw new Error('useSettings must be used within a SettingsProvider');
+    // Return default settings instead of throwing error to prevent app crash
+    return {
+      settings: { theme: 'light', interface: 'chatgpt' },
+      hasChanges: false,
+      updateSetting: () => {},
+      updateTheme: () => {},
+      updateInterface: () => {},
+      saveSettings: () => {},
+      resetSettings: () => {}
+    };
   }
   return context;
 };
