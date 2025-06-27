@@ -50,7 +50,7 @@ export const fileUploads = pgTable("file_uploads", {
 export const financialAnalyses = pgTable("financial_analyses", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  conversationId: integer("conversation_id").references(() => conversations.id),
+  conversationId: uuid("conversation_id").references(() => conversations.id),
   fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
   analysisType: varchar("analysis_type", { length: 100 }).notNull(), // credit_score, risk_assessment, pattern_detection
   results: jsonb("results").notNull(), // Resultados da análise em JSON
