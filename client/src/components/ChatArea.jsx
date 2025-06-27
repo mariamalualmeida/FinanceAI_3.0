@@ -16,15 +16,16 @@ export default function ChatArea({ user, settings, interface: interfaceType, onT
   }, [messages, isTyping])
 
   // Função para enviar mensagem
-  const sendMessage = async (text, files = []) => {
+  const sendMessage = async (text, files = [], audioData = null) => {
     if (!text.trim() && files.length === 0) return
 
     // Adicionar mensagem do usuário
     const userMessage = {
       id: Date.now(),
       sender: 'user',
-      text: text, // Preservar quebras de linha
+      text: text,
       files: files.map(f => ({ name: f.name, size: f.size, type: f.type })),
+      audioData: audioData,
       timestamp: new Date()
     }
     
@@ -32,22 +33,83 @@ export default function ChatArea({ user, settings, interface: interfaceType, onT
     setIsTyping(true)
 
     try {
-      // Upload de arquivos se houver
+      // Se há arquivos, usar o endpoint de upload com análise
       if (files.length > 0) {
         setUploadProgress(0)
         const formData = new FormData()
         files.forEach(file => formData.append('files', file))
         if (text.trim()) formData.append('message', text)
+        formData.append('conversationId', 'current-conversation')
 
-        // Fazer upload real e análise
-        const uploadPromise = fetch('/api/upload', {
+        // Simular progresso
+        let progressTimer = setInterval(() => {
+          setUploadProgress(prev => {
+            if (prev >= 90) return prev
+            return prev + Math.random() * 15
+          })
+        }, 200)
+
+        const response = await fetch('/api/chat/upload', {
           method: 'POST',
           body: formData,
           credentials: 'include'
         })
 
-        // Simular progresso enquanto processa
-        let progressTimer = null
+        clearInterval(progressTimer)
+        setUploadProgress(100)
+
+        const result = await response.json()
+
+        if (result.success) {
+          // Adicionar resposta da IA
+          const aiMessage = {
+            id: Date.now() + 1,
+            sender: 'assistant',
+            text: result.aiResponse,
+            analysisResults: result.analysis,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiMessage])
+        } else {
+          throw new Error(result.message || 'Erro no upload')
+        }
+
+        setTimeout(() => setUploadProgress(null), 1000)
+
+    } catch (error) {
+      console.error('Error in file upload:', error)
+      setIsTyping(false)
+      setUploadProgress(null)
+
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: 'assistant',
+        text: 'Erro ao processar arquivos. Tente novamente.',
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
+    }
+  } else {
+        // Mensagem simples sem arquivos
+        const response = await fetch('/api/conversations/current-conversation/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ content: text })
+        })
+
+        const result = await response.json()
+
+        if (result.aiResponse) {
+          const aiMessage = {
+            id: Date.now() + 1,
+            sender: 'assistant',
+            text: result.aiResponse,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiMessage])
+        }
+      }
         let isCompleted = false
         
         progressTimer = setInterval(() => {
@@ -272,7 +334,11 @@ Para uma análise mais detalhada, envie seus documentos financeiros (PDF, Excel,
 
       {/* Área de input */}
       <footer className="border-t border-gray-800 dark:border-gray-800 p-4">
-        <InputArea onSend={sendMessage} />
+        <InputArea 
+          onSend={sendMessage} 
+          isProcessing={isTyping}
+          uploadProgress={uploadProgress}
+        />
       </footer>
     </main>
   )
