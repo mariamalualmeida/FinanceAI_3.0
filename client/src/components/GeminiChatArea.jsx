@@ -119,6 +119,12 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     }
   }
 
+  const handleEditMessage = (messageId, newText) => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId ? { ...msg, text: newText } : msg
+    ))
+  }
+
   return (
     <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-screen overflow-hidden gemini-chat-container">
       {/* Gemini Header - Fundo uniforme */}
