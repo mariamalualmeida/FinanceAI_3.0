@@ -155,6 +155,32 @@ class MultiLLMOrchestrator {
     }
   }
 
+  async processMessage(input: string, options: { userId?: string, strategy?: string } = {}): Promise<string> {
+    try {
+      // Initialize if not done yet
+      if (this.providers.size === 0) {
+        await this.initialize();
+      }
+
+      // Use provided strategy or default to balanced
+      const strategyMode = options.strategy || 'balanced';
+      
+      // Simple strategy mapping for now
+      switch (strategyMode) {
+        case 'economic':
+          return this.economicMode(input);
+        case 'premium':
+          return this.premiumMode(input);
+        case 'balanced':
+        default:
+          return this.balancedMode(input);
+      }
+    } catch (error) {
+      console.error('Error processing message:', error);
+      return 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.';
+    }
+  }
+
   async processRequest(input: string, context?: string): Promise<string> {
     if (!this.strategy) {
       throw new Error('No strategy configured');

@@ -139,6 +139,28 @@ html, body {
     height: 100vh;
   }
   
+  /* Correção para overflow de texto em inputs */
+  .mobile-textarea-scroll,
+  textarea {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: pre-wrap !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Prevenir overflow horizontal em todas as mensagens */
+  .break-words {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
   /* Safe area support para dispositivos com notch */
   @supports (height: env(safe-area-inset-top)) {
     #root {
