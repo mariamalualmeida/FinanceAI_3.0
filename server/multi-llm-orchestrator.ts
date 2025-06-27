@@ -44,8 +44,10 @@ class MultiLLMOrchestrator {
 
       switch (config.name) {
         case 'openai':
+          const apiKey = config.apiKey || process.env.OPENAI_API_KEY;
+          console.log('OpenAI API Key available:', !!apiKey);
           const openai = new OpenAI({ 
-            apiKey: config.apiKey || process.env.OPENAI_API_KEY 
+            apiKey: apiKey 
           });
           provider = {
             name: 'openai',
