@@ -227,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 pt-4 pb-12 pl-12 pr-20 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 pb-12 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -257,8 +257,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Ícones direitos - canto inferior direito */}
             <div className="absolute bottom-3 right-3 flex items-center gap-2">
               
-              {/* Audio recorder com fundo */}
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg">
+              {/* Audio recorder sem fundo */}
+              <div className="bg-transparent">
                 <AudioRecorder
                   onTranscriptionComplete={handleTranscriptionComplete}
                   onAudioReady={setAudioData}
