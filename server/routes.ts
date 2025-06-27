@@ -371,6 +371,156 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chat Upload with Analysis endpoint
+  app.post('/api/chat/upload', isAuthenticated, upload.array('files', 5), async (req: any, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      const message = req.body.message || '';
+      const conversationId = req.body.conversationId;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'No files uploaded' 
+        });
+      }
+
+      const results = [];
+      const fileAnalyses = [];
+
+      // Process each file
+      for (const file of files) {
+        try {
+          // Create file record
+          const fileUpload = await storage.createFileUpload({
+            userId: req.session.userId!,
+            filename: file.originalname,
+            filepath: file.path,
+            mimetype: file.mimetype,
+            size: file.size,
+            status: 'processing'
+          });
+
+          // Analyze file
+          const analysisResult = await financialAnalyzer.analyzeDocument(file.path, file.originalname);
+          
+          if (analysisResult.success) {
+            // Update file status
+            await storage.updateFileUploadStatus(fileUpload.id, 'completed');
+            
+            // Create analysis record
+            const analysis = await storage.createAnalysis({
+              userId: req.session.userId!,
+              fileUploadId: fileUpload.id,
+              analysisType: analysisResult.data.documentType || 'general',
+              results: analysisResult.data,
+              insights: analysisResult.data.insights || 'Análise financeira realizada com sucesso.',
+              riskScore: analysisResult.data.riskScore || 0,
+              creditScore: analysisResult.data.creditScore || 0
+            });
+
+            fileAnalyses.push({
+              filename: file.originalname,
+              analysis: analysisResult.data,
+              insights: analysis.insights
+            });
+
+            results.push({
+              filename: file.originalname,
+              status: 'success',
+              analysisId: analysis.id,
+              summary: analysisResult.data.summary || 'Documento analisado com sucesso'
+            });
+          } else {
+            await storage.updateFileUploadStatus(fileUpload.id, 'error');
+            results.push({
+              filename: file.originalname,
+              status: 'error',
+              error: analysisResult.error || 'Erro na análise'
+            });
+          }
+
+          // Clean up file
+          await fs.unlink(file.path).catch(() => {});
+
+        } catch (fileError) {
+          console.error(`Error processing file ${file.originalname}:`, fileError);
+          results.push({
+            filename: file.originalname,
+            status: 'error',
+            error: 'Erro no processamento do arquivo'
+          });
+        }
+      }
+
+      // Generate comprehensive response based on analyses
+      let aiResponse = '';
+      if (fileAnalyses.length > 0) {
+        const analysisContext = fileAnalyses.map(fa => 
+          `Arquivo: ${fa.filename}\nAnálise: ${JSON.stringify(fa.analysis, null, 2)}\nInsights: ${fa.insights}`
+        ).join('\n\n');
+
+        const prompt = `
+          Baseado na análise dos documentos financeiros enviados, forneça um resumo executivo detalhado:
+
+          ${analysisContext}
+
+          Mensagem do usuário: "${message}"
+
+          Por favor, forneça:
+          1. Resumo geral dos documentos analisados
+          2. Principais insights financeiros
+          3. Avaliação de risco e recomendações
+          4. Resposta específica à mensagem do usuário (se houver)
+        `;
+
+        try {
+          const llmResponse = await multiLlmOrchestrator.processMessage(prompt, 'financial');
+          aiResponse = llmResponse.response;
+        } catch (llmError) {
+          console.error('LLM processing error:', llmError);
+          aiResponse = `Análise concluída para ${fileAnalyses.length} arquivo(s). ` +
+                      `${fileAnalyses.map(fa => `${fa.filename}: ${fa.insights}`).join('. ')}`;
+        }
+      } else {
+        aiResponse = 'Não foi possível processar os arquivos enviados. Verifique os formatos e tente novamente.';
+      }
+
+      // Create user message if there's text
+      if (message.trim() && conversationId) {
+        await storage.createMessage({
+          conversationId,
+          role: 'user',
+          content: message,
+          attachments: results.map(r => r.filename)
+        });
+
+        // Create AI response message
+        await storage.createMessage({
+          conversationId,
+          role: 'assistant',
+          content: aiResponse
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Arquivos processados com sucesso',
+        results,
+        analysis: fileAnalyses,
+        aiResponse
+      });
+
+    } catch (error) {
+      console.error('Chat upload error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Erro no processamento dos arquivos',
+        error: (error as Error).message 
+      });
+    }
+  });
+
   // Analysis endpoints
   app.get('/api/analyses', isAuthenticated, async (req: any, res) => {
     try {
