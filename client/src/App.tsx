@@ -113,6 +113,7 @@ function AppContent() {
                 user={user}
                 settings={{...settings, onToggleTheme: toggleTheme}}
                 onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                sidebarOpen={sidebarOpen}
               />
             </div>
           </Route>
