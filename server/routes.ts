@@ -359,7 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Create financial analysis
           const analysis = await financialAnalyzer.analyzeFinancialDocument(
             req.session.userId!,
-            conversationId || 1,
+            conversationId || null,
             fileContent,
             req.file!.originalname
           );
