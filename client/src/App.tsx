@@ -5,12 +5,17 @@ import Sidebar from './components/Sidebar'
 import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
 import CleanSettingsModal from './components/CleanSettingsModal'
+import AdminAuthModal from './components/AdminAuthModal'
 import { Toaster } from './components/ui/toaster'
+
 function AppContent() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showAdminAuth, setShowAdminAuth] = useState(false)
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
   const [settings, setSettings] = useState({
     theme: 'light',
     interface: 'gemini'
@@ -75,6 +80,19 @@ function AppContent() {
     }
   }
 
+  const handleOpenAdminPanel = () => {
+    if (isAdminAuthenticated) {
+      setShowAdminPanel(true)
+    } else {
+      setShowAdminAuth(true)
+    }
+  }
+
+  const handleAdminAuthSuccess = () => {
+    setIsAdminAuthenticated(true)
+    setShowAdminPanel(true)
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -108,6 +126,7 @@ function AppContent() {
                 onToggle={() => setSidebarOpen(!sidebarOpen)}
                 onClose={() => setSidebarOpen(false)}
                 onOpenSettings={() => setShowSettings(true)}
+                onOpenAdminPanel={handleOpenAdminPanel}
               />
               <GeminiChatArea 
                 user={user}
@@ -126,6 +145,25 @@ function AppContent() {
           onClose={() => setShowSettings(false)}
           user={user}
         />
+
+        {/* Admin Authentication Modal */}
+        <AdminAuthModal
+          isOpen={showAdminAuth}
+          onClose={() => setShowAdminAuth(false)}
+          onSuccess={handleAdminAuthSuccess}
+        />
+
+        {/* Admin Panel Modal */}
+        {showAdminPanel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-6xl h-[90vh] overflow-hidden">
+              <AdminPanel 
+                user={user} 
+                onClose={() => setShowAdminPanel(false)} 
+              />
+            </div>
+          </div>
+        )}
       </div>
     </Router>
   )
