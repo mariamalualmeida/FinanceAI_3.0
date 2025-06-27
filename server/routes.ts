@@ -286,6 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           apiKey: process.env.OPENAI_API_KEY
         });
         
+        const fs = require('fs');
         const transcription = await openai.audio.transcriptions.create({
           file: fs.createReadStream(req.file.path),
           model: "whisper-1",
@@ -310,7 +311,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json({ 
-        transcription: mockTranscription,
+        transcription: transcriptionText,
         audioId: req.file.filename 
       });
     } catch (error) {
