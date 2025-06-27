@@ -384,7 +384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Use the AI orchestrator to generate response
-      const aiResponse = await aiOrchestrator.processMessage(message, {
+      const aiResponse = await multiLlmOrchestrator.processMessage(message, {
         userId: req.session.userId,
         strategy: 'balanced' // Default strategy
       });
