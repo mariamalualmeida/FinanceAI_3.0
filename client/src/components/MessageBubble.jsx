@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import TypingIndicator from './TypingIndicator'
-import { File } from 'lucide-react'
+import { File, Copy, Edit, Check, X } from 'lucide-react'
 
 export default function MessageBubble({ message, isTyping = false, isGemini = false }) {
   const isUser = message.sender === 'user'

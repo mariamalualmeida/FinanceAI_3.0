@@ -199,30 +199,50 @@ class MultiLLMOrchestrator {
   }
 
   private async economicMode(input: string, context?: string): Promise<string> {
-    // Modo econômico: Uma LLM principal + backup
-    const primaryConfig = await storage.getPrimaryLlmConfig();
-    if (!primaryConfig) {
-      throw new Error('No primary LLM configured');
-    }
-
-    const primaryProvider = this.providers.get(primaryConfig.name);
-    if (!primaryProvider) {
-      throw new Error(`Primary provider ${primaryConfig.name} not available`);
-    }
-
     try {
+      // Modo econômico: Uma LLM principal + backup
+      const primaryConfig = await storage.getPrimaryLlmConfig();
+      
+      // Fallback para primeiro provider disponível se não há configuração
+      if (!primaryConfig) {
+        const firstProvider = Array.from(this.providers.values())[0];
+        if (firstProvider) {
+          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          return await firstProvider.generateResponse(prompt, context || undefined);
+        }
+        throw new Error('No LLM providers available');
+      }
+
+      const primaryProvider = this.providers.get(primaryConfig.name);
+      if (!primaryProvider) {
+        // Fallback para primeiro provider disponível
+        const firstProvider = Array.from(this.providers.values())[0];
+        if (firstProvider) {
+          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          return await firstProvider.generateResponse(prompt, context || undefined);
+        }
+        throw new Error(`Primary provider ${primaryConfig.name} not available`);
+      }
+
       // Tentar usar a LLM principal
       const prompt = this.buildPrompt(input);
       return await primaryProvider.generateResponse(prompt, context || undefined);
     } catch (error) {
-      console.warn('Primary LLM failed, trying backup:', error);
+      console.warn('Economic mode failed, trying simple fallback:', error);
       
-      // Fallback para backup
-      if (this.strategy?.enableBackupSystem) {
-        return this.useBackupLLM(input, context);
+      // Último fallback: usar qualquer provider disponível
+      const firstProvider = Array.from(this.providers.values())[0];
+      if (firstProvider) {
+        try {
+          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          return await firstProvider.generateResponse(prompt, context || undefined);
+        } catch (fallbackError) {
+          console.error('All providers failed:', fallbackError);
+          return 'Desculpe, não consegui processar sua mensagem no momento. Tente novamente.';
+        }
       }
       
-      throw error;
+      return 'Desculpe, nenhum sistema de IA está disponível no momento.';
     }
   }
 
@@ -376,6 +396,18 @@ class MultiLLMOrchestrator {
     // Combinar prompts em sistema base
     const systemPrompt = prompts.join('\n\n');
     return `${systemPrompt}\n\nTarefa: ${input}`;
+  }
+
+  private buildSimplePrompt(input: string): string {
+    return `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. 
+
+Características:
+- Especialista em análise financeira e consultorias
+- Foco em crédito, risco e planejamento financeiro
+- Respostas objetivas e profissionais
+- Linguagem clara e acessível
+
+Solicitação: ${input}`;
   }
 
   private getLastUsedProvider(): string {
