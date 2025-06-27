@@ -15,10 +15,10 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings }: SidebarProps) {
-  const [conversations, setConversations] = useState([])
-  const [currentChatId, setCurrentChatId] = useState(null)
+  const [conversations, setConversations] = useState<any[]>([])
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null)
   const [showSearch, setShowSearch] = useState(false)
-  const [showDropdown, setShowDropdown] = useState(null)
+  const [showDropdown, setShowDropdown] = useState<string | null>(null)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
 
 
@@ -52,7 +52,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     if (onClose) onClose()
   }
 
-  const onSelectChat = (chatId) => {
+  const onSelectChat = (chatId: string) => {
     setCurrentChatId(chatId)
     // Close sidebar on mobile after selection
     if (window.innerWidth < 768 && onClose) {
@@ -61,7 +61,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     // TODO: Implement chat loading logic when backend supports it
   }
 
-  const onDeleteConversation = async (conversationId) => {
+  const onDeleteConversation = async (conversationId: string) => {
     // Validar se o ID é válido
     if (!conversationId || conversationId === null || conversationId === undefined) {
       console.warn('Tentativa de excluir conversa com ID inválido:', conversationId)
