@@ -24,57 +24,28 @@ class MultiLLMOrchestrator {
   private prompts: SystemPrompts | null = null;
 
   async initialize() {
-    // Configurações hardcoded para funcionamento imediato
-    const defaultConfigs = [
-      {
-        name: 'openai',
-        model: 'gpt-4o',
-        apiKey: process.env.OPENAI_API_KEY,
-        temperature: 0.7,
-        maxTokens: 4000
-      },
-      {
-        name: 'anthropic',
-        model: 'claude-sonnet-4-20250514',
-        apiKey: process.env.ANTHROPIC_API_KEY,
-        temperature: 0.7,
-        maxTokens: 4000
-      },
-      {
-        name: 'google',
-        model: 'gemini-2.5-flash',
-        apiKey: process.env.GOOGLE_AI_API_KEY,
-        temperature: 0.7,
-        maxTokens: 4000
-      }
-    ];
+    // Carregear configurações dos LLMs
+    const llmConfigs = await storage.getEnabledLlmConfigs();
+    const activeStrategy = await storage.getActiveMultiLlmStrategy();
+    const systemPrompts = await storage.getActiveSystemPrompts();
 
-    // Configuração de estratégia padrão
-    this.strategy = {
-      mode: 'balanced',
-      enableSubjectRouting: true,
-      enableBackupSystem: true,
-      enableValidation: false
-    } as any;
+    this.strategy = activeStrategy || null;
+    this.prompts = systemPrompts[0] || null;
 
-    // Inicializar provedores disponíveis
-    for (const config of defaultConfigs) {
-      if (config.apiKey) {
-        await this.initializeProvider(config);
-      }
+    // Inicializar provedores
+    for (const config of llmConfigs) {
+      await this.initializeProvider(config);
     }
   }
 
-  private async initializeProvider(config: any) {
+  private async initializeProvider(config: LlmConfig) {
     try {
       let provider: LLMProvider;
 
       switch (config.name) {
         case 'openai':
-          const apiKey = config.apiKey || process.env.OPENAI_API_KEY;
-          console.log('OpenAI API Key available:', !!apiKey);
           const openai = new OpenAI({ 
-            apiKey: apiKey 
+            apiKey: config.apiKey || process.env.OPENAI_API_KEY 
           });
           provider = {
             name: 'openai',
@@ -228,25 +199,30 @@ class MultiLLMOrchestrator {
   }
 
   private async economicMode(input: string, context?: string): Promise<string> {
-    try {
-      // Modo econômico: usar o primeiro provider disponível (OpenAI preferencialmente)
-      const openaiProvider = this.providers.get('openai');
-      if (openaiProvider) {
-        const prompt = this.buildPrompt(input);
-        return await openaiProvider.generateResponse(prompt, context || undefined);
-      }
+    // Modo econômico: Uma LLM principal + backup
+    const primaryConfig = await storage.getPrimaryLlmConfig();
+    if (!primaryConfig) {
+      throw new Error('No primary LLM configured');
+    }
 
-      // Fallback para qualquer provider disponível
-      const firstProvider = Array.from(this.providers.values())[0];
-      if (firstProvider) {
-        const prompt = this.buildPrompt(input);
-        return await firstProvider.generateResponse(prompt, context || undefined);
+    const primaryProvider = this.providers.get(primaryConfig.name);
+    if (!primaryProvider) {
+      throw new Error(`Primary provider ${primaryConfig.name} not available`);
+    }
+
+    try {
+      // Tentar usar a LLM principal
+      const prompt = this.buildPrompt(input);
+      return await primaryProvider.generateResponse(prompt, context || undefined);
+    } catch (error) {
+      console.warn('Primary LLM failed, trying backup:', error);
+      
+      // Fallback para backup
+      if (this.strategy?.enableBackupSystem) {
+        return this.useBackupLLM(input, context);
       }
       
-      throw new Error('No LLM providers available');
-    } catch (error) {
-      console.warn('Economic mode failed:', error);
-      return 'Desculpe, não consegui processar sua mensagem no momento. Verifique se as API keys estão configuradas corretamente.';
+      throw error;
     }
   }
 
@@ -373,65 +349,33 @@ class MultiLLMOrchestrator {
   }
 
   private buildPrompt(input: string): string {
-    // Sistema de prompts financeiros especializado
-    const baseFinancialPrompt = `Você é o Mig, um assistente especializado em análise financeira e consultoria de crédito. Sua função é:
-
-1. ANÁLISE FINANCEIRA ESPECIALIZADA:
-   - Avaliar extratos bancários, faturas de cartão e demonstrações financeiras
-   - Calcular scores de crédito e indicadores de risco
-   - Identificar padrões de consumo e comportamento financeiro
-   - Detectar movimentações suspeitas ou gastos com apostas/jogos
-
-2. CONSULTORIA FINANCEIRA INTELIGENTE:
-   - Fornecer recomendações personalizadas para melhoria do score
-   - Sugerir estratégias de organização financeira
-   - Alertar sobre riscos de inadimplência
-   - Orientar sobre melhores práticas de gestão financeira
-
-3. COMUNICAÇÃO PROFISSIONAL:
-   - Sempre responder em português brasileiro
-   - Usar linguagem clara e acessível
-   - Fornecer insights práticos e acionáveis
-   - Manter confidencialidade e profissionalismo
-
-IMPORTANTE: Nunca invente dados financeiros. Sempre baseie suas análises em informações reais fornecidas pelos usuários.`;
-
-    // Se há prompts customizados do banco, usar em adição ao base
-    if (this.prompts) {
-      const customPrompts = [
-        this.prompts.prompt1,
-        this.prompts.prompt2,
-        this.prompts.prompt3,
-        this.prompts.prompt4,
-        this.prompts.prompt5,
-        this.prompts.prompt6,
-        this.prompts.prompt7,
-        this.prompts.prompt8,
-        this.prompts.prompt9,
-        this.prompts.prompt10,
-        this.prompts.prompt11,
-        this.prompts.prompt12
-      ].filter(p => p && p.trim().length > 0);
-
-      if (customPrompts.length > 0) {
-        const customSystemPrompt = customPrompts.join('\n\n');
-        return `${baseFinancialPrompt}\n\nCONFIGURAÇÕES ADICIONAIS:\n${customSystemPrompt}\n\nSolicitação do usuário: ${input}`;
-      }
+    if (!this.prompts) {
+      return input;
     }
 
-    return `${baseFinancialPrompt}\n\nSolicitação do usuário: ${input}`;
-  }
+    // Usar prompts em cadeia se configurado
+    const prompts = [
+      this.prompts.prompt1,
+      this.prompts.prompt2,
+      this.prompts.prompt3,
+      this.prompts.prompt4,
+      this.prompts.prompt5,
+      this.prompts.prompt6,
+      this.prompts.prompt7,
+      this.prompts.prompt8,
+      this.prompts.prompt9,
+      this.prompts.prompt10,
+      this.prompts.prompt11,
+      this.prompts.prompt12
+    ].filter(p => p && p.trim().length > 0);
 
-  private buildSimplePrompt(input: string): string {
-    return `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. 
+    if (prompts.length === 0) {
+      return input;
+    }
 
-Características:
-- Especialista em análise financeira e consultorias
-- Foco em crédito, risco e planejamento financeiro
-- Respostas objetivas e profissionais
-- Linguagem clara e acessível
-
-Solicitação: ${input}`;
+    // Combinar prompts em sistema base
+    const systemPrompt = prompts.join('\n\n');
+    return `${systemPrompt}\n\nTarefa: ${input}`;
   }
 
   private getLastUsedProvider(): string {

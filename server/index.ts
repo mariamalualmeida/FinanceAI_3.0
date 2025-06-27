@@ -3,7 +3,6 @@ import session from "express-session";
 import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { initializeDefaultConfigs } from "./initialize-default-configs";
 
 declare module 'express-session' {
   interface SessionData {
@@ -68,9 +67,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Inicializar configurações padrão do sistema
-  await initializeDefaultConfigs();
-  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
