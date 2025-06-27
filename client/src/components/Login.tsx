@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
 interface LoginProps {
   onLogin: (userData: any) => void
@@ -48,95 +48,96 @@ export default function Login({ onLogin }: LoginProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-          {/* Logo e título */}
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-              </svg>
+    <div className="financeai-login">
+      <div className="financeai-login__card">
+        {/* Header */}
+        <div className="financeai-login__header">
+          <div className="financeai-login__logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+            </svg>
+          </div>
+          <h2 className="financeai-login__title">FinanceAI</h2>
+          <p className="financeai-login__subtitle">Análise Financeira Inteligente</p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="financeai-login__form">
+          {error && (
+            <div style={{ 
+              padding: '12px', 
+              background: '#fee2e2', 
+              border: '1px solid #fecaca', 
+              borderRadius: '8px', 
+              color: '#dc2626',
+              fontSize: '14px',
+              marginBottom: '16px'
+            }}>
+              {error}
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              FinanceAI
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Análise Financeira Inteligente
-            </p>
+          )}
+
+          <div className="financeai-login__field">
+            <label className="financeai-login__label">Usuário</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="financeai-login__input"
+              placeholder="Digite seu usuário"
+              disabled={isLoading}
+            />
           </div>
 
-          {/* Formulário */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="p-3 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300 text-sm">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Usuário
-              </label>
+          <div className="financeai-login__field">
+            <label className="financeai-login__label">Senha</label>
+            <div style={{ position: 'relative' }}>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Digite seu usuário"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="financeai-login__input"
+                placeholder="Digite sua senha"
+                style={{ paddingRight: '40px' }}
                 disabled={isLoading}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px'
+                }}
+                disabled={isLoading}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Senha
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Digite sua senha"
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  disabled={isLoading}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
+          <button
+            type="submit"
+            className="financeai-login__button"
+            disabled={isLoading}
+            style={{ opacity: isLoading ? 0.7 : 1 }}
+          >
+            {isLoading ? 'Entrando...' : 'Entrar'}
+          </button>
+        </form>
 
-            <button
-              type="submit"
-              disabled={isLoading || !username || !password}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <LogIn size={20} />
-              )}
-              {isLoading ? 'Entrando...' : 'Entrar'}
-            </button>
-          </form>
-
-          {/* Credenciais padrão */}
-          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 text-center mb-2">
-              Credenciais padrão:
-            </p>
-            <div className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
-              <div>Usuário: <span className="font-mono">Admin</span></div>
-              <div>Senha: <span className="font-mono">admin123</span></div>
-            </div>
+        {/* Credentials */}
+        <div className="financeai-login__credentials">
+          <div className="financeai-login__credentials-title">Credenciais padrão:</div>
+          <div className="financeai-login__credentials-text">
+            Usuário: Admin<br />
+            Senha: admin123
           </div>
         </div>
       </div>
