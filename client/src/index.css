@@ -1,10 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import './simplified.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './simplified.css';
 
 /* Custom CSS variables for components that need them */
 :root {
