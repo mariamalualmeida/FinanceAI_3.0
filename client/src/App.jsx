@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
-import NewSettingsModal from './components/NewSettingsModal'
+import UnifiedSettingsModal from './components/UnifiedSettingsModal'
 import { Toaster } from './components/ui/toaster'
 import { SettingsProvider, useSettings } from './contexts/SettingsContext'
 
@@ -86,7 +86,6 @@ function AppContent() {
                 user={user} 
                 onLogout={handleLogout}
                 settings={settings}
-                onUpdateSettings={updateSettings}
                 isOpen={sidebarOpen}
                 onToggle={() => setSidebarOpen(!sidebarOpen)}
                 onClose={() => setSidebarOpen(false)}
@@ -112,14 +111,20 @@ function AppContent() {
         <Toaster />
         
         {/* Settings Modal */}
-        <NewSettingsModal
+        <UnifiedSettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
-          currentTheme={settings.theme}
-          onThemeChange={(theme) => updateSettings({ theme })}
           user={user}
         />
       </div>
     </Router>
+  )
+}
+
+export default function App() {
+  return (
+    <SettingsProvider>
+      <AppContent />
+    </SettingsProvider>
   )
 }
