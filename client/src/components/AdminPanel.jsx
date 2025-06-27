@@ -1082,9 +1082,9 @@ export default function AdminPanel({ onClose, user }) {
             <div key={config.id} className="admin-card">
               <div className="admin-card-header">
                 <div className="admin-card-content">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="admin-card-title">
                     <Cpu className="text-blue-600" size={20} />
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{config.displayName}</h4>
+                    <h4 className="text-gray-900 dark:text-white">{config.displayName}</h4>
                     {config.isEnabled && (
                       <span className="admin-status-badge bg-green-100 text-green-800">Ativo</span>
                     )}
@@ -1092,12 +1092,17 @@ export default function AdminPanel({ onClose, user }) {
                       <span className="admin-status-badge bg-blue-100 text-blue-800">Primário</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Modelo: {config.model} | Especialidade: {config.specialty || 'Geral'}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Tokens: {config.maxTokens} | Temperatura: {config.temperature}
-                  </p>
+                  <div className="admin-card-details">
+                    <p className="text-gray-600 dark:text-gray-400">
+                      <strong>Modelo:</strong> {config.model}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      <strong>Especialidade:</strong> {config.specialty || 'Geral'}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      <strong>Tokens:</strong> {config.maxTokens} | <strong>Temperatura:</strong> {config.temperature}
+                    </p>
+                  </div>
                 </div>
                 <div className="admin-card-actions">
                   <button
@@ -1105,14 +1110,14 @@ export default function AdminPanel({ onClose, user }) {
                     className="admin-action-btn edit"
                     title="Editar"
                   >
-                    <Edit3 size={16} />
+                    <Edit3 size={18} />
                   </button>
                   <button
                     onClick={() => deleteItem('/api/admin/llm-configs', config.id)}
                     className="admin-action-btn delete"
                     title="Excluir"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
@@ -1189,27 +1194,24 @@ export default function AdminPanel({ onClose, user }) {
         </div>
 
         {/* Mobile-First Tabs Navigation */}
-        <div className="overflow-x-auto border-b border-gray-200 dark:border-gray-700">
-          <div className="flex min-w-max px-2">
-            {tabs.map((tab) => {
-              const Icon = tab.icon
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-3 py-3 border-b-2 transition-colors whitespace-nowrap text-sm ${
-                    activeTab === tab.id
-                      ? 'border-purple-600 text-purple-600 bg-purple-50 dark:bg-purple-900/20'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
-                >
-                  <Icon size={16} />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
-                </button>
-              )
-            })}
-          </div>
+        <div className="admin-tabs-mobile">
+          {tabs.map((tab) => {
+            const Icon = tab.icon
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`admin-tab-mobile ${
+                  activeTab === tab.id
+                    ? 'bg-purple-600 dark:bg-purple-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                <Icon size={18} className="mx-auto mb-1" />
+                <span className="text-xs block">{tab.label.split(' ')[0]}</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Content - Mobile-First Vertical Layout */}

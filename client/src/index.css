@@ -319,17 +319,22 @@ body {
   display: none;
 }
 
-/* Fix text overflow in input area */
-.input-textarea {
+/* Fix text overflow in input area - higher specificity */
+.input-textarea-fixed {
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
   white-space: pre-wrap !important;
-  max-height: 120px;
-  overflow-y: auto;
-  resize: none;
-  padding-right: 130px !important; /* Increased space for buttons */
+  word-break: break-word !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  resize: none !important;
+  padding: 12px 140px 12px 12px !important; /* Top Right Bottom Left */
   line-height: 1.5 !important;
   font-size: 16px !important; /* Prevent zoom on iOS */
+  box-sizing: border-box !important;
+  touch-action: manipulation !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: text !important;
 }
 
 /* Input container positioning fix */
@@ -346,15 +351,64 @@ body {
   z-index: 10;
 }
 
-/* Fix toggle button formatting */
+/* Fix toggle button formatting - Mobile-first */
 .toggle-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 16px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  background: var(--card) !important;
+  margin-bottom: 16px !important;
+}
+
+/* Settings modal improvements */
+.settings-modal-content {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+.settings-field-group {
+  margin-bottom: 20px !important;
+}
+
+.settings-field-group label {
+  display: block !important;
+  margin-bottom: 8px !important;
+  font-weight: 500 !important;
+  color: var(--foreground) !important;
+}
+
+.settings-input {
+  width: 100% !important;
+  padding: 12px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
+  box-sizing: border-box !important;
+}
+
+.settings-input:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.settings-button-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 24px !important;
+}
+
+@media (min-width: 640px) {
+  .settings-button-group {
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+  }
 }
 
 .toggle-header {
@@ -386,86 +440,156 @@ input[type="email"] {
   font-size: 16px; /* Prevents zoom on iOS */
 }
 
-/* AdminPanel improvements */
+/* AdminPanel improvements - Mobile-first design */
 .admin-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  margin-bottom: 16px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Mobile-first: Stack vertically by default */
 .admin-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 12px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  margin-bottom: 0 !important;
 }
 
 .admin-card-content {
-  flex: 1;
-  min-width: 0;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.admin-card-title {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.admin-card-title h4 {
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.admin-card-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.admin-card-details p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
 }
 
 .admin-card-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+  display: flex !important;
+  gap: 12px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--border) !important;
+  justify-content: flex-end !important;
 }
 
 .admin-status-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  border-radius: 16px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
 }
 
 .admin-action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--muted-foreground);
-  transition: all 0.2s ease;
-  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  background: var(--muted) !important;
+  color: var(--muted-foreground) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
 }
 
 .admin-action-btn:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+  transform: translateY(-1px) !important;
 }
 
 .admin-action-btn.edit:hover {
-  background: #dbeafe;
-  color: #2563eb;
+  background: #dbeafe !important;
+  color: #2563eb !important;
 }
 
 .admin-action-btn.delete:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
 }
 
-/* Mobile responsive admin layout */
-@media (max-width: 768px) {
+/* Desktop: Horizontal layout for larger screens */
+@media (min-width: 768px) {
   .admin-card-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
   }
   
   .admin-card-actions {
-    justify-content: flex-end;
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
+    border-top: none !important;
+    padding-top: 0 !important;
+    flex-shrink: 0 !important;
+    margin-left: 16px !important;
+  }
+  
+  .admin-card-details {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Improve mobile tabs */
+.admin-tabs-mobile {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+}
+
+.admin-tab-mobile {
+  flex: 1 !important;
+  min-width: fit-content !important;
+  padding: 12px 16px !important;
+  text-align: center !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+}
+
+@media (max-width: 640px) {
+  .admin-tabs-mobile {
+    flex-direction: column !important;
+  }
+  
+  .admin-tab-mobile {
+    flex: none !important;
+    width: 100% !important;
   }
 }
 
