@@ -141,6 +141,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/user/change-password', isAuthenticated, async (req: any, res) => {
+    try {
+      const { newPassword } = req.body;
+      if (!newPassword || newPassword.length < 3) {
+        return res.status(400).json({ message: 'Password must be at least 3 characters' });
+      }
+
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Update password (in production would use bcrypt)
+      await storage.updateUser(user.id, { password: newPassword });
+      res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+      console.error('Change password error:', error);
+      res.status(500).json({ message: 'Failed to change password' });
+    }
+  });
+
   app.post('/api/logout', (req, res) => {
     req.session.destroy((err) => {
       if (err) {
