@@ -176,7 +176,12 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         ) : (
           <div className="max-w-4xl mx-auto px-6 py-8 space-y-8 pb-48 messages-container">
             {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} isGemini={true} />
+              <MessageBubble 
+                key={message.id} 
+                message={message} 
+                isGemini={true} 
+                onEdit={handleEditMessage}
+              />
             ))}
             
             {isTyping && (
