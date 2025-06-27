@@ -167,7 +167,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
               {!isTyping && !isEditing && (
                 <>
                   {/* Botões para mensagens do usuário - aparecem ao clicar */}
-                  {isUser && showActions && (
+                  {isUser && (
                     <div className="flex gap-2 mt-2 justify-end">
                       <button
                         onClick={(e) => {
