@@ -20,7 +20,8 @@ import {
   MessageSquare,
   Network,
   Shield,
-  Server
+  Server,
+  Cpu
 } from 'lucide-react'
 
 interface AdminPanelProps {

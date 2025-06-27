@@ -684,6 +684,20 @@ textarea.scrollbar-hide {
 
 /* Correções para problemas móveis identificados */
 @media screen and (max-width: 768px) {
+  /* Melhor padding para a área de input no mobile */
+  .max-w-3xl {
+    max-width: calc(100vw - 32px) !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+  
+  /* Padding específico para o container de input */
+  .input-container-mobile {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
   /* Prevenção de zoom em inputs móveis */
   input[type="text"],
   input[type="email"], 
