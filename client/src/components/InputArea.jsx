@@ -218,7 +218,7 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
             <motion.button
               type="button"
               onClick={handleSend}
-              disabled={!text.trim() && files.length === 0 && !audioData}
+              disabled={isProcessing || (!text.trim() && files.length === 0 && !audioData)}
               whileTap={{ scale: 0.95 }}
               className={`p-1.5 rounded-lg transition-colors ${
                 text.trim() || files.length > 0 || audioData
@@ -230,6 +230,17 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
               <Send size={18} />
             </motion.button>
           </div>
+
+          {/* Drag and Drop Overlay */}
+          {isDragOver && (
+            <div className="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-xl flex items-center justify-center">
+              <div className="text-center">
+                <Upload className="mx-auto mb-2 text-blue-600" size={32} />
+                <p className="text-blue-600 font-medium">Solte os arquivos aqui</p>
+                <p className="text-blue-500 text-sm">PDF, DOC, XLS, CSV, IMG</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
