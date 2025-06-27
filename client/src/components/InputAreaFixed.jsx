@@ -89,8 +89,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="relative px-6 py-4 bg-transparent">
-      <div className="max-w-6xl mx-auto relative">
+    <div className="relative px-2 sm:px-4 py-3 bg-transparent">
+      <div className="max-w-4xl mx-auto relative">
         {/* Transcription preview modal - integrado */}
         {pendingTranscription && (
           <div className="audio-transcription-integrated">
@@ -186,15 +186,32 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Input area */}
-          <div className="flex items-end gap-2 p-2">
+          {/* Input area - redesenhada para ser mais responsiva */}
+          <div className="flex items-start gap-3 p-4">
+            {/* File upload button - movido para a esquerda */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mt-1"
+              disabled={isDisabled}
+              title="Anexar arquivo"
+            >
+              <Paperclip size={20} />
+            </button>
+
+            {/* Text input area - expandida */}
             <div className="flex-1 relative">
               <textarea
                 ref={textareaRef}
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => {
+                  setText(e.target.value)
+                  // Auto-resize textarea
+                  const textarea = e.target
+                  textarea.style.height = 'auto'
+                  textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
+                }}
                 placeholder="Digite sua mensagem..."
-                className="input-textarea-final-fix w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-3 px-3 text-base leading-6 min-h-[48px] mobile-textarea-scroll"
+                className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 px-0 text-base leading-6 min-h-[24px] max-h-[200px] overflow-y-auto"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault()
@@ -203,41 +220,32 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 }}
                 disabled={isDisabled}
                 rows={1}
+                style={{ height: 'auto' }}
               />
-              
-              {/* Action buttons - positioned absolutely within textarea */}
-              <div className="input-buttons-final">
-                {/* File upload button */}
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="btn-minimal p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                  disabled={isDisabled}
-                  title="Anexar arquivo"
-                >
-                  <Paperclip size={18} />
-                </button>
+            </div>
 
-                {/* Audio recorder */}
-                <AudioRecorder
-                  onTranscriptionComplete={handleTranscriptionComplete}
-                  onAudioReady={setAudioData}
-                  disabled={isDisabled}
-                />
+            {/* Right action buttons */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Audio recorder */}
+              <AudioRecorder
+                onTranscriptionComplete={handleTranscriptionComplete}
+                onAudioReady={setAudioData}
+                disabled={isDisabled}
+              />
 
-                {/* Send button */}
-                <button
-                  onClick={handleSend}
-                  disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                  className="btn-minimal p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-                  title="Enviar mensagem"
-                >
-                  {isProcessing ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    <Send size={18} />
-                  )}
-                </button>
-              </div>
+              {/* Send button */}
+              <button
+                onClick={handleSend}
+                disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
+                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                title="Enviar mensagem"
+              >
+                {isProcessing ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : (
+                  <Send size={20} />
+                )}
+              </button>
             </div>
           </div>
         </div>
