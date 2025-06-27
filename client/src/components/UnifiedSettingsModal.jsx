@@ -194,102 +194,104 @@ const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, us
             </div>
           </div>
 
-          {/* Content - Split Layout */}
-          <div className="flex-1 flex overflow-hidden">
-            {/* Left Column - Quick Settings */}
-            <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Configurações Rápidas</h3>
+          {/* Content - Mobile-First Vertical Layout */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 space-y-4">
               
-              {/* Tema */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-3">
-                  <Palette size={16} className="text-blue-600" />
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Tema</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => updateTheme('light')}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      settings.theme === 'light'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="w-6 h-6 bg-white border border-gray-300 rounded mx-auto mb-1"></div>
-                    <span className="text-xs font-medium">Claro</span>
-                  </button>
-                  <button
-                    onClick={() => updateTheme('dark')}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      settings.theme === 'dark'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="w-6 h-6 bg-gray-800 rounded mx-auto mb-1"></div>
-                    <span className="text-xs font-medium">Escuro</span>
-                  </button>
-                </div>
-              </div>
+              {/* Configurações Rápidas - Tema e Interface */}
+              <ExpandableSection title="Tema e Interface" icon={Palette} defaultOpen={true}>
+                <div className="space-y-4">
+                  {/* Tema */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Tema
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => updateTheme('light')}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          settings.theme === 'light'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="w-8 h-8 bg-white border border-gray-300 rounded mx-auto mb-2"></div>
+                        <span className="text-sm font-medium">Claro</span>
+                      </button>
+                      <button
+                        onClick={() => updateTheme('dark')}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          settings.theme === 'dark'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="w-8 h-8 bg-gray-800 rounded mx-auto mb-2"></div>
+                        <span className="text-sm font-medium">Escuro</span>
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Interface */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-3">
-                  <Database size={16} className="text-green-600" />
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Interface</span>
+                  {/* Interface */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Estilo da Interface
+                    </label>
+                    <div className="space-y-2">
+                      {[
+                        { value: 'chatgpt', label: 'ChatGPT', icon: '🤖', desc: 'Interface similar ao ChatGPT' },
+                        { value: 'gemini', label: 'Gemini (Mig)', icon: '💎', desc: 'Interface similar ao Gemini' }
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => updateInterface(option.value)}
+                          className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                            settings.interface === option.value
+                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-xl">{option.icon}</span>
+                            <div>
+                              <div className="font-medium">{option.label}</div>
+                              <div className="text-sm text-gray-500">{option.desc}</div>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {[
-                    { value: 'chatgpt', label: 'ChatGPT', icon: '🤖' },
-                    { value: 'gemini', label: 'Gemini', icon: '💎' }
-                  ].map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => updateInterface(option.value)}
-                      className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                        settings.interface === option.value
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                      }`}
-                    >
-                      <span className="text-sm font-medium">{option.icon} {option.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              </ExpandableSection>
 
-              {/* Configurações Rápidas */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap size={16} className="text-yellow-600" />
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Rápidas</span>
-                </div>
-                <div className="space-y-3">
+              {/* Configurações de Comportamento */}
+              <ExpandableSection title="Comportamento da Interface" icon={Zap} defaultOpen={false}>
+                <div className="space-y-4">
                   <ToggleField
                     label="Modo Compacto"
                     value={settings.interfaceSettings?.compact_mode || false}
                     onChange={(value) => updateSetting('interfaceSettings', 'compact_mode', value)}
-                    description="Interface mais compacta"
+                    description="Reduz espaçamentos para telas menores"
+                    icon={Eye}
                   />
                   <ToggleField
                     label="Mostrar Sidebar"
-                    value={settings.interfaceSettings?.show_sidebar || true}
+                    value={settings.interfaceSettings?.show_sidebar !== false}
                     onChange={(value) => updateSetting('interfaceSettings', 'show_sidebar', value)}
-                    description="Exibir sidebar de conversas"
+                    description="Exibir painel lateral de conversas"
+                    icon={Database}
                   />
                   <ToggleField
                     label="Rolagem Automática"
-                    value={settings.interfaceSettings?.auto_scroll || true}
+                    value={settings.interfaceSettings?.auto_scroll !== false}
                     onChange={(value) => updateSetting('interfaceSettings', 'auto_scroll', value)}
-                    description="Rolar para novas mensagens"
+                    description="Rolar automaticamente para novas mensagens"
+                    icon={Globe}
                   />
                 </div>
-              </div>
-            </div>
+              </ExpandableSection>
 
-            {/* Right Column - Detailed Settings */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
-              
               {/* Perfil do Usuário */}
               <ExpandableSection title="Perfil do Usuário" icon={User} defaultOpen={false}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
