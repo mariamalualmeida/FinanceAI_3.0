@@ -271,14 +271,11 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     {settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
                   </button>
                   <button 
-                    onClick={() => {
-                      const newInterface = settings.interface === 'chatgpt' ? 'gemini' : 'chatgpt'
-                      onUpdateSettings({ interface: newInterface })
-                    }}
+                    onClick={() => onOpenSettings()}
                     className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
                   >
-                    {settings.interface === 'chatgpt' ? <Zap size={16} /> : <Monitor size={16} />}
-                    {settings.interface === 'chatgpt' ? 'Interface Gemini' : 'Interface ChatGPT'}
+                    <Settings size={16} />
+                    Configurações
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
                   <button 
