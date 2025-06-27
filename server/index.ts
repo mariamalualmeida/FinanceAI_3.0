@@ -16,17 +16,20 @@ const MemStore = MemoryStore(session);
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'fallback-secret-key',
+    secret: process.env.SESSION_SECRET || 'financeai-secret-development-key-' + Date.now(),
     resave: false,
     saveUninitialized: false,
     store: new MemStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
+      checkPeriod: 86400000, // prune expired entries every 24h
+      ttl: 1000 * 60 * 60 * 24 * 7 // 1 week
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
       httpOnly: true,
-      secure: false // set to true in production with HTTPS
-    }
+      secure: false, // set to true in production with HTTPS
+      sameSite: 'lax'
+    },
+    name: 'financeai.session'
   })
 );
 
