@@ -13,6 +13,8 @@ import {
   BookOpen,
   Plus,
   Eye,
+  EyeOff,
+  User,
   AlertCircle,
   Zap,
   MessageSquare,
@@ -961,44 +963,48 @@ export default function AdminPanel({ onClose, user }) {
           </button>
         </div>
 
-        <div className="space-y-3">
+        <div className="grid gap-4">
           {users.map((user) => (
-            <div key={user.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <User className="text-blue-600" size={18} />
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{user.username}</h4>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
+            <div key={user.id} className="admin-card">
+              <div className="admin-card-header">
+                <div className="admin-card-content">
+                  <div className="admin-card-title">
+                    <User className="text-blue-600" size={20} />
+                    <h4 className="text-gray-900 dark:text-white">{user.username}</h4>
+                    <span className={`admin-status-badge ${
                       user.role === 'admin' 
                         ? 'bg-purple-100 text-purple-800' 
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {user.role === 'admin' ? 'Administrador' : 'Usuário'}
+                      {user.role === 'admin' ? 'Admin' : 'User'}
                     </span>
                     {user.isActive && (
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ativo</span>
+                      <span className="admin-status-badge bg-green-100 text-green-800">Ativo</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    Email: {user.email}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Último acesso: {user.lastLogin}
-                  </p>
+                  <div className="admin-card-details">
+                    <p className="text-gray-600 dark:text-gray-400">
+                      <strong>Email:</strong> {user.email}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      <strong>Último acesso:</strong> {user.lastLogin}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="admin-card-actions">
                   <button
                     onClick={() => setEditingUser(user)}
-                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                    className="admin-action-btn edit"
+                    title="Editar"
                   >
-                    <Edit3 size={16} />
+                    <Edit3 size={18} />
                   </button>
                   <button
                     onClick={() => console.log('Toggle user status:', user.id)}
-                    className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                    className="admin-action-btn delete"
+                    title={user.isActive ? 'Desativar' : 'Ativar'}
                   >
-                    {user.isActive ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {user.isActive ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
