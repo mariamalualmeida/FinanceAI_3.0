@@ -96,7 +96,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="px-4 py-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-900">
       <input
         ref={fileInputRef}
         type="file"
@@ -161,7 +161,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+        <div className="relative bg-white dark:bg-gray-800">
           
           {/* File attachments preview */}
           {files.length > 0 && (
