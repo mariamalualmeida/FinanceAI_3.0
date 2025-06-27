@@ -96,7 +96,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="bg-white dark:bg-gray-900">
+    <div className="w-full">
       <input
         ref={fileInputRef}
         type="file"
@@ -161,11 +161,11 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative bg-white dark:bg-gray-800">
+        <div className="relative bg-transparent">
           
           {/* File attachments preview */}
           {files.length > 0 && (
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-3">
               <div className="flex flex-wrap gap-2">
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
@@ -194,7 +194,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
 
           {/* Upload progress */}
           {uploadProgress && (
-            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2">
               <div className="flex items-center gap-3">
                 <Loader2 size={16} className="animate-spin text-blue-500" />
                 <div className="flex-1">
@@ -218,8 +218,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Input area principal */}
-          <div className="relative p-2">
+          {/* Input area principal - sem padding para ocupar toda largura */}
+          <div className="relative">
             
             {/* Textarea com posicionamento correto */}
             <textarea
