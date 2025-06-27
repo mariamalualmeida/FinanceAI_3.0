@@ -285,7 +285,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl h-[100dvh] md:max-h-[95vh] md:h-auto overflow-hidden flex flex-col"
+          className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-7xl h-[100dvh] md:max-h-[95vh] md:h-auto overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -300,20 +300,135 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
                 </span>
               )}
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    setTimeout(() => {
+                      window.location.href = '/admin';
+                    }, 300);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md"
+                >
+                  <Shield size={18} />
+                  <span className="hidden sm:inline">Painel Admin</span>
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
-            
-            {/* Perfil do Usuário */}
-            <ExpandableSection title="Perfil do Usuário" icon={User} defaultOpen={true}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Content - Split Layout */}
+          <div className="flex-1 flex overflow-hidden">
+            {/* Left Column - Quick Settings */}
+            <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Configurações Rápidas</h3>
+              
+              {/* Tema */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <Palette size={16} className="text-blue-600" />
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Tema</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      updateSetting('interface', 'theme', 'light');
+                      onThemeChange?.('light');
+                    }}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      settings.interface.theme === 'light'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="w-6 h-6 bg-white border border-gray-300 rounded mx-auto mb-1"></div>
+                    <span className="text-xs font-medium">Claro</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      updateSetting('interface', 'theme', 'dark');
+                      onThemeChange?.('dark');
+                    }}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      settings.interface.theme === 'dark'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="w-6 h-6 bg-gray-800 rounded mx-auto mb-1"></div>
+                    <span className="text-xs font-medium">Escuro</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Interface */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <Database size={16} className="text-green-600" />
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Interface</span>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { value: 'chatgpt', label: 'ChatGPT', color: 'green', icon: '🤖' },
+                    { value: 'gemini', label: 'Gemini', color: 'purple', icon: '💎' }
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => updateSetting('interface', 'interface_type', option.value)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                        settings.interface.interface_type === option.value
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{option.icon} {option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Configurações Rápidas */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap size={16} className="text-yellow-600" />
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Rápidas</span>
+                </div>
+                <div className="space-y-3">
+                  <ToggleField
+                    label="Modo Compacto"
+                    value={settings.interface.compact_mode}
+                    onChange={(value) => updateSetting('interface', 'compact_mode', value)}
+                    description="Interface mais compacta"
+                  />
+                  <ToggleField
+                    label="Mostrar Sidebar"
+                    value={settings.interface.show_sidebar}
+                    onChange={(value) => updateSetting('interface', 'show_sidebar', value)}
+                    description="Exibir sidebar de conversas"
+                  />
+                  <ToggleField
+                    label="Rolagem Automática"
+                    value={settings.interface.auto_scroll}
+                    onChange={(value) => updateSetting('interface', 'auto_scroll', value)}
+                    description="Rolar para novas mensagens"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Detailed Settings */}
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
+              
+              {/* Perfil do Usuário */}
+              <ExpandableSection title="Perfil do Usuário" icon={User} defaultOpen={false}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputField
                   label="Nome"
                   value={settings.profile.name}
@@ -781,6 +896,7 @@ const NewSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, user }
                 )}
               </div>
             </ExpandableSection>
+            </div>
           </div>
 
           {/* Footer */}
