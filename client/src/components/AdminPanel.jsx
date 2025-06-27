@@ -13,19 +13,96 @@ import {
   BookOpen,
   Search,
   Filter,
-  Plus
+  Plus,
+  Eye,
+  EyeOff,
+  Check,
+  AlertCircle,
+  Cpu,
+  Zap
 } from 'lucide-react'
 
 export default function AdminPanel({ user, onClose }) {
-  const [activeTab, setActiveTab] = useState('general')
-  const [configs, setConfigs] = useState([])
+  const [activeTab, setActiveTab] = useState('llm')
+  const [llmConfigs, setLlmConfigs] = useState([])
+  const [systemPrompts, setSystemPrompts] = useState([])
+  const [strategies, setStrategies] = useState([])
   const [knowledgeBase, setKnowledgeBase] = useState([])
-  const [fileUploads, setFileUploads] = useState([])
+  const [systemConfigs, setSystemConfigs] = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
-  const [editingConfig, setEditingConfig] = useState(null)
-  const [newConfig, setNewConfig] = useState({ key: '', value: '', description: '', category: 'general' })
+  const [editingItem, setEditingItem] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
+
+  // Load data functions
+  const loadLlmConfigs = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/llm-configs', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setLlmConfigs(data)
+      }
+    } catch (error) {
+      console.error('Error loading LLM configs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadSystemPrompts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/system-prompts', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setSystemPrompts(data)
+      }
+    } catch (error) {
+      console.error('Error loading system prompts:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadStrategies = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/multi-llm-strategies', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setStrategies(data)
+      }
+    } catch (error) {
+      console.error('Error loading strategies:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Load data based on active tab
+  useEffect(() => {
+    switch (activeTab) {
+      case 'llm':
+        loadLlmConfigs()
+        break
+      case 'prompts':
+        loadSystemPrompts()
+        break
+      case 'strategy':
+        loadStrategies()
+        break
+      default:
+        break
+    }
+  }, [activeTab])
 
   // Check if user is admin
   if (user?.role !== 'admin') {
@@ -43,70 +120,77 @@ export default function AdminPanel({ user, onClose }) {
   }
 
   const tabs = [
-    { id: 'general', label: 'Configurações Gerais', icon: Settings },
-    { id: 'credentials', label: 'Credenciais', icon: Key },
+    { id: 'llm', label: 'Configurações LLM', icon: Settings },
+    { id: 'prompts', label: 'Prompts do Sistema', icon: FileText },
+    { id: 'strategy', label: 'Estratégias Multi-LLM', icon: Database },
     { id: 'knowledge', label: 'Base de Conhecimento', icon: BookOpen },
-    { id: 'files', label: 'Uploads', icon: FileText },
+    { id: 'system', label: 'Sistema', icon: Key },
     { id: 'users', label: 'Usuários', icon: Users }
   ]
 
-  // Load data based on active tab
-  useEffect(() => {
-    loadTabData()
-  }, [activeTab])
+  // LLM Configuration Component
+  const LLMConfigSection = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações LLM</h3>
+        <button
+          onClick={() => setEditingItem({ type: 'llm', data: {} })}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          <Plus size={16} />
+          Novo Provedor
+        </button>
+      </div>
 
-  const loadTabData = async () => {
-    setLoading(true)
-    try {
-      switch (activeTab) {
-        case 'general':
-        case 'credentials':
-          const configRes = await fetch('/api/admin/configs', { credentials: 'include' })
-          if (configRes.ok) {
-            const configs = await configRes.json()
-            setConfigs(configs)
-          }
-          break
-        case 'knowledge':
-          const kbRes = await fetch('/api/admin/knowledge-base', { credentials: 'include' })
-          if (kbRes.ok) {
-            const kb = await kbRes.json()
-            setKnowledgeBase(kb)
-          }
-          break
-        case 'files':
-          const filesRes = await fetch('/api/admin/file-uploads', { credentials: 'include' })
-          if (filesRes.ok) {
-            const files = await filesRes.json()
-            setFileUploads(files)
-          }
-          break
-      }
-    } catch (error) {
-      console.error('Error loading data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const saveConfig = async (config) => {
-    try {
-      const response = await fetch('/api/admin/configs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(config)
-      })
-      
-      if (response.ok) {
-        loadTabData()
-        setEditingConfig(null)
-        setNewConfig({ key: '', value: '', description: '', category: 'general' })
-      }
-    } catch (error) {
-      console.error('Error saving config:', error)
-    }
-  }
+      {loading ? (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Carregando configurações...</p>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {llmConfigs.map((config) => (
+            <div key={config.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Cpu className="text-blue-600" size={20} />
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{config.displayName}</h4>
+                    {config.isEnabled && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ativo</span>
+                    )}
+                    {config.isPrimary && (
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Primário</span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Modelo: {config.model} | Especialidade: {config.specialty || 'Geral'}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Tokens: {config.maxTokens} | Temperatura: {config.temperature}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditingItem({ type: 'llm', data: config })}
+                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded"
+                  >
+                    <Edit3 size={16} />
+                  </button>
+                  <button
+                    onClick={() => deleteItem('/api/admin/llm-configs', config.id)}
+                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 
   const deleteItem = async (endpoint, id) => {
     if (!confirm('Tem certeza que deseja excluir este item?')) return
@@ -118,7 +202,18 @@ export default function AdminPanel({ user, onClose }) {
       })
       
       if (response.ok) {
-        loadTabData()
+        // Reload data based on current tab
+        switch (activeTab) {
+          case 'llm':
+            loadLlmConfigs()
+            break
+          case 'prompts':
+            loadSystemPrompts()
+            break
+          case 'strategy':
+            loadStrategies()
+            break
+        }
       }
     } catch (error) {
       console.error('Error deleting item:', error)
