@@ -17,7 +17,8 @@ import {
   MessageSquare,
   Network,
   Shield,
-  Server
+  Server,
+  Cpu
 } from 'lucide-react'
 
 export default function AdminPanel({ onClose, user }) {
