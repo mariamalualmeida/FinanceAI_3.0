@@ -21,12 +21,26 @@ declare module "express-session" {
   }
 }
 
-// Authentication middleware
-const isAuthenticated = (req: any, res: Response, next: NextFunction) => {
-  if (req.session?.userId) {
+// Enhanced authentication middleware
+const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    if (!req.session?.userId) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    // Verify user still exists in database
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      req.session.destroy(() => {});
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    // Add user to request for easy access
+    req.user = user;
     next();
-  } else {
-    res.status(401).json({ message: 'Not authenticated' });
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({ message: 'Authentication failed' });
   }
 };
 
@@ -48,63 +62,62 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Fixed users system
-  const FIXED_USERS = [
-    {
-      id: 1,
-      username: 'Admin',
-      password: 'admin123',
-      email: 'admin@financeai.com',
-      role: 'admin',
-      fullName: 'Usuário Padrão'
-    },
-    {
-      id: 2,
-      username: 'Leonardo',
-      password: 'L30n4rd0@1004',
-      email: 'leonardo@financeai.com',
-      role: 'admin',
-      fullName: 'Administrador'
-    }
-  ];
-
-  // Initialize fixed users if they don't exist
-  async function initializeUsers() {
-    for (const fixedUser of FIXED_USERS) {
-      const existingUser = await storage.getUserByUsername(fixedUser.username);
-      if (!existingUser) {
+  // Initialize default admin user if it doesn't exist
+  async function initializeDefaultUsers() {
+    try {
+      const adminUser = await storage.getUserByUsername('Admin');
+      if (!adminUser) {
         await storage.createUser({
-          username: fixedUser.username,
-          password: fixedUser.password,
-          email: fixedUser.email,
-          role: fixedUser.role
+          username: 'Admin',
+          password: 'admin123',
+          email: 'admin@financeai.com',
+          role: 'admin'
         });
+        console.log('Default admin user created');
       }
+
+      const leonardoUser = await storage.getUserByUsername('Leonardo');
+      if (!leonardoUser) {
+        await storage.createUser({
+          username: 'Leonardo',
+          password: 'L30n4rd0@1004',
+          email: 'leonardo@financeai.com',
+          role: 'admin'
+        });
+        console.log('Leonardo admin user created');
+      }
+    } catch (error) {
+      console.error('Error initializing users:', error);
     }
   }
   
   // Initialize users on server start
-  initializeUsers().catch(console.error);
+  initializeDefaultUsers();
 
   app.post('/api/login', async (req, res) => {
     try {
       const { username, password } = loginSchema.parse(req.body);
       
-      // Check against fixed users
-      const fixedUser = FIXED_USERS.find(u => u.username === username && u.password === password);
-      if (!fixedUser) {
+      // Get user from database
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // For now, doing simple password comparison
+      // In production, you'd want to use bcrypt
+      if (user.password !== password) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
       // Create session
-      req.session.userId = fixedUser.id;
+      req.session.userId = user.id;
       
       const userResponse = {
-        id: fixedUser.id,
-        username: fixedUser.username,
-        email: fixedUser.email,
-        role: fixedUser.role,
-        fullName: fixedUser.fullName
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
       };
       
       res.json({ user: userResponse });
@@ -116,14 +129,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/user', isAuthenticated, async (req: any, res) => {
     try {
-      // First check if user exists in fixed users
-      const fixedUser = FIXED_USERS.find(u => u.id === req.session.userId);
-      if (fixedUser) {
-        const { password, ...userWithoutPassword } = fixedUser;
-        return res.json(userWithoutPassword);
-      }
-
-      // Fallback to database lookup
       const user = await storage.getUser(req.session.userId!);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
