@@ -7,14 +7,15 @@ import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
 import UnifiedSettingsModal from './components/UnifiedSettingsModal'
 import { Toaster } from './components/ui/toaster'
-import { SettingsProvider, useSettings } from './contexts/SettingsContext'
-
 function AppContent() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const { settings, updateTheme, updateInterface } = useSettings()
+  const [settings, setSettings] = useState({
+    theme: 'light',
+    interface: 'chatgpt'
+  })
 
   // Check authentication and load settings on app load
   useEffect(() => {
@@ -34,12 +35,29 @@ function AppContent() {
       }
     }
 
+    const loadSettings = () => {
+      const saved = localStorage.getItem('financeai-settings')
+      if (saved) {
+        try {
+          setSettings(prev => ({ ...prev, ...JSON.parse(saved) }))
+        } catch (error) {
+          console.error('Failed to load settings:', error)
+        }
+      }
+    }
+
     checkAuth()
+    loadSettings()
   }, [])
+
+  const updateSettings = (newSettings) => {
+    setSettings(prev => ({ ...prev, ...newSettings }))
+    localStorage.setItem('financeai-settings', JSON.stringify({ ...settings, ...newSettings }))
+  }
 
   const toggleTheme = () => {
     const newTheme = settings.theme === 'light' ? 'dark' : 'light'
-    updateTheme(newTheme)
+    updateSettings({ theme: newTheme })
   }
 
   const handleLogin = (userData) => {
@@ -86,6 +104,7 @@ function AppContent() {
                 user={user} 
                 onLogout={handleLogout}
                 settings={settings}
+                onUpdateSettings={updateSettings}
                 isOpen={sidebarOpen}
                 onToggle={() => setSidebarOpen(!sidebarOpen)}
                 onClose={() => setSidebarOpen(false)}
@@ -114,6 +133,8 @@ function AppContent() {
         <UnifiedSettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
+          currentTheme={settings.theme}
+          onThemeChange={(theme) => updateSettings({ theme })}
           user={user}
         />
       </div>
@@ -121,10 +142,4 @@ function AppContent() {
   )
 }
 
-export default function App() {
-  return (
-    <SettingsProvider>
-      <AppContent />
-    </SettingsProvider>
-  )
-}
+export default AppContent;
