@@ -185,10 +185,10 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
           />
         )}
 
-        {/* Container do input */}
+        {/* Container do input - sem bordas e ocupando toda área */}
         <div 
-          className={`relative h-32 bg-white dark:bg-[#40414F] border border-gray-300 dark:border-white/20 rounded-xl shadow-sm focus-within:shadow-md transition-all ${
-            isDragOver ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
+          className={`relative h-32 bg-white dark:bg-[#40414F] transition-all ${
+            isDragOver ? 'bg-blue-50 dark:bg-blue-900/20' : ''
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -215,11 +215,11 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
             className="input-textarea-fixed w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 scrollbar-hide mobile-textarea-scroll"
           />
 
-          {/* Botão de anexo - canto inferior esquerdo */}
+          {/* Botão de anexo - canto inferior esquerdo, sem fundo */}
           <button 
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-2 left-3 p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            className="absolute bottom-2 left-3 p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
             title="Anexar arquivo"
           >
             <Paperclip size={18} />
@@ -261,15 +261,15 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
                   size={18}
                 />
 
-                {/* Botão de envio */}
+                {/* Botão de envio - mesma cor dos demais ícones, sem fundo */}
                 <motion.button
                   type="button"
                   onClick={handleSend}
                   disabled={isProcessing || (!text.trim() && files.length === 0 && !audioData)}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-1.5 transition-colors bg-transparent ${
                     text.trim() || files.length > 0 || audioData
-                      ? 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'
+                      ? 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
                       : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                   }`}
                   title="Enviar mensagem"
