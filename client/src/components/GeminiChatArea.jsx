@@ -217,7 +217,10 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         <div className="fixed bottom-0 left-0 right-0 z-40">
           <InputAreaFixed 
             onSend={sendMessage}
-            onFileUpload={uploadFiles}
+            onFileUpload={(file) => {
+              // Upload simples sem quebrar a interface
+              console.log('Arquivo anexado:', file.name)
+            }}
             isProcessing={isTyping}
             uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
           />

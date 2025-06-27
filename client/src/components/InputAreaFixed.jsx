@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { Send, Paperclip, X, FileText, Image, File, Loader2, Check } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Send, Paperclip, X, FileText, Image, File, Loader2, Upload } from 'lucide-react'
 import { motion } from 'framer-motion'
 import AudioRecorder from './AudioRecorder'
 
@@ -11,6 +11,18 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const [pendingTranscription, setPendingTranscription] = useState(null)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current
+      textarea.style.height = 'auto'
+      const scrollHeight = textarea.scrollHeight
+      const maxHeight = 120 // ~5 lines max
+      const minHeight = 56 // ~2 lines min
+      textarea.style.height = `${Math.min(Math.max(scrollHeight, minHeight), maxHeight)}px`
+    }
+  }, [text])
 
   const handleSend = () => {
     if (!text.trim() && files.length === 0 && !audioData) return
@@ -56,15 +68,44 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
       'image/png'
     ]
     
-    const validFiles = droppedFiles.filter(file => allowedTypes.includes(file.type))
+    const validFiles = droppedFiles.filter(file => 
+      allowedTypes.includes(file.type) && file.size <= 10 * 1024 * 1024
+    )
+    
     if (validFiles.length > 0) {
       setFiles(prev => [...prev, ...validFiles])
+      if (onFileUpload) {
+        validFiles.forEach(file => onFileUpload(file))
+      }
     }
   }
 
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files || [])
-    setFiles(prev => [...prev, ...selectedFiles])
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+      'text/plain',
+      'text/csv',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'image/jpeg',
+      'image/jpg',
+      'image/png'
+    ]
+    
+    const validFiles = selectedFiles.filter(file => 
+      allowedTypes.includes(file.type) && file.size <= 10 * 1024 * 1024
+    )
+    
+    if (validFiles.length > 0) {
+      setFiles(prev => [...prev, ...validFiles])
+      if (onFileUpload) {
+        validFiles.forEach(file => onFileUpload(file))
+      }
+    }
+    
+    e.target.value = ''
   }
 
   const removeFile = (index) => {
@@ -84,14 +125,21 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
 
   const rejectTranscription = () => {
     setPendingTranscription(null)
+    setAudioData(null)
   }
 
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="relative px-2 sm:px-4 py-3 bg-transparent">
+    <div 
+      className="relative px-2 sm:px-4 py-3 bg-transparent"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <div className="max-w-4xl mx-auto relative">
-        {/* Transcription preview modal - integrado */}
+        
+        {/* Transcription preview modal */}
         {pendingTranscription && (
           <div className="audio-transcription-integrated">
             <div className="transcription-header">
@@ -123,17 +171,11 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        {/* Main input container */}
-        <div className={`input-container-final border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 transition-all duration-200 ${
-          isDragOver ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
-        }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {/* File attachments display */}
+        <div className="relative border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+          
+          {/* File attachments preview */}
           {files.length > 0 && (
-            <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex flex-wrap gap-2">
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
@@ -144,12 +186,12 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                     ) : (
                       <File size={16} className="text-gray-500" />
                     )}
-                    <span className="text-minimal-sm text-gray-700 dark:text-gray-300 truncate max-w-32">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 truncate max-w-32">
                       {file.name}
                     </span>
                     <button
                       onClick={() => removeFile(index)}
-                      className="text-gray-500 hover:text-red-500 btn-minimal"
+                      className="text-gray-500 hover:text-red-500 p-1"
                       disabled={isDisabled}
                     >
                       <X size={14} />
@@ -167,8 +209,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 <Loader2 size={16} className="animate-spin text-blue-500" />
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-minimal-sm text-gray-600 dark:text-gray-400">Processando arquivo...</span>
-                    <span className="text-minimal-sm text-gray-600 dark:text-gray-400">{uploadProgress.progress}%</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Processando arquivo...</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">{uploadProgress.progress}%</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
@@ -177,7 +219,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                     />
                   </div>
                   {uploadProgress.fileName && (
-                    <div className="text-minimal-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                       {uploadProgress.fileName}
                     </div>
                   )}
@@ -186,46 +228,43 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Input area - redesenhada para ser mais responsiva */}
-          <div className="flex items-start gap-3 p-4">
-            {/* File upload button - movido para a esquerda */}
+          {/* Input area principal */}
+          <div className="relative p-4">
+            
+            {/* Textarea com posicionamento correto */}
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Digite sua mensagem..."
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-12 pr-20 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-hidden scrollbar-hide"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSend()
+                }
+              }}
+              disabled={isDisabled}
+              rows={2}
+              style={{ 
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            />
+
+            {/* Ícone de anexar - canto inferior esquerdo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mt-1"
+              className="absolute bottom-4 left-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
-              <Paperclip size={20} />
+              <Paperclip size={18} />
             </button>
 
-            {/* Text input area - expandida */}
-            <div className="flex-1 relative">
-              <textarea
-                ref={textareaRef}
-                value={text}
-                onChange={(e) => {
-                  setText(e.target.value)
-                  // Auto-resize textarea
-                  const textarea = e.target
-                  textarea.style.height = 'auto'
-                  textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
-                }}
-                placeholder="Digite sua mensagem..."
-                className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 px-0 text-base leading-6 min-h-[24px] max-h-[200px] overflow-y-auto"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                disabled={isDisabled}
-                rows={1}
-                style={{ height: 'auto' }}
-              />
-            </div>
-
-            {/* Right action buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Ícones direitos - canto inferior direito */}
+            <div className="absolute bottom-4 right-4 flex items-center gap-2">
+              
               {/* Audio recorder */}
               <AudioRecorder
                 onTranscriptionComplete={handleTranscriptionComplete}
@@ -241,9 +280,9 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
-                  <Loader2 size={20} className="animate-spin" />
+                  <Loader2 size={18} className="animate-spin" />
                 ) : (
-                  <Send size={20} />
+                  <Send size={18} />
                 )}
               </button>
             </div>
@@ -262,10 +301,10 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
 
         {/* Drag overlay */}
         {isDragOver && (
-          <div className="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-xl flex items-center justify-center">
+          <div className="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-xl flex items-center justify-center z-10">
             <div className="text-blue-600 dark:text-blue-400 text-center">
               <Upload size={32} className="mx-auto mb-2" />
-              <p className="text-minimal-base font-medium">Solte os arquivos aqui</p>
+              <p className="text-base font-medium">Solte os arquivos aqui</p>
             </div>
           </div>
         )}

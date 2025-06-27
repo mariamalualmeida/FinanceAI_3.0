@@ -563,6 +563,22 @@ input[type="email"] {
   }
 }
 
+/* Input area improvements - esconder scrollbar mas permitir touch scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Textarea touch scroll habilitado */
+textarea.scrollbar-hide {
+  -webkit-overflow-scrolling: touch !important;
+  overflow-scrolling: touch !important;
+}
+
 /* Improve mobile tabs */
 .admin-tabs-mobile {
   display: flex !important;
