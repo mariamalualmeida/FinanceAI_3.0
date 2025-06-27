@@ -20,11 +20,15 @@ import {
   MessageSquare,
   Network,
   Shield,
-  Server,
-  Cpu
+  Server
 } from 'lucide-react'
 
-export default function AdminPanel({ onClose, user }) {
+interface AdminPanelProps {
+  onClose: () => void;
+  user: { role: string; username?: string } | null;
+}
+
+export default function AdminPanel({ onClose, user }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState('llm')
   const [llmConfigs, setLlmConfigs] = useState([])
   const [systemPrompts, setSystemPrompts] = useState([])
@@ -1089,7 +1093,7 @@ export default function AdminPanel({ onClose, user }) {
               <div className="admin-card-header">
                 <div className="admin-card-content">
                   <div className="admin-card-title">
-                    <Cpu className="text-blue-600" size={20} />
+                    <Server className="text-blue-600" size={20} />
                     <h4 className="text-gray-900 dark:text-white">{config.displayName}</h4>
                     {config.isEnabled && (
                       <span className="admin-status-badge bg-green-100 text-green-800">Ativo</span>
@@ -1179,10 +1183,6 @@ export default function AdminPanel({ onClose, user }) {
         return <UserManagementSection />
       default:
         return <div className="text-center py-8 text-gray-500">Seção não encontrada</div>
-    }
-  }eturn <UserManagementSection />
-      default:
-        return <LLMConfigSection />
     }
   }
 
