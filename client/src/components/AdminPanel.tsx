@@ -30,11 +30,11 @@ interface AdminPanelProps {
 
 export default function AdminPanel({ onClose, user }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState('llm')
-  const [llmConfigs, setLlmConfigs] = useState([])
-  const [systemPrompts, setSystemPrompts] = useState([])
-  const [strategies, setStrategies] = useState([])
+  const [llmConfigs, setLlmConfigs] = useState<any[]>([])
+  const [systemPrompts, setSystemPrompts] = useState<any[]>([])
+  const [strategies, setStrategies] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [editingItem, setEditingItem] = useState(null)
+  const [editingItem, setEditingItem] = useState<any>(null)
 
   // Check if user is admin
   if (user?.role !== 'admin') {
@@ -1138,7 +1138,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
     </div>
   )
 
-  const deleteItem = async (endpoint, id) => {
+  const deleteItem = async (endpoint: string, id: any) => {
     if (!confirm('Tem certeza que deseja excluir este item?')) return
     
     try {
