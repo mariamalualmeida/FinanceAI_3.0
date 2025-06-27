@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { Router, Route, Switch } from 'wouter'
 import Login from './components/Login'
 import Sidebar from './components/Sidebar'
-import GeminiChatArea from './components/GeminiChatArea'
+import GeminiChatArea from './components/FixedGeminiChatArea'
 import AdminPanel from './components/AdminPanel'
-import UnifiedSettingsModal from './components/UnifiedSettingsModal'
+import SimpleSettingsModal from './components/SimpleSettingsModal'
 import { Toaster } from './components/ui/toaster'
 function AppContent() {
   const [user, setUser] = useState(null)
@@ -75,6 +75,24 @@ function AppContent() {
     }
   }
 
+  const handleUserUpdate = async (userData) => {
+    try {
+      const response = await fetch('/api/user/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(userData)
+      })
+      
+      if (response.ok) {
+        const updatedUser = await response.json()
+        setUser(updatedUser)
+      }
+    } catch (error) {
+      console.error('User update error:', error)
+    }
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -121,12 +139,11 @@ function AppContent() {
         <Toaster />
         
         {/* Settings Modal */}
-        <UnifiedSettingsModal
+        <SimpleSettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
-          currentTheme={settings.theme}
-          onThemeChange={(theme) => updateSettings({ theme })}
-          user={user}
+          currentUser={user}
+          onUserUpdate={(userData) => handleUserUpdate(userData)}
         />
       </div>
     </Router>

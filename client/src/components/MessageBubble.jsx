@@ -58,8 +58,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
 
   const handleMessageClick = () => {
     if (isUser && !isEditing) {
-      console.log('Clicou na mensagem do usuário, showActions:', !showActions)
-      setShowActions(!showActions)
+      setShowActions(true)
     }
   }
   
