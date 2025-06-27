@@ -1010,3 +1010,26 @@ button[title="Enviar mensagem"]:disabled,
 button[title="Enviar mensagem"]:disabled svg {
   color: rgb(156, 163, 175) !important; /* gray-400 */
 }
+
+/* Remover TODAS as bordas da área de input */
+.fixed.bottom-0,
+.fixed.bottom-0 > *,
+.fixed.bottom-0 > * > *,
+.fixed.bottom-0 textarea,
+.fixed.bottom-0 div {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Forçar background e remover qualquer sombra/borda visual */
+.fixed.bottom-0 {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
