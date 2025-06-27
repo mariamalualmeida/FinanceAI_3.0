@@ -227,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-3 pl-12 pr-24 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-9 pr-16 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -247,15 +247,15 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Ícone de anexar - canto inferior esquerdo com fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-2 left-2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="absolute bottom-1 left-1 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
               <Paperclip size={18} />
             </button>
 
-            {/* Ícones direitos - canto inferior direito com fundo */}
-            <div className="absolute bottom-2 right-2 flex items-center gap-2">
+            {/* Ícones direitos - canto inferior direito */}
+            <div className="absolute bottom-1 right-1 flex items-center gap-2">
               
               {/* Audio recorder com fundo */}
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg">
@@ -266,11 +266,11 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 />
               </div>
 
-              {/* Send button com fundo melhorado */}
+              {/* Send button sem fundo */}
               <button
                 onClick={handleSend}
                 disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm"
+                className="p-2 text-blue-600 dark:text-blue-400 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center"
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
