@@ -24,21 +24,48 @@ class MultiLLMOrchestrator {
   private prompts: SystemPrompts | null = null;
 
   async initialize() {
-    // Carregear configurações dos LLMs
-    const llmConfigs = await storage.getEnabledLlmConfigs();
-    const activeStrategy = await storage.getActiveMultiLlmStrategy();
-    const systemPrompts = await storage.getActiveSystemPrompts();
+    // Configurações hardcoded para funcionamento imediato
+    const defaultConfigs = [
+      {
+        name: 'openai',
+        model: 'gpt-4o',
+        apiKey: process.env.OPENAI_API_KEY,
+        temperature: 0.7,
+        maxTokens: 4000
+      },
+      {
+        name: 'anthropic',
+        model: 'claude-sonnet-4-20250514',
+        apiKey: process.env.ANTHROPIC_API_KEY,
+        temperature: 0.7,
+        maxTokens: 4000
+      },
+      {
+        name: 'google',
+        model: 'gemini-2.5-flash',
+        apiKey: process.env.GOOGLE_AI_API_KEY,
+        temperature: 0.7,
+        maxTokens: 4000
+      }
+    ];
 
-    this.strategy = activeStrategy || null;
-    this.prompts = systemPrompts[0] || null;
+    // Configuração de estratégia padrão
+    this.strategy = {
+      mode: 'balanced',
+      enableSubjectRouting: true,
+      enableBackupSystem: true,
+      enableValidation: false
+    } as any;
 
-    // Inicializar provedores
-    for (const config of llmConfigs) {
-      await this.initializeProvider(config);
+    // Inicializar provedores disponíveis
+    for (const config of defaultConfigs) {
+      if (config.apiKey) {
+        await this.initializeProvider(config);
+      }
     }
   }
 
-  private async initializeProvider(config: LlmConfig) {
+  private async initializeProvider(config: any) {
     try {
       let provider: LLMProvider;
 
@@ -202,49 +229,24 @@ class MultiLLMOrchestrator {
 
   private async economicMode(input: string, context?: string): Promise<string> {
     try {
-      // Modo econômico: Uma LLM principal + backup
-      const primaryConfig = await storage.getPrimaryLlmConfig();
-      
-      // Fallback para primeiro provider disponível se não há configuração
-      if (!primaryConfig) {
-        const firstProvider = Array.from(this.providers.values())[0];
-        if (firstProvider) {
-          const prompt = this.buildPrompt(input);
-          return await firstProvider.generateResponse(prompt, context || undefined);
-        }
-        throw new Error('No LLM providers available');
+      // Modo econômico: usar o primeiro provider disponível (OpenAI preferencialmente)
+      const openaiProvider = this.providers.get('openai');
+      if (openaiProvider) {
+        const prompt = this.buildPrompt(input);
+        return await openaiProvider.generateResponse(prompt, context || undefined);
       }
 
-      const primaryProvider = this.providers.get(primaryConfig.name);
-      if (!primaryProvider) {
-        // Fallback para primeiro provider disponível
-        const firstProvider = Array.from(this.providers.values())[0];
-        if (firstProvider) {
-          const prompt = this.buildPrompt(input);
-          return await firstProvider.generateResponse(prompt, context || undefined);
-        }
-        throw new Error(`Primary provider ${primaryConfig.name} not available`);
-      }
-
-      // Tentar usar a LLM principal
-      const prompt = this.buildPrompt(input);
-      return await primaryProvider.generateResponse(prompt, context || undefined);
-    } catch (error) {
-      console.warn('Economic mode failed, trying simple fallback:', error);
-      
-      // Último fallback: usar qualquer provider disponível
+      // Fallback para qualquer provider disponível
       const firstProvider = Array.from(this.providers.values())[0];
       if (firstProvider) {
-        try {
-          const prompt = this.buildPrompt(input);
-          return await firstProvider.generateResponse(prompt, context || undefined);
-        } catch (fallbackError) {
-          console.error('All providers failed:', fallbackError);
-          return 'Desculpe, não consegui processar sua mensagem no momento. Tente novamente.';
-        }
+        const prompt = this.buildPrompt(input);
+        return await firstProvider.generateResponse(prompt, context || undefined);
       }
       
-      return 'Desculpe, nenhum sistema de IA está disponível no momento.';
+      throw new Error('No LLM providers available');
+    } catch (error) {
+      console.warn('Economic mode failed:', error);
+      return 'Desculpe, não consegui processar sua mensagem no momento. Verifique se as API keys estão configuradas corretamente.';
     }
   }
 
