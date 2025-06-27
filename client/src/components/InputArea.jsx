@@ -132,7 +132,7 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto input-container-mobile">
       <div className="relative">
         {/* Arquivos anexados */}
         {files.length > 0 && (
