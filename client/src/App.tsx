@@ -3,15 +3,36 @@ import { Router, Route, Switch } from 'wouter'
 import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import GeminiChatArea from './components/GeminiChatArea'
-import AdminPanel from './components/AdminPanel'
-import SimpleSettingsModal from './components/SimpleSettingsModal'
 import { Toaster } from './components/ui/toaster'
+
+interface User {
+  id: number
+  username: string
+  email: string
+  role?: string
+}
+
+interface Conversation {
+  id: string
+  title: string
+  updatedAt: string
+}
+
+interface Settings {
+  theme: string
+  interface: string
+  userName?: string
+  onToggleTheme?: () => void
+}
+
 function AppContent() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null)
   const [showSettings, setShowSettings] = useState(false)
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<Settings>({
     theme: 'light',
     interface: 'gemini'
   })
@@ -26,41 +47,54 @@ function AppContent() {
         if (response.ok) {
           const userData = await response.json()
           setUser(userData)
+          loadConversations()
         }
       } catch (error) {
-        console.log('Not authenticated')
+        console.error('Error checking auth:', error)
       } finally {
         setLoading(false)
       }
     }
 
-    const loadSettings = () => {
-      const saved = localStorage.getItem('financeai-settings')
-      if (saved) {
-        try {
-          setSettings(prev => ({ ...prev, ...JSON.parse(saved) }))
-        } catch (error) {
-          console.error('Failed to load settings:', error)
+    // Load settings from localStorage
+    const savedSettings = localStorage.getItem('financeai-settings')
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings)
+        setSettings(prev => ({ ...prev, ...parsed }))
+        
+        // Apply theme
+        if (parsed.theme === 'dark') {
+          document.documentElement.classList.add('dark')
         }
+      } catch (error) {
+        console.error('Error loading settings:', error)
       }
     }
 
     checkAuth()
-    loadSettings()
   }, [])
 
-  const updateSettings = (newSettings) => {
-    setSettings(prev => ({ ...prev, ...newSettings }))
-    localStorage.setItem('financeai-settings', JSON.stringify({ ...settings, ...newSettings }))
+  const handleSettingsChange = (newSettings: Partial<Settings>) => {
+    const updated = { ...settings, ...newSettings }
+    setSettings(updated)
+    
+    // Save to localStorage
+    localStorage.setItem('financeai-settings', JSON.stringify(updated))
+    
+    // Apply theme changes
+    if (newSettings.theme) {
+      if (newSettings.theme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
   }
 
-  const toggleTheme = () => {
-    const newTheme = settings.theme === 'light' ? 'dark' : 'light'
-    updateSettings({ theme: newTheme })
-  }
-
-  const handleLogin = (userData) => {
+  const handleLogin = (userData: User) => {
     setUser(userData)
+    loadConversations()
   }
 
   const handleLogout = async () => {
@@ -69,85 +103,126 @@ function AppContent() {
         method: 'POST',
         credentials: 'include'
       })
-      setUser(null)
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('Error logging out:', error)
+    } finally {
+      setUser(null)
+      setConversations([])
+      setActiveConversationId(null)
+      setSidebarOpen(false)
     }
   }
 
-  const handleUserUpdate = async (userData) => {
+  const loadConversations = async () => {
     try {
-      const response = await fetch('/api/user/update', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(userData)
+      const response = await fetch('/api/conversations', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setConversations(data)
+        
+        // Set active conversation to the most recent one
+        if (data.length > 0) {
+          setActiveConversationId(data[0].id)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading conversations:', error)
+    }
+  }
+
+  const handleNewChat = async () => {
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: 'Nova Conversa'
+        }),
+        credentials: 'include'
       })
       
       if (response.ok) {
-        const updatedUser = await response.json()
-        setUser(updatedUser)
+        const newConversation = await response.json()
+        setConversations(prev => [newConversation, ...prev])
+        setActiveConversationId(newConversation.id)
       }
     } catch (error) {
-      console.error('User update error:', error)
+      console.error('Error creating new chat:', error)
     }
   }
 
-  // Loading state
+  const toggleTheme = () => {
+    const newTheme = settings.theme === 'light' ? 'dark' : 'light'
+    handleSettingsChange({ theme: newTheme })
+  }
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
+
   if (loading) {
     return (
-      <div className={`flex items-center justify-center h-screen ${settings.theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+            </svg>
+          </div>
+          <div className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            FinanceAI
+          </div>
+          <div className="w-8 h-8 mx-auto border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>
       </div>
     )
   }
 
-  // Login screen
   if (!user) {
     return <Login onLogin={handleLogin} />
   }
 
-  // Main app
+  const settingsWithHandlers = {
+    ...settings,
+    onToggleTheme: toggleTheme
+  }
+
   return (
-    <Router>
-      <div className={`w-full h-full ${settings.theme === 'dark' ? 'dark' : ''}`}>
-        <Switch>
-          <Route path="/admin">
-            <AdminPanel user={user} onLogout={handleLogout} onClose={() => window.history.back()} />
-          </Route>
-          <Route>
-            <div className="flex h-full w-full">
-              <Sidebar 
-                user={user} 
-                onLogout={handleLogout}
-                settings={settings}
-                onUpdateSettings={updateSettings}
-                isOpen={sidebarOpen}
-                onToggle={() => setSidebarOpen(!sidebarOpen)}
-                onClose={() => setSidebarOpen(false)}
-                onOpenSettings={() => setShowSettings(true)}
-              />
-              <GeminiChatArea 
-                user={user}
-                settings={{...settings, onToggleTheme: toggleTheme}}
-                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-                sidebarOpen={sidebarOpen}
-              />
-            </div>
-          </Route>
-        </Switch>
-        <Toaster />
-        
-        {/* Settings Modal */}
-        <SimpleSettingsModal
-          isOpen={showSettings}
-          onClose={() => setShowSettings(false)}
-          currentUser={user}
-          onUserUpdate={(userData) => handleUserUpdate(userData)}
-        />
-      </div>
-    </Router>
+    <div className="app-container">
+      <Sidebar
+        user={user}
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNewChat={handleNewChat}
+        onSelectConversation={setActiveConversationId}
+        onShowSettings={() => setShowSettings(true)}
+        onLogout={handleLogout}
+      />
+
+      <GeminiChatArea
+        user={user}
+        settings={settingsWithHandlers}
+        onToggleSidebar={toggleSidebar}
+        sidebarOpen={sidebarOpen}
+      />
+
+      <Toaster />
+    </div>
   )
 }
 
-export default AppContent;
+export default function App() {
+  return (
+    <Router>
+      <Switch>
+        <Route path="*" component={AppContent} />
+      </Switch>
+    </Router>
+  )
+}
