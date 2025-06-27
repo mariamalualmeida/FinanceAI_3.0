@@ -71,7 +71,7 @@ const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, us
   const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState({
     theme: currentTheme || 'light',
-    interface: 'chatgpt',
+    interface: 'gemini',
     profile: {
       name: user?.username || '',
       email: user?.email || ''
