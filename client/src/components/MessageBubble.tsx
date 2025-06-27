@@ -102,7 +102,16 @@ export default function MessageBubble({ message, isGemini, onEdit }: MessageBubb
             ) : (
               <div className="group relative">
                 {message.sender === 'ai' ? (
-                  <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert">
+                  <ReactMarkdown 
+                    className="prose prose-sm max-w-none dark:prose-invert"
+                    components={{
+                      code: ({ children, ...props }) => (
+                        <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm" {...props}>
+                          {children}
+                        </code>
+                      )
+                    }}
+                  >
                     {message.text}
                   </ReactMarkdown>
                 ) : (
