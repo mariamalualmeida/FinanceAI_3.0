@@ -12,9 +12,10 @@ interface SidebarProps {
   onToggle: () => void;
   onClose: () => void;
   onOpenSettings: () => void;
+  onOpenAdminPanel?: () => void;
 }
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings }: SidebarProps) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings, onOpenAdminPanel }: SidebarProps) {
   const [conversations, setConversations] = useState<any[]>([])
   const [currentChatId, setCurrentChatId] = useState<string | null>(null)
   const [showSearch, setShowSearch] = useState(false)
