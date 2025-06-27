@@ -259,23 +259,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
                   >
                     <Settings size={16} />
-                    Configurações
-                  </button>
-                  <button 
-                    onClick={() => {
-                      onUpdateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })
-                    }}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
-                  >
-                    {settings.theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-                    {settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-                  </button>
-                  <button 
-                    onClick={() => onOpenSettings()}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
-                  >
-                    <Settings size={16} />
-                    Configurações
+                    Perfil
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
                   <button 
