@@ -223,11 +223,11 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Perfil */}
-        <div className="border-t border-gray-200 dark:border-gray-600 px-2 py-2 flex-shrink-0 mt-auto sticky bottom-0 bg-white dark:bg-[#202123] z-20">
+        <div className="profile-section border-t px-2 py-2 flex-shrink-0 mt-auto sticky bottom-0 z-20">
           <div className="relative">
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-3 w-full p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-700 dark:text-gray-300 transition-colors text-sm"
+              className="profile-item flex items-center gap-3 w-full rounded-md transition-colors text-minimal-base"
             >
               <User size={16} />
               Perfil
@@ -249,14 +249,14 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-1 bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden"
+                  className="modal-consistent mt-1 rounded-md overflow-hidden"
                 >
                   <button 
                     onClick={() => {
                       onOpenSettings?.()
                       setShowProfileMenu(false)
                     }}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
+                    className="profile-item flex items-center gap-3 w-full transition-colors text-minimal-base"
                   >
                     <Settings size={16} />
                     Configurações
@@ -265,22 +265,15 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     onClick={() => {
                       onUpdateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })
                     }}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
+                    className="profile-item flex items-center gap-3 w-full transition-colors text-minimal-base"
                   >
                     {settings.theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
                     {settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
                   </button>
-                  <button 
-                    onClick={() => onOpenSettings()}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors text-sm"
-                  >
-                    <Settings size={16} />
-                    Configurações
-                  </button>
                   <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
                   <button 
                     onClick={onLogout}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-red-500 dark:hover:bg-red-600 text-red-600 dark:text-gray-300 hover:text-white transition-colors text-sm"
+                    className="profile-item flex items-center gap-3 w-full hover:bg-red-500 dark:hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white transition-colors text-minimal-base"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

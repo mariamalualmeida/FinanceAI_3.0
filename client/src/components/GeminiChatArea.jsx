@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import MessageBubble from './MessageBubble'
 import ThemeToggle from './ThemeToggle'
 import AudioRecorder from './AudioRecorder'
+import InputAreaFixed from './InputAreaFixed'
 import { useFileUpload } from '../hooks/useFileUpload'
 
 export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen }) {
@@ -212,86 +213,14 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         )}
         <div ref={messagesEndRef} />
         
-        {/* Input Area flutuante - Posicionado como overlay */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 z-40" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom))` }}>
-          <div className="max-w-4xl mx-auto">
-
-
-            <form onSubmit={handleSubmit} className="relative">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
-                <div className="relative h-32">
-                  {/* Botão de anexar arquivos - canto inferior esquerdo */}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-2 left-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                  >
-                    <Paperclip size={18} />
-                  </button>
-                  
-                  {/* Textarea responsiva - ocupa toda a área disponível */}
-                  <textarea
-                    value={inputText}
-                    onChange={(e) => {
-                      setInputText(e.target.value)
-                    }}
-                    placeholder=""
-                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
-                    style={{
-                      wordWrap: 'break-word',
-                      overflowWrap: 'break-word',
-                      whiteSpace: 'pre-wrap',
-                      touchAction: 'manipulation',
-                      WebkitTouchCallout: 'none',
-                      WebkitUserSelect: 'text'
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.shiftKey) {
-                        e.preventDefault()
-                        handleSubmit(e)
-                      }
-                      // Enter sem Shift = nova linha (comportamento padrão)
-                    }}
-                  />
-                  
-                  {/* Botões de ação - canto inferior direito */}
-                  <div className="absolute bottom-2 right-3 flex items-center gap-2">
-                    {/* Componente de áudio */}
-                    <AudioRecorder 
-                      onAudioReady={handleAudioReady}
-                      variant="purple"
-                      size={18}
-                    />
-
-                    {/* Botão de envio */}
-                    <motion.button
-                      type="submit"
-                      disabled={!inputText.trim() && !fileInputRef.current?.files?.length && !audioData}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        inputText.trim() || fileInputRef.current?.files?.length || audioData
-                          ? 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                          : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      }`}
-                      title="Enviar mensagem"
-                    >
-                      <Send size={18} />
-                    </motion.button>
-                  </div>
-                  
-                  {/* Input de arquivo oculto */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
+        {/* Área de input corrigida */}
+        <div className="fixed bottom-0 left-0 right-0 z-40">
+          <InputAreaFixed 
+            onSend={sendMessage}
+            onFileUpload={uploadFiles}
+            isProcessing={isTyping}
+            uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
+          />
         </div>
       </div>
     </main>
