@@ -7,19 +7,17 @@ import {
   FileText, 
   Upload,
   Trash2,
-  Edit3,
-  Save,
+  Edit,
   X,
   BookOpen,
-  Search,
-  Filter,
   Plus,
   Eye,
-  EyeOff,
-  Check,
   AlertCircle,
-  Cpu,
-  Zap
+  Zap,
+  MessageSquare,
+  Network,
+  Shield,
+  Server
 } from 'lucide-react'
 
 export default function AdminPanel({ onClose, user }) {
