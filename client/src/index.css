@@ -706,3 +706,197 @@ input[type="email"] {
     padding-bottom: calc(12rem + env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* ===== CORREÇÕES MINIMALISTAS E CONSISTÊNCIA ===== */
+
+/* Botões mais arredondados e fontes padronizadas */
+.btn-minimal {
+  border-radius: 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.4 !important;
+}
+
+.btn-minimal:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Tamanhos de fonte padronizados globalmente */
+.text-minimal-xl {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.text-minimal-lg {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+.text-minimal-base {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+.text-minimal-sm {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+/* Cores consistentes para modo escuro - sem cinza indesejado */
+.modal-consistent {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.modal-consistent .modal-header {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.modal-consistent .modal-content {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Fix para sidebar perfil - remover linha e cores inconsistentes */
+.profile-section {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: none !important;
+  border-top: none !important;
+}
+
+.profile-section .profile-header {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-bottom: none !important;
+  padding: 16px !important;
+}
+
+.profile-section .profile-item {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: none !important;
+  padding: 12px 16px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.profile-section .profile-item:hover {
+  background: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+/* Fix para caixa de transcrição de áudio - integração completa */
+.audio-transcription-integrated {
+  position: absolute !important;
+  bottom: 60px !important;
+  left: 12px !important;
+  right: 12px !important;
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  z-index: 100 !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.audio-transcription-integrated .transcription-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--foreground) !important;
+}
+
+.audio-transcription-integrated .transcription-text {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--muted-foreground) !important;
+  margin-bottom: 12px !important;
+  max-height: 80px !important;
+  overflow-y: auto !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.audio-transcription-integrated .transcription-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+}
+
+.audio-transcription-integrated .transcription-btn {
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.audio-transcription-integrated .transcription-btn.accept {
+  background: #10b981 !important;
+  color: white !important;
+}
+
+.audio-transcription-integrated .transcription-btn.reject {
+  background: var(--muted) !important;
+  color: var(--muted-foreground) !important;
+}
+
+.audio-transcription-integrated .transcription-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fix final para textarea overflow - MÁXIMA ESPECIFICIDADE */
+.input-textarea-final-fix {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  resize: none !important;
+  padding: 12px 140px 12px 12px !important;
+  line-height: 1.5 !important;
+  font-size: 16px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Container do input com width forçado */
+.input-container-final {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Botões de ação com posicionamento absoluto fixo */
+.input-buttons-final {
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  display: flex !important;
+  gap: 4px !important;
+  z-index: 10 !important;
+  flex-shrink: 0 !important;
+}

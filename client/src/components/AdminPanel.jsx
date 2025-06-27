@@ -953,10 +953,10 @@ export default function AdminPanel({ onClose, user }) {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Usuários do Sistema</h3>
+          <h3 className="text-minimal-xl text-gray-900 dark:text-white">Usuários do Sistema</h3>
           <button
             onClick={() => setShowUserForm(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+            className="btn-minimal flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             <Plus size={16} />
             Novo Usuário
@@ -994,14 +994,14 @@ export default function AdminPanel({ onClose, user }) {
                 <div className="admin-card-actions">
                   <button
                     onClick={() => setEditingUser(user)}
-                    className="admin-action-btn edit"
+                    className="btn-minimal admin-action-btn edit"
                     title="Editar"
                   >
                     <Edit3 size={18} />
                   </button>
                   <button
                     onClick={() => console.log('Toggle user status:', user.id)}
-                    className="admin-action-btn delete"
+                    className="btn-minimal admin-action-btn delete"
                     title={user.isActive ? 'Desativar' : 'Ativar'}
                   >
                     {user.isActive ? <EyeOff size={18} /> : <Eye size={18} />}
