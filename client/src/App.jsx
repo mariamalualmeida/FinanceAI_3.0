@@ -4,21 +4,17 @@ import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
-
 import AdminPanel from './components/AdminPanel'
 import NewSettingsModal from './components/NewSettingsModal'
 import { Toaster } from './components/ui/toaster'
+import { SettingsProvider, useSettings } from './contexts/SettingsContext'
 
-export default function App() {
+function AppContent() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [settings, setSettings] = useState({
-    theme: 'light',
-    interface: 'chatgpt', // 'chatgpt' or 'gemini'
-    userName: ''
-  })
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const { settings, updateTheme, updateInterface } = useSettings()
 
   // Check authentication and load settings on app load
   useEffect(() => {
@@ -38,26 +34,12 @@ export default function App() {
       }
     }
 
-    const loadSettings = () => {
-      const saved = localStorage.getItem('financeai-settings')
-      if (saved) {
-        setSettings({ ...settings, ...JSON.parse(saved) })
-      }
-    }
-
     checkAuth()
-    loadSettings()
   }, [])
-
-  const updateSettings = (newSettings) => {
-    const updated = { ...settings, ...newSettings }
-    setSettings(updated)
-    localStorage.setItem('financeai-settings', JSON.stringify(updated))
-  }
 
   const toggleTheme = () => {
     const newTheme = settings.theme === 'light' ? 'dark' : 'light'
-    updateSettings({ theme: newTheme })
+    updateTheme(newTheme)
   }
 
   const handleLogin = (userData) => {
