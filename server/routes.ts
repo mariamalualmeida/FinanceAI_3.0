@@ -51,12 +51,12 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Allow common financial document formats
-    const allowedTypes = /\.(pdf|xlsx?|csv|txt|png|jpe?g)$/i;
+    // Allow common financial document formats and audio files
+    const allowedTypes = /\.(pdf|xlsx?|csv|txt|png|jpe?g|mp3|wav|m4a|webm|ogg)$/i;
     if (allowedTypes.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Please upload PDF, Excel, CSV, TXT, or image files.'));
+      cb(new Error('Invalid file type. Please upload PDF, Excel, CSV, TXT, image, or audio files.'));
     }
   },
 });

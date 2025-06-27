@@ -247,7 +247,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
                       setInputText(e.target.value)
                     }}
                     placeholder=""
-                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
+                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto chat-input"
                     style={{
                       wordWrap: 'break-word',
                       overflowWrap: 'break-word',
