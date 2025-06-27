@@ -321,13 +321,15 @@ body {
 
 /* Fix text overflow in input area */
 .input-textarea {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
   max-height: 120px;
   overflow-y: auto;
   resize: none;
-  padding-right: 120px !important; /* Space for buttons */
+  padding-right: 130px !important; /* Increased space for buttons */
+  line-height: 1.5 !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
 }
 
 /* Input container positioning fix */
@@ -350,9 +352,9 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #374151;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: #1f2937;
+  background: var(--card);
 }
 
 .toggle-header {
@@ -382,6 +384,89 @@ input[type="email"] {
   -webkit-touch-callout: default;
   -webkit-tap-highlight-color: transparent;
   font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* AdminPanel improvements */
+.admin-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.admin-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.admin-action-btn:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.admin-action-btn.edit:hover {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.admin-action-btn.delete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Mobile responsive admin layout */
+@media (max-width: 768px) {
+  .admin-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .admin-card-actions {
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
 }
 
 /* Classe especial para textareas com scroll móvel otimizado */

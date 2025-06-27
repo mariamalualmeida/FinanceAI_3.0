@@ -1079,17 +1079,17 @@ export default function AdminPanel({ onClose, user }) {
       ) : (
         <div className="grid gap-4">
           {llmConfigs.map((config) => (
-            <div key={config.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
+            <div key={config.id} className="admin-card">
+              <div className="admin-card-header">
+                <div className="admin-card-content">
                   <div className="flex items-center gap-3 mb-2">
                     <Cpu className="text-blue-600" size={20} />
                     <h4 className="font-semibold text-gray-900 dark:text-white">{config.displayName}</h4>
                     {config.isEnabled && (
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ativo</span>
+                      <span className="admin-status-badge bg-green-100 text-green-800">Ativo</span>
                     )}
                     {config.isPrimary && (
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Primário</span>
+                      <span className="admin-status-badge bg-blue-100 text-blue-800">Primário</span>
                     )}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -1099,16 +1099,18 @@ export default function AdminPanel({ onClose, user }) {
                     Tokens: {config.maxTokens} | Temperatura: {config.temperature}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="admin-card-actions">
                   <button
                     onClick={() => setEditingItem({ type: 'llm', data: config })}
-                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded"
+                    className="admin-action-btn edit"
+                    title="Editar"
                   >
                     <Edit3 size={16} />
                   </button>
                   <button
                     onClick={() => deleteItem('/api/admin/llm-configs', config.id)}
-                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded"
+                    className="admin-action-btn delete"
+                    title="Excluir"
                   >
                     <Trash2 size={16} />
                   </button>
