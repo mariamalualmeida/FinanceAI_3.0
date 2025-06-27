@@ -96,7 +96,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div className="px-4 py-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
       <input
         ref={fileInputRef}
         type="file"
@@ -107,7 +107,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
       />
 
       <div 
-        className={`max-w-6xl mx-auto transition-all duration-300 ${isDragOver ? 'scale-105' : ''}`}
+        className={`w-full transition-all duration-300 ${isDragOver ? 'scale-105' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -219,7 +219,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           )}
 
           {/* Input area principal */}
-          <div className="relative p-4">
+          <div className="relative p-2">
             
             {/* Textarea com posicionamento correto */}
             <textarea
@@ -227,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-2 pr-20 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-auto scrollbar-hide touch-pan-y"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-3 pl-12 pr-24 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -239,35 +239,38 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               style={{ 
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch'
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-y'
               }}
             />
 
-            {/* Ícone de anexar - canto inferior esquerdo */}
+            {/* Ícone de anexar - canto inferior esquerdo com fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-4 left-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="absolute bottom-2 left-2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
               <Paperclip size={18} />
             </button>
 
-            {/* Ícones direitos - canto inferior direito */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2">
+            {/* Ícones direitos - canto inferior direito com fundo */}
+            <div className="absolute bottom-2 right-2 flex items-center gap-2">
               
-              {/* Audio recorder */}
-              <AudioRecorder
-                onTranscriptionComplete={handleTranscriptionComplete}
-                onAudioReady={setAudioData}
-                disabled={isDisabled}
-              />
+              {/* Audio recorder com fundo */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <AudioRecorder
+                  onTranscriptionComplete={handleTranscriptionComplete}
+                  onAudioReady={setAudioData}
+                  disabled={isDisabled}
+                />
+              </div>
 
-              {/* Send button */}
+              {/* Send button com fundo melhorado */}
               <button
                 onClick={handleSend}
                 disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm"
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
