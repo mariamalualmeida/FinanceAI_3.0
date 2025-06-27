@@ -177,6 +177,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Interface de upload com preview, progress e validação de arquivos
 - June 27, 2025. Orquestração inteligente por assunto com backup e validação cruzada
 - June 27, 2025. Sistema de notificações visuais para processamento de arquivos
+- June 27, 2025. Corrigidos erros críticos no banco de dados: conversationId em financialAnalyses alterado de integer para uuid
+- June 27, 2025. Extensões de arquivos corrigidas: todos os componentes .jsx renomeados para .tsx para compatibilidade TypeScript
+- June 27, 2025. Erro de UUID no upload de arquivos resolvido, aplicativo funcionando corretamente
 
 ## User Preferences
 
