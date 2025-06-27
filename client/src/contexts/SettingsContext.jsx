@@ -7,7 +7,7 @@ export const useSettings = () => {
   if (!context) {
     // Return default settings instead of throwing error to prevent app crash
     return {
-      settings: { theme: 'light', interface: 'chatgpt' },
+      settings: { theme: 'light', interface: 'gemini' },
       hasChanges: false,
       updateSetting: () => {},
       updateTheme: () => {},
@@ -21,7 +21,7 @@ export const useSettings = () => {
 
 const defaultSettings = {
   theme: 'light',
-  interface: 'chatgpt',
+  interface: 'gemini',
   userName: '',
   // Profile settings
   profile: {

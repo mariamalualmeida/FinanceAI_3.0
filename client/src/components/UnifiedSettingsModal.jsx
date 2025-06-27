@@ -129,7 +129,7 @@ const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, us
     if (confirm('Tem certeza que deseja restaurar as configurações padrão?')) {
       setSettings({
         theme: 'light',
-        interface: 'chatgpt',
+        interface: 'gemini',
         profile: { name: '', email: '' },
         interfaceSettings: { compact_mode: false, show_sidebar: true, auto_scroll: true },
         notifications: { desktop: true, sound: true, analysis_complete: true },
@@ -239,8 +239,7 @@ const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, us
                     </label>
                     <div className="space-y-2">
                       {[
-                        { value: 'chatgpt', label: 'ChatGPT', icon: '🤖', desc: 'Interface similar ao ChatGPT' },
-                        { value: 'gemini', label: 'Gemini (Mig)', icon: '💎', desc: 'Interface similar ao Gemini' }
+                        { value: 'gemini', label: 'Gemini (Mig)', icon: '💎', desc: 'Interface otimizada e moderna' }
                       ].map((option) => (
                         <button
                           key={option.value}

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Router, Route, Switch } from 'wouter'
 import Login from './components/Login'
 import Sidebar from './components/Sidebar'
-import ChatArea from './components/ChatArea'
 import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
 import UnifiedSettingsModal from './components/UnifiedSettingsModal'
@@ -14,7 +13,7 @@ function AppContent() {
   const [showSettings, setShowSettings] = useState(false)
   const [settings, setSettings] = useState({
     theme: 'light',
-    interface: 'chatgpt'
+    interface: 'gemini'
   })
 
   // Check authentication and load settings on app load
@@ -110,20 +109,11 @@ function AppContent() {
                 onClose={() => setSidebarOpen(false)}
                 onOpenSettings={() => setShowSettings(true)}
               />
-              {settings.interface === 'gemini' ? (
-                <GeminiChatArea 
-                  user={user}
-                  settings={{...settings, onToggleTheme: toggleTheme}}
-                  onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-                />
-              ) : (
-                <ChatArea 
-                  user={user}
-                  settings={{...settings, onToggleTheme: toggleTheme}}
-                  interface={settings.interface}
-                  onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-                />
-              )}
+              <GeminiChatArea 
+                user={user}
+                settings={{...settings, onToggleTheme: toggleTheme}}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              />
             </div>
           </Route>
         </Switch>
