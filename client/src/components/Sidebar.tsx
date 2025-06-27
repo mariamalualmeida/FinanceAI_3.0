@@ -3,7 +3,18 @@ import { Sun, Moon, Plus, Settings, User, MessageSquare, MoreHorizontal, Edit, T
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchModal from './SearchModal'
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings }) {
+interface SidebarProps {
+  user: any;
+  onLogout: () => Promise<void>;
+  settings: { theme: string; interface: string };
+  onUpdateSettings: (newSettings: any) => void;
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+  onOpenSettings: () => void;
+}
+
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings }: SidebarProps) {
   const [conversations, setConversations] = useState([])
   const [currentChatId, setCurrentChatId] = useState(null)
   const [showSearch, setShowSearch] = useState(false)

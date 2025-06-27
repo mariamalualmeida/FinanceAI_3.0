@@ -49,7 +49,7 @@ function AppContent() {
     loadSettings()
   }, [])
 
-  const updateSettings = (newSettings) => {
+  const updateSettings = (newSettings: any) => {
     setSettings(prev => ({ ...prev, ...newSettings }))
     localStorage.setItem('financeai-settings', JSON.stringify({ ...settings, ...newSettings }))
   }
@@ -59,7 +59,7 @@ function AppContent() {
     updateSettings({ theme: newTheme })
   }
 
-  const handleLogin = (userData) => {
+  const handleLogin = (userData: any) => {
     setUser(userData)
   }
 
@@ -95,7 +95,7 @@ function AppContent() {
       <div className={`w-full h-full ${settings.theme === 'dark' ? 'dark' : ''}`}>
         <Switch>
           <Route path="/admin">
-            <AdminPanel user={user} onLogout={handleLogout} onClose={() => window.history.back()} />
+            <AdminPanel user={user} onClose={() => window.history.back()} />
           </Route>
           <Route>
             <div className="flex h-full w-full">
