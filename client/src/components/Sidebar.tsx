@@ -281,6 +281,18 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                     {settings.theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
                     {settings.theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
                   </button>
+                  <button 
+                    onClick={() => {
+                      onOpenAdminPanel?.()
+                      setShowProfileMenu(false)
+                    }}
+                    className="profile-item flex items-center gap-3 w-full transition-colors text-minimal-base"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 1L21 5v6c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V5l9-4z"/>
+                    </svg>
+                    Painel Admin
+                  </button>
                   <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
                   <button 
                     onClick={onLogout}
