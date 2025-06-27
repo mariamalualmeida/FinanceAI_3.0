@@ -161,7 +161,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+        <div className="relative border border-gray-200 dark:border-white rounded-xl bg-white dark:bg-gray-900 shadow-sm min-h-[80px]">
           
           {/* File attachments preview */}
           {files.length > 0 && (
@@ -227,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-9 pr-16 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -247,7 +247,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Ícone de anexar - canto inferior esquerdo sem fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-1 left-1 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
+              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
@@ -255,10 +255,10 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </button>
 
             {/* Ícones direitos - canto inferior direito */}
-            <div className="absolute bottom-1 right-1 flex items-center gap-2">
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
               
-              {/* Audio recorder com fundo */}
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg">
+              {/* Audio recorder sem fundo */}
+              <div className="bg-transparent">
                 <AudioRecorder
                   onTranscriptionComplete={handleTranscriptionComplete}
                   onAudioReady={setAudioData}
