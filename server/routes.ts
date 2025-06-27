@@ -55,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       username: 'Admin',
       password: 'admin123',
       email: 'admin@financeai.com',
-      role: 'user',
+      role: 'admin',
       fullName: 'Usuário Padrão'
     },
     {
