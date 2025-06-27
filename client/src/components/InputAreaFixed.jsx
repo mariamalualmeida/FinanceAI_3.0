@@ -244,10 +244,10 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               }}
             />
 
-            {/* Ícone de anexar - canto inferior esquerdo com fundo */}
+            {/* Ícone de anexar - canto inferior esquerdo sem fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-1 left-1 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="absolute bottom-1 left-1 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
@@ -266,11 +266,11 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 />
               </div>
 
-              {/* Send button sem fundo */}
+              {/* Send button - mesma cor dos demais ícones, sem fundo */}
               <button
                 onClick={handleSend}
                 disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 text-blue-600 dark:text-blue-400 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
