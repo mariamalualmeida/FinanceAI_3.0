@@ -9,7 +9,6 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
   const [audioData, setAudioData] = useState(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const [pendingTranscription, setPendingTranscription] = useState(null)
-  const [transcriptionVerificationEnabled, setTranscriptionVerificationEnabled] = useState(true)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
 
@@ -29,6 +28,7 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
     setText('')
     setFiles([])
     setAudioData(null)
+    setPendingTranscription(null) // Clear pending transcription
   }
 
   const handleDragOver = (e) => {
