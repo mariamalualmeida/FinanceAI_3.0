@@ -53,146 +53,36 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
       id: Date.now(),
       sender: 'user',
       text: inputText,
-      files: selectedFiles.map(f => ({ name: f.name, size: f.size, type: f.type })),
+      files: selectedFiles.map(file => ({
+        name: file.name,
+        size: file.size,
+        type: file.type
+      })),
       timestamp: new Date()
     }
-    
+
     setMessages(prev => [...prev, userMessage])
     setInputText('')
     setSelectedFiles([])
     setIsTyping(true)
 
     try {
-      // Upload de arquivos se houver
-      let uploadedFiles: string[] = []
-      if (selectedFiles.length > 0) {
-        setUploadProgress(0)
-        const formData = new FormData()
-        selectedFiles.forEach(file => formData.append('files', file))
-
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include'
-        })
-
-        if (uploadResponse.ok) {
-          const uploadResult = await uploadResponse.json()
-          uploadedFiles = uploadResult.files || []
-        }
-        setUploadProgress(null)
-      }
-
-      // Enviar mensagem para a IA
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: inputText,
-          files: uploadedFiles,
-          conversationId: 'default'
-        }),
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        const data = await response.json()
+      // Simular resposta da IA por enquanto
+      setTimeout(() => {
         const aiMessage: Message = {
           id: Date.now() + 1,
           sender: 'ai',
-          text: data.response || 'Desculpe, não consegui processar sua mensagem.',
+          text: 'Esta é uma resposta simulada. O sistema real de IA será integrado em breve.',
           timestamp: new Date()
         }
         setMessages(prev => [...prev, aiMessage])
-      } else {
-        throw new Error('Falha na comunicação com a IA')
-      }
+        setIsTyping(false)
+      }, 1500)
     } catch (error) {
-      console.error('Erro ao enviar mensagem:', error)
-      const errorMessage: Message = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: 'Desculpe, houve um erro ao processar sua mensagem. Tente novamente.',
-        timestamp: new Date()
-      }
-      setMessages(prev => [...prev, errorMessage])
-    } finally {
       setIsTyping(false)
     }
   }
 
-  // Manipular upload de arquivos
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || [])
-    if (files.length > 0) {
-      setSelectedFiles(prev => [...prev, ...files])
-    }
-  }
-
-  // Remover arquivo selecionado
-  const removeFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index))
-  }
-
-  // Iniciar gravação de áudio
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      
-      const audioChunks: Blob[] = []
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data)
-        }
-      }
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-        await transcribeAudio(audioBlob)
-        stream.getTracks().forEach(track => track.stop())
-      }
-
-      mediaRecorder.start()
-      setIsRecording(true)
-    } catch (error) {
-      console.error('Erro ao iniciar gravação:', error)
-    }
-  }
-
-  // Parar gravação
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
-    }
-  }
-
-  // Transcrever áudio
-  const transcribeAudio = async (audioBlob: Blob) => {
-    try {
-      const formData = new FormData()
-      formData.append('audio', audioBlob, 'recording.wav')
-
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setInputText(data.transcription || '')
-      }
-    } catch (error) {
-      console.error('Erro na transcrição:', error)
-    }
-  }
-
-  // Manipular teclas
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -200,161 +90,215 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     }
   }
 
-  return (
-    <div className="main-content">
-      {/* Header */}
-      <header className="chat-header">
-        <div className="flex items-center gap-3">
-          {!sidebarOpen && (
-            <>
-              <button
-                onClick={onToggleSidebar}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                aria-label="Toggle sidebar"
-              >
-                <Menu size={20} />
-              </button>
-              <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
-            </>
-          )}
-          <div className="flex items-center gap-2 ml-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
-              <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-            </svg>
-            <span className="text-lg font-normal text-gray-800 dark:text-gray-200">Mig</span>
-          </div>
-        </div>
-      </header>
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files)
+      setSelectedFiles(prev => [...prev, ...files])
+    }
+  }
 
-      {/* Messages Container */}
-      <div className="messages-container">
-        {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center px-6">
-            <div className="mb-8">
-              <svg width="64" height="64" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
-                <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      setIsRecording(true)
+      
+      mediaRecorder.start()
+    } catch (error) {
+      console.error('Erro ao iniciar gravação:', error)
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+    }
+  }
+
+  return (
+    <div className="financeai-main">
+      {/* Header */}
+      <div className="financeai-header">
+        <div className="financeai-header__left">
+          <button onClick={onToggleSidebar} className="financeai-header__menu">
+            <Menu size={20} />
+          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              background: 'linear-gradient(135deg, var(--color-record), var(--color-send))', 
+              borderRadius: '50%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'white'
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
               </svg>
             </div>
-            <div className="text-center">
-              <h1 className="text-4xl font-light text-gray-900 dark:text-white mb-4">
-                {settings.userName ? `Olá, ${settings.userName}` : 'Olá'}
-              </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                Como posso ajudá-lo hoje?
-              </p>
-            </div>
+            <span className="financeai-header__title">Mig</span>
           </div>
-        ) : (
-          <div className="max-w-4xl mx-auto space-y-4">
-            {messages.map((message) => (
-              <MessageBubble 
-                key={message.id} 
-                message={message} 
-                isGemini={true}
-              />
-            ))}
-            
-            {isTyping && (
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-                  </svg>
-                </div>
-                <div className="typing-indicator">
-                  <div className="typing-dot"></div>
-                  <div className="typing-dot"></div>
-                  <div className="typing-dot"></div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+        </div>
+        
+        <div className="financeai-header__right">
+          <ThemeToggle 
+            theme={settings.theme} 
+            onToggleTheme={settings.onToggleTheme} 
+          />
+        </div>
       </div>
 
-      {/* Input Area */}
-      <div className="input-area">
-        {/* Arquivos selecionados */}
-        {selectedFiles.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {selectedFiles.map((file, index) => (
-              <div key={index} className="upload-progress">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{file.name}</span>
-                  <button
-                    onClick={() => removeFile(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    ×
-                  </button>
+      {/* Chat Area */}
+      <div className="financeai-chat">
+        <div className="financeai-messages">
+          {messages.length === 0 && (
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              height: '100%', 
+              textAlign: 'center',
+              color: 'var(--text-secondary)'
+            }}>
+              <div style={{ 
+                width: '64px', 
+                height: '64px', 
+                background: 'linear-gradient(135deg, var(--color-send), var(--color-record))', 
+                borderRadius: '50%', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                color: 'white',
+                marginBottom: '16px'
+              }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+                </svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-primary)' }}>
+                Olá
+              </h3>
+              <p style={{ fontSize: '14px' }}>Como posso ajudá-lo hoje?</p>
+            </div>
+          )}
+
+          {messages.map((message) => (
+            <MessageBubble key={message.id} message={message} />
+          ))}
+
+          {isTyping && (
+            <div className="financeai-message">
+              <div className="financeai-message__avatar financeai-message__avatar--ai">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+                </svg>
+              </div>
+              <div className="financeai-message__content">
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ width: '8px', height: '8px', background: 'currentColor', borderRadius: '50%', animation: 'pulse 1.4s infinite' }}></div>
+                  <div style={{ width: '8px', height: '8px', background: 'currentColor', borderRadius: '50%', animation: 'pulse 1.4s infinite 0.2s' }}></div>
+                  <div style={{ width: '8px', height: '8px', background: 'currentColor', borderRadius: '50%', animation: 'pulse 1.4s infinite 0.4s' }}></div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* Progress de upload */}
-        {uploadProgress !== null && (
-          <div className="mb-3">
-            <div className="upload-progress-bar">
-              <div 
-                className="upload-progress-fill" 
-                style={{ width: `${uploadProgress}%` }}
-              />
             </div>
-          </div>
-        )}
-
-        {/* Container de input */}
-        <div className="input-container">
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="input-button button-file"
-            aria-label="Anexar arquivo"
-          >
-            <Paperclip size={16} />
-          </button>
-
-          <textarea
-            ref={textareaRef}
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Digite sua mensagem..."
-            className="input-textarea"
-            rows={1}
-          />
-
-          <button
-            type="button"
-            onClick={isRecording ? stopRecording : startRecording}
-            className={`input-button button-record ${isRecording ? 'recording' : ''}`}
-            aria-label={isRecording ? "Parar gravação" : "Gravar áudio"}
-          >
-            {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
-          </button>
-
-          <button
-            type="button"
-            onClick={sendMessage}
-            disabled={!inputText.trim() && selectedFiles.length === 0}
-            className="input-button button-send"
-            aria-label="Enviar mensagem"
-          >
-            <Send size={16} />
-          </button>
+          )}
+          
+          <div ref={messagesEndRef} />
         </div>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
-          onChange={handleFileUpload}
-          className="sr-only"
-        />
+        {/* Input Area */}
+        <div className="financeai-input-area">
+          {/* Selected files */}
+          {selectedFiles.length > 0 && (
+            <div style={{ marginBottom: '12px' }}>
+              {selectedFiles.map((file, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  padding: '8px 12px', 
+                  background: 'var(--bg-secondary)', 
+                  borderRadius: '6px',
+                  marginBottom: '4px'
+                }}>
+                  <Paperclip size={14} />
+                  <span style={{ fontSize: '14px', flex: 1 }}>{file.name}</span>
+                  <button onClick={() => removeFile(index)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Upload progress */}
+          {uploadProgress !== null && (
+            <div style={{ marginBottom: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', padding: '12px' }}>
+              <div style={{ fontSize: '14px', marginBottom: '8px' }}>Enviando arquivo...</div>
+              <div style={{ background: 'var(--border-color)', borderRadius: '4px', height: '4px' }}>
+                <div style={{ 
+                  background: 'var(--color-send)', 
+                  height: '100%', 
+                  borderRadius: '4px',
+                  width: `${uploadProgress}%`,
+                  transition: 'width 0.3s ease'
+                }} />
+              </div>
+            </div>
+          )}
+
+          {/* Input container */}
+          <div className="financeai-input-container">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="financeai-input-button financeai-input-button--attach"
+            >
+              <Paperclip size={16} />
+            </button>
+
+            <textarea
+              ref={textareaRef}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Digite sua mensagem..."
+              className="financeai-input"
+              rows={1}
+            />
+
+            <button
+              onClick={isRecording ? stopRecording : startRecording}
+              className={`financeai-input-button financeai-input-button--record ${isRecording ? 'financeai-input-button--recording' : ''}`}
+            >
+              {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
+            </button>
+
+            <button
+              onClick={sendMessage}
+              disabled={!inputText.trim() && selectedFiles.length === 0}
+              className="financeai-input-button financeai-input-button--send"
+            >
+              <Send size={16} />
+            </button>
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
+            onChange={handleFileUpload}
+            className="financeai-sr-only"
+          />
+        </div>
       </div>
     </div>
   )
