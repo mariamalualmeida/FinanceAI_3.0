@@ -213,8 +213,8 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         )}
         <div ref={messagesEndRef} />
         
-        {/* Área de input corrigida */}
-        <div className="fixed bottom-0 left-0 right-0 z-40">
+        {/* Área de input corrigida - sem bordas */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-0">
           <InputAreaFixed 
             onSend={sendMessage}
             onFileUpload={(file) => {

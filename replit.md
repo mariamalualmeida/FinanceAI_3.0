@@ -177,6 +177,11 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Interface de upload com preview, progress e validação de arquivos
 - June 27, 2025. Orquestração inteligente por assunto com backup e validação cruzada
 - June 27, 2025. Sistema de notificações visuais para processamento de arquivos
+- June 27, 2025. Análise completa do código: arquivos duplicados removidos (InputArea.jsx, useToast.js)
+- June 27, 2025. Layout ChatGPT completamente removido - apenas versão Gemini em uso
+- June 27, 2025. Correções definitivas da caixa de digitação: bordas removidas, área completa utilizada
+- June 27, 2025. CSS forçado para eliminar qualquer borda visual na área de input
+- June 27, 2025. Ícones mantidos em cor cinza uniforme (gray-400/500) sem azul ativo
 
 ## User Preferences
 
