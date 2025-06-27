@@ -1,0 +1,46 @@
+/* Correções simplificadas para problemas de layout mobile */
+
+/* Quebra de palavras global - simples */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+/* Mobile corrections - não conflitar com Tailwind */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Textarea específica sem conflitos */
+  textarea {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: pre-wrap !important;
+    overflow-x: hidden !important;
+    resize: none !important;
+    font-size: 16px !important;
+  }
+  
+  /* Sidebar mobile simples */
+  aside[data-mobile-sidebar] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 50 !important;
+  }
+}
+
+/* Scroll suave global */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
