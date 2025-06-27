@@ -55,56 +55,24 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragOver(false)
+    
     const droppedFiles = Array.from(e.dataTransfer.files)
-    const allowedTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword',
-      'text/plain',
-      'text/csv',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'image/jpeg',
-      'image/jpg',
-      'image/png'
-    ]
-    
-    const validFiles = droppedFiles.filter(file => 
-      allowedTypes.includes(file.type) && file.size <= 10 * 1024 * 1024
-    )
-    
-    if (validFiles.length > 0) {
-      setFiles(prev => [...prev, ...validFiles])
-      if (onFileUpload) {
-        validFiles.forEach(file => onFileUpload(file))
+    if (droppedFiles.length > 0) {
+      setFiles(prev => [...prev, ...droppedFiles])
+      if (onFileUpload && droppedFiles.length > 0) {
+        onFileUpload(droppedFiles[0])
       }
     }
   }
 
   const handleFileSelect = (e) => {
-    const selectedFiles = Array.from(e.target.files || [])
-    const allowedTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword',
-      'text/plain',
-      'text/csv',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'image/jpeg',
-      'image/jpg',
-      'image/png'
-    ]
-    
-    const validFiles = selectedFiles.filter(file => 
-      allowedTypes.includes(file.type) && file.size <= 10 * 1024 * 1024
-    )
-    
-    if (validFiles.length > 0) {
-      setFiles(prev => [...prev, ...validFiles])
-      if (onFileUpload) {
-        validFiles.forEach(file => onFileUpload(file))
+    const selectedFiles = Array.from(e.target.files)
+    if (selectedFiles.length > 0) {
+      setFiles(prev => [...prev, ...selectedFiles])
+      if (onFileUpload && selectedFiles.length > 0) {
+        onFileUpload(selectedFiles[0])
       }
     }
-    
     e.target.value = ''
   }
 
@@ -117,36 +85,58 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   }
 
   const acceptTranscription = () => {
-    if (pendingTranscription) {
-      setText(pendingTranscription)
-      setPendingTranscription(null)
-    }
+    setText(pendingTranscription)
+    setPendingTranscription(null)
   }
 
   const rejectTranscription = () => {
     setPendingTranscription(null)
-    setAudioData(null)
   }
 
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div 
-      className="relative px-2 sm:px-4 py-3 bg-transparent"
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      <div className="max-w-4xl mx-auto relative">
-        
-        {/* Transcription preview modal */}
+    <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.gif,.zip,.rar"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      <div 
+        className={`max-w-6xl mx-auto transition-all duration-300 ${isDragOver ? 'scale-105' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* Drag overlay */}
+        {isDragOver && (
+          <div className="fixed inset-0 bg-blue-500 bg-opacity-20 z-50 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border-2 border-dashed border-blue-500">
+              <Upload size={48} className="mx-auto text-blue-500 mb-4" />
+              <p className="text-lg font-medium text-gray-900 dark:text-white text-center">
+                Solte os arquivos aqui
+              </p>
+              <p className="text-gray-600 dark:text-gray-400 text-center mt-2">
+                PDF, Excel, Imagens, Documentos
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Transcription preview */}
         {pendingTranscription && (
-          <div className="audio-transcription-integrated">
-            <div className="transcription-header">
-              <h4 className="text-minimal-base">🎙️ Áudio Gravado</h4>
+          <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-xl">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-medium text-purple-900 dark:text-purple-100">
+                🎤 Transcrição de Áudio
+              </h4>
               <button
                 onClick={rejectTranscription}
-                className="text-gray-400 hover:text-white"
+                className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-200"
               >
                 <X size={16} />
               </button>
@@ -237,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-12 pr-20 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-hidden scrollbar-hide"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-2 pr-20 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-auto scrollbar-hide touch-pan-y"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -248,7 +238,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               rows={2}
               style={{ 
                 scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch'
               }}
             />
 
@@ -288,26 +279,6 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           </div>
         </div>
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.jpg,.jpeg,.png"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-
-        {/* Drag overlay */}
-        {isDragOver && (
-          <div className="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-xl flex items-center justify-center z-10">
-            <div className="text-blue-600 dark:text-blue-400 text-center">
-              <Upload size={32} className="mx-auto mb-2" />
-              <p className="text-base font-medium">Solte os arquivos aqui</p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
