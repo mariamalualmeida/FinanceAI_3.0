@@ -82,7 +82,12 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
   }
 
   const handleAudioReady = (audio) => {
-    if (transcriptionVerificationEnabled && audio?.transcription) {
+    // Verificar configuração salva no localStorage
+    const savedSettings = localStorage.getItem('financeai-settings')
+    const settings = savedSettings ? JSON.parse(savedSettings) : { audio: { transcriptionVerification: true } }
+    const verificationEnabled = settings.audio?.transcriptionVerification ?? true
+    
+    if (verificationEnabled && audio?.transcription) {
       // Modo verificação: mostrar transcrição na caixa de texto para edição
       setPendingTranscription(audio)
       setText(audio.transcription)

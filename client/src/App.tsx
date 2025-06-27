@@ -121,11 +121,9 @@ function AppContent() {
         <Toaster />
         
         {/* Settings Modal */}
-        <UnifiedSettingsModal
+        <CleanSettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
-          currentTheme={settings.theme}
-          onThemeChange={(theme) => updateSettings({ theme })}
           user={user}
         />
       </div>
