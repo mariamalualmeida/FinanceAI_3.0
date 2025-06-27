@@ -1178,6 +1178,10 @@ export default function AdminPanel({ onClose, user }) {
       case 'users':
         return <UserManagementSection />
       default:
+        return <div className="text-center py-8 text-gray-500">Seção não encontrada</div>
+    }
+  }eturn <UserManagementSection />
+      default:
         return <LLMConfigSection />
     }
   }
