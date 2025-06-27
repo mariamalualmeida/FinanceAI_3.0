@@ -96,7 +96,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const isDisabled = isProcessing || uploadProgress !== null
 
   return (
-    <div className="w-full">
+    <div className="bg-white dark:bg-gray-900">
       <input
         ref={fileInputRef}
         type="file"
@@ -161,11 +161,11 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative bg-transparent">
+        <div className="relative bg-white dark:bg-gray-800">
           
           {/* File attachments preview */}
           {files.length > 0 && (
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex flex-wrap gap-2">
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
@@ -194,7 +194,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
 
           {/* Upload progress */}
           {uploadProgress && (
-            <div className="px-4 py-2">
+            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <Loader2 size={16} className="animate-spin text-blue-500" />
                 <div className="flex-1">
@@ -218,8 +218,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Input area principal - sem padding para ocupar toda largura */}
-          <div className="relative">
+          {/* Input area principal */}
+          <div className="relative p-2">
             
             {/* Textarea com posicionamento correto */}
             <textarea
@@ -227,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-3 px-12 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 py-2 pl-9 pr-16 text-base leading-6 min-h-[56px] max-h-[120px] overflow-y-scroll"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
