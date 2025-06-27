@@ -371,6 +371,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chat message endpoint (text only)
+  app.post('/api/chat', isAuthenticated, async (req: any, res) => {
+    try {
+      const { message, conversationId } = req.body;
+      
+      if (!message || !message.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Message is required'
+        });
+      }
+
+      // Use the AI orchestrator to generate response
+      const aiResponse = await aiOrchestrator.processMessage(message, {
+        userId: req.session.userId,
+        strategy: 'balanced' // Default strategy
+      });
+
+      res.json({
+        success: true,
+        response: aiResponse
+      });
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to process chat message',
+        error: (error as Error).message
+      });
+    }
+  });
+
   // Chat Upload with Analysis endpoint
   app.post('/api/chat/upload', isAuthenticated, upload.array('files', 5), async (req: any, res) => {
     try {

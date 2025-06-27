@@ -6,7 +6,7 @@ import ThemeToggle from './ThemeToggle'
 import AudioRecorder from './AudioRecorder'
 import { useFileUpload } from '../hooks/useFileUpload'
 
-export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
+export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -53,17 +53,38 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
           setMessages(prev => [...prev, aiMessage])
         }
       } else {
-        // Simular resposta da IA
-        setTimeout(() => {
+        // Enviar mensagem para a IA
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            message: finalText,
+            conversationId: null // TODO: implement conversation tracking
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',
-            text: `Recebi sua mensagem: "${finalText}". Como posso ajudá-lo com análise financeira?`,
+            text: result.response || 'Desculpe, não consegui processar sua mensagem.',
             timestamp: new Date()
           }
           setMessages(prev => [...prev, aiMessage])
-          setIsTyping(false)
-        }, 1500)
+        } else {
+          const aiMessage = {
+            id: Date.now() + 1,
+            sender: 'assistant',
+            text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiMessage])
+        }
+        setIsTyping(false)
       }
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
@@ -103,14 +124,18 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
       {/* Gemini Header - Fundo uniforme */}
       <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0 z-20">
         <div className="flex items-center gap-3">
-          <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
-            aria-label="Toggle sidebar"
-          >
-            <Menu size={20} />
-          </button>
-          <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+          {!sidebarOpen && (
+            <>
+              <button
+                onClick={onToggleSidebar}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+                aria-label="Toggle sidebar"
+              >
+                <Menu size={20} />
+              </button>
+              <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+            </>
+          )}
           <div className="flex items-center gap-2 ml-2">
             <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
               <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
