@@ -4,6 +4,8 @@ import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import GeminiChatArea from './components/GeminiChatArea'
 import { Toaster } from './components/ui/toaster'
+import { initializeCleanApp } from './utils/configMigration'
+import './financeai.css'
 
 interface User {
   id: number
@@ -56,20 +58,18 @@ function AppContent() {
       }
     }
 
-    // Load settings from localStorage
-    const savedSettings = localStorage.getItem('financeai-settings')
-    if (savedSettings) {
-      try {
-        const parsed = JSON.parse(savedSettings)
-        setSettings(prev => ({ ...prev, ...parsed }))
-        
-        // Apply theme
-        if (parsed.theme === 'dark') {
-          document.documentElement.classList.add('dark')
-        }
-      } catch (error) {
-        console.error('Error loading settings:', error)
-      }
+    // Initialize clean app with migrated configs
+    const cleanConfig = initializeCleanApp()
+    setSettings({
+      theme: cleanConfig.theme,
+      interface: cleanConfig.interface
+    })
+    
+    // Apply theme
+    if (cleanConfig.theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
     }
 
     checkAuth()
@@ -166,17 +166,15 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+      <div className="financeai-loading">
+        <div className="financeai-loading__content">
+          <div className="financeai-loading__logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
             </svg>
           </div>
-          <div className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            FinanceAI
-          </div>
-          <div className="w-8 h-8 mx-auto border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="financeai-loading__title">FinanceAI</div>
+          <div className="financeai-loading__spinner" />
         </div>
       </div>
     )
@@ -192,7 +190,10 @@ function AppContent() {
   }
 
   return (
-    <div className="app-container">
+    <div className="financeai-app">
+      {/* Overlay for mobile */}
+      <div className={`financeai-overlay ${sidebarOpen ? 'financeai-overlay--visible' : ''}`} onClick={() => setSidebarOpen(false)} />
+      
       <Sidebar
         user={user}
         conversations={conversations}

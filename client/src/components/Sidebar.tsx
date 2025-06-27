@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus, MessageSquare, Settings, LogOut, User, Shield } from 'lucide-react'
+import AdminPanel from './AdminPanel'
 
 interface Conversation {
   id: string
@@ -58,111 +59,82 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Overlay para mobile */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={onClose}
-        />
-      )}
+      <div className={`financeai-sidebar ${isOpen ? 'financeai-sidebar--open' : ''}`}>
+        {/* Header */}
+        <div className="financeai-sidebar__header">
+          <button onClick={onNewChat} className="financeai-sidebar__new-chat">
+            <Plus size={20} />
+            <span>Nova Conversa</span>
+          </button>
+        </div>
 
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Conversas */}
+        <div className="financeai-sidebar__conversations">
+          {conversations.map((conversation) => (
             <button
-              onClick={onNewChat}
-              className="w-full flex items-center gap-3 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors"
+              key={conversation.id}
+              onClick={() => onSelectConversation(conversation.id)}
+              className={`financeai-sidebar__conversation ${
+                activeConversationId === conversation.id ? 'financeai-sidebar__conversation--active' : ''
+              }`}
             >
-              <Plus size={20} className="text-gray-600 dark:text-gray-400" />
-              <span className="text-gray-900 dark:text-gray-100 font-medium">
-                Nova Conversa
-              </span>
+              <MessageSquare size={16} />
+              <div className="financeai-truncate">
+                <div className="financeai-truncate">{truncateTitle(conversation.title)}</div>
+                <div style={{ fontSize: '12px', opacity: 0.7 }}>{formatDate(conversation.updatedAt)}</div>
+              </div>
+            </button>
+          ))}
+          
+          {conversations.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)' }}>
+              <MessageSquare size={32} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
+              <p style={{ fontSize: '14px' }}>Nenhuma conversa ainda</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="financeai-sidebar__footer">
+          {/* Perfil do usuário */}
+          <div className="financeai-sidebar__profile">
+            <div className="financeai-sidebar__avatar">
+              <User size={16} />
+            </div>
+            <div className="financeai-sidebar__user-info">
+              <div className="financeai-sidebar__username">{user?.username || 'Usuário'}</div>
+              <div className="financeai-sidebar__email">{user?.email || 'email@exemplo.com'}</div>
+            </div>
+          </div>
+
+          {/* Botões de ação */}
+          <div className="financeai-sidebar__actions">
+            {isAdmin && (
+              <button onClick={() => setShowAdminPanel(true)} className="financeai-sidebar__action">
+                <Shield size={16} />
+                <span>Painel Admin</span>
+              </button>
+            )}
+            
+            <button onClick={onShowSettings} className="financeai-sidebar__action">
+              <Settings size={16} />
+              <span>Configurações</span>
+            </button>
+            
+            <button onClick={onLogout} className="financeai-sidebar__action" style={{ color: 'var(--text-muted)' }}>
+              <LogOut size={16} />
+              <span>Sair</span>
             </button>
           </div>
-
-          {/* Conversas */}
-          <div className="flex-1 overflow-y-auto p-2">
-            <div className="space-y-1">
-              {conversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => onSelectConversation(conversation.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                    activeConversationId === conversation.id
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                  }`}
-                >
-                  <MessageSquare size={16} className="flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">
-                      {truncateTitle(conversation.title)}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatDate(conversation.updatedAt)}
-                    </div>
-                  </div>
-                </button>
-              ))}
-              
-              {conversations.length === 0 && (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Nenhuma conversa ainda</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Footer com perfil e configurações */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-            {/* Perfil do usuário */}
-            <div className="flex items-center gap-3 px-3 py-2 bg-white dark:bg-gray-800 rounded-lg">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <User size={16} className="text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                  {user?.username || 'Usuário'}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {user?.email || 'email@exemplo.com'}
-                </div>
-              </div>
-            </div>
-
-            {/* Botões de ação */}
-            <div className="space-y-1">
-              {isAdmin && (
-                <button
-                  onClick={() => setShowAdminPanel(true)}
-                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
-                >
-                  <Shield size={16} />
-                  <span className="text-sm">Painel Admin</span>
-                </button>
-              )}
-              
-              <button
-                onClick={onShowSettings}
-                className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
-              >
-                <Settings size={16} />
-                <span className="text-sm">Configurações</span>
-              </button>
-              
-              <button
-                onClick={onLogout}
-                className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-100 dark:hover:bg-red-900 rounded-lg transition-colors text-red-600 dark:text-red-400"
-              >
-                <LogOut size={16} />
-                <span className="text-sm">Sair</span>
-              </button>
-            </div>
-          </div>
         </div>
+
+        {/* Componente AdminPanel */}
+        {showAdminPanel && isAdmin && (
+          <AdminPanel 
+            isOpen={showAdminPanel} 
+            onClose={() => setShowAdminPanel(false)} 
+          />
+        )}
       </div>
     </>
   )
