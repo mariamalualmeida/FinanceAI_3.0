@@ -4,6 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './simplified.css';
+
 /* Custom CSS variables for components that need them */
 :root {
   --bg-primary: #ffffff;

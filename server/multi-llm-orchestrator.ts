@@ -220,7 +220,7 @@ class MultiLLMOrchestrator {
         // Fallback para primeiro provider disponível
         const firstProvider = Array.from(this.providers.values())[0];
         if (firstProvider) {
-          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          const prompt = this.buildPrompt(input);
           return await firstProvider.generateResponse(prompt, context || undefined);
         }
         throw new Error(`Primary provider ${primaryConfig.name} not available`);
@@ -236,7 +236,7 @@ class MultiLLMOrchestrator {
       const firstProvider = Array.from(this.providers.values())[0];
       if (firstProvider) {
         try {
-          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          const prompt = this.buildPrompt(input);
           return await firstProvider.generateResponse(prompt, context || undefined);
         } catch (fallbackError) {
           console.error('All providers failed:', fallbackError);
