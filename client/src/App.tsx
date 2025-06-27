@@ -4,7 +4,7 @@ import Login from './components/Login'
 import Sidebar from './components/Sidebar'
 import GeminiChatArea from './components/GeminiChatArea'
 import AdminPanel from './components/AdminPanel'
-import UnifiedSettingsModal from './components/UnifiedSettingsModal'
+import CleanSettingsModal from './components/CleanSettingsModal'
 import { Toaster } from './components/ui/toaster'
 function AppContent() {
   const [user, setUser] = useState(null)

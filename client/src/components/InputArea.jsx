@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Send, Paperclip, X, FileText, Image, File, Loader2 } from 'lucide-react'
+import { Send, Paperclip, X, FileText, Image, File, Loader2, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 import AudioRecorder from './AudioRecorder'
 
@@ -8,6 +8,8 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
   const [files, setFiles] = useState([])
   const [audioData, setAudioData] = useState(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [pendingTranscription, setPendingTranscription] = useState(null)
+  const [transcriptionVerificationEnabled, setTranscriptionVerificationEnabled] = useState(true)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
 
@@ -80,10 +82,31 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
   }
 
   const handleAudioReady = (audio) => {
-    setAudioData(audio)
-    if (audio?.transcription) {
+    if (transcriptionVerificationEnabled && audio?.transcription) {
+      // Modo verificação: mostrar transcrição na caixa de texto para edição
+      setPendingTranscription(audio)
       setText(audio.transcription)
+    } else {
+      // Modo direto: anexar áudio imediatamente
+      setAudioData(audio)
     }
+  }
+
+  const handleConfirmTranscription = () => {
+    // Confirmar transcrição editada e anexar áudio
+    if (pendingTranscription) {
+      setAudioData({
+        ...pendingTranscription,
+        transcription: text // Usar o texto editado pelo usuário
+      })
+      setPendingTranscription(null)
+    }
+  }
+
+  const handleCancelTranscription = () => {
+    // Cancelar transcrição e limpar texto
+    setPendingTranscription(null)
+    setText('')
   }
 
   const handleFileSelect = (e) => {
@@ -210,28 +233,57 @@ export default function InputArea({ onSend, onFileUpload, isProcessing = false, 
 
           {/* Botões de ação - canto inferior direito */}
           <div className="absolute bottom-2 right-3 flex items-center gap-2">
-            {/* Componente de áudio */}
-            <AudioRecorder 
-              onAudioReady={handleAudioReady}
-              variant="blue"
-              size={18}
-            />
+            {/* Sistema de transcrição pendente com botões X e ✓ */}
+            {pendingTranscription ? (
+              <>
+                {/* Botão cancelar transcrição (X) */}
+                <motion.button
+                  type="button"
+                  onClick={handleCancelTranscription}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-1.5 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                  title="Cancelar transcrição"
+                >
+                  <X size={18} />
+                </motion.button>
 
-            {/* Botão de envio */}
-            <motion.button
-              type="button"
-              onClick={handleSend}
-              disabled={isProcessing || (!text.trim() && files.length === 0 && !audioData)}
-              whileTap={{ scale: 0.95 }}
-              className={`p-1.5 rounded-lg transition-colors ${
-                text.trim() || files.length > 0 || audioData
-                  ? 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'
-                  : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-              }`}
-              title="Enviar mensagem"
-            >
-              <Send size={18} />
-            </motion.button>
+                {/* Botão confirmar transcrição (✓) */}
+                <motion.button
+                  type="button"
+                  onClick={handleConfirmTranscription}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-1.5 text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                  title="Confirmar transcrição"
+                >
+                  <Check size={18} />
+                </motion.button>
+              </>
+            ) : (
+              <>
+                {/* Componente de áudio normal */}
+                <AudioRecorder 
+                  onAudioReady={handleAudioReady}
+                  variant="blue"
+                  size={18}
+                />
+
+                {/* Botão de envio */}
+                <motion.button
+                  type="button"
+                  onClick={handleSend}
+                  disabled={isProcessing || (!text.trim() && files.length === 0 && !audioData)}
+                  whileTap={{ scale: 0.95 }}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    text.trim() || files.length > 0 || audioData
+                      ? 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'
+                      : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  }`}
+                  title="Enviar mensagem"
+                >
+                  <Send size={18} />
+                </motion.button>
+              </>
+            )}
           </div>
 
           {/* Drag and Drop Overlay */}
