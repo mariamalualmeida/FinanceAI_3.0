@@ -131,6 +131,233 @@ export default function AdminPanel({ onClose, user }) {
     }
   }, [activeTab])
 
+  // Knowledge Base Component
+  const KnowledgeBaseSection = () => {
+    const [documents, setDocuments] = useState([
+      { id: 1, name: 'Manual Financeiro.pdf', type: 'pdf', size: '2.3 MB', uploadDate: '2025-06-27', status: 'indexed' },
+      { id: 2, name: 'Guia Análise Crédito.docx', type: 'docx', size: '1.8 MB', uploadDate: '2025-06-26', status: 'processing' }
+    ])
+    const [showUploadForm, setShowUploadForm] = useState(false)
+    
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Base de Conhecimento</h3>
+          <button
+            onClick={() => setShowUploadForm(true)}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"
+          >
+            <Upload size={16} />
+            Upload Documento
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {documents.map((doc) => (
+            <div key={doc.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <FileText className="text-green-600" size={18} />
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{doc.name}</h4>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      doc.status === 'indexed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {doc.status === 'indexed' ? 'Indexado' : 'Processando'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Tamanho: {doc.size} | Formato: {doc.type.toUpperCase()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Enviado em: {doc.uploadDate}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => console.log('View document:', doc.id)}
+                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  >
+                    <Eye size={16} />
+                  </button>
+                  <button
+                    onClick={() => console.log('Delete document:', doc.id)}
+                    className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {showUploadForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md">
+              <h4 className="text-lg font-semibold mb-4">Upload Documento</h4>
+              <div className="space-y-4">
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+                  <Upload className="mx-auto text-gray-400 mb-2" size={32} />
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">
+                    Arraste arquivos ou clique para selecionar
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, DOC, DOCX, TXT até 10MB
+                  </p>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,.txt"
+                    className="hidden"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Nome do documento (opcional)"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  onClick={() => setShowUploadForm(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => setShowUploadForm(false)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // User Management Component
+  const UserManagementSection = () => {
+    const [users, setUsers] = useState([
+      { id: 1, username: 'Admin', email: 'admin@financeai.com', role: 'user', isActive: true, lastLogin: '2025-06-27' },
+      { id: 2, username: 'Leonardo', email: 'leonardo@financeai.com', role: 'admin', isActive: true, lastLogin: '2025-06-27' }
+    ])
+    const [showUserForm, setShowUserForm] = useState(false)
+    const [editingUser, setEditingUser] = useState(null)
+    
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Usuários do Sistema</h3>
+          <button
+            onClick={() => setShowUserForm(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+          >
+            <Plus size={16} />
+            Novo Usuário
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {users.map((user) => (
+            <div key={user.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <User className="text-blue-600" size={18} />
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{user.username}</h4>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      user.role === 'admin' 
+                        ? 'bg-purple-100 text-purple-800' 
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {user.role === 'admin' ? 'Administrador' : 'Usuário'}
+                    </span>
+                    {user.isActive && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Ativo</span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Email: {user.email}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Último acesso: {user.lastLogin}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setEditingUser(user)}
+                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  >
+                    <Edit3 size={16} />
+                  </button>
+                  <button
+                    onClick={() => console.log('Toggle user status:', user.id)}
+                    className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                  >
+                    {user.isActive ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {(showUserForm || editingUser) && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md">
+              <h4 className="text-lg font-semibold mb-4">
+                {editingUser ? 'Editar Usuário' : 'Novo Usuário'}
+              </h4>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Nome de usuário"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  defaultValue={editingUser?.username || ''}
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  defaultValue={editingUser?.email || ''}
+                />
+                <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                  <option value="user">Usuário</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowUserForm(false)
+                    setEditingUser(null)
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUserForm(false)
+                    setEditingUser(null)
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   // LLM Configuration Component
   const LLMConfigSection = () => (
     <div className="space-y-6">
@@ -249,15 +476,7 @@ export default function AdminPanel({ onClose, user }) {
           </div>
         )
       case 'knowledge':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Base de Conhecimento</h3>
-            <p className="text-gray-600 dark:text-gray-400">Gerencie documentos da base de conhecimento do sistema.</p>
-            <div className="text-center py-8 text-gray-500">
-              Seção em desenvolvimento
-            </div>
-          </div>
-        )
+        return <KnowledgeBaseSection />
       case 'system':
         return (
           <div className="space-y-6">

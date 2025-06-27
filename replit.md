@@ -163,6 +163,12 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Sistema de usuários unificado - removidos hardcoded, usando apenas banco de dados
 - June 27, 2025. Middleware de autenticação aprimorado com validação robusta
 - June 27, 2025. UnifiedSettingsModal criado substituindo múltiplas implementações
+- June 27, 2025. Layout mobile-first implementado: configurações em barra vertical única
+- June 27, 2025. AdminPanel redesenhado para mobile com tabs horizontais responsivas
+- June 27, 2025. Base de Conhecimento implementada com upload e gerenciamento de documentos
+- June 27, 2025. Sistema de gerenciamento de usuários funcional no AdminPanel
+- June 27, 2025. Interface otimizada para dispositivos móveis conforme solicitado
+- June 27, 2025. Correções de extensões .jsx → .tsx para compatibilidade com servidor
 
 ## User Preferences
 
