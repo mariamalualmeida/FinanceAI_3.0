@@ -51,12 +51,12 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Allow common financial document formats and audio files
-    const allowedTypes = /\.(pdf|xlsx?|csv|txt|png|jpe?g|mp3|wav|m4a|webm|ogg)$/i;
+    // Allow common financial document formats
+    const allowedTypes = /\.(pdf|xlsx?|csv|txt|png|jpe?g)$/i;
     if (allowedTypes.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Please upload PDF, Excel, CSV, TXT, image, or audio files.'));
+      cb(new Error('Invalid file type. Please upload PDF, Excel, CSV, TXT, or image files.'));
     }
   },
 });
@@ -278,26 +278,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Nenhum arquivo de áudio fornecido' });
       }
 
-      // Transcrição real usando OpenAI Whisper API
-      let transcriptionText = '';
-      
-      try {
-        const openai = new (await import('openai')).default({
-          apiKey: process.env.OPENAI_API_KEY
-        });
-        
-        const fs = require('fs');
-        const transcription = await openai.audio.transcriptions.create({
-          file: fs.createReadStream(req.file.path),
-          model: "whisper-1",
-          language: "pt"
-        });
-        
-        transcriptionText = transcription.text;
-      } catch (error) {
-        console.error('Whisper transcription failed:', error);
-        transcriptionText = 'Erro ao transcrever áudio. Verifique se a API key do OpenAI está configurada.';
-      }
+      // Implementação real seria com OpenAI Whisper API
+      // Por agora, vamos usar uma simulação para demonstração
+      const mockTranscription = "Esta é uma transcrição simulada do áudio enviado. Em produção, usaria a API Whisper da OpenAI para transcrever o áudio real.";
 
       // Salvar log do áudio para auditoria conforme arquitetura discutida
       await storage.createFileUpload({
@@ -311,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json({ 
-        transcription: transcriptionText,
+        transcription: mockTranscription,
         audioId: req.file.filename 
       });
     } catch (error) {
