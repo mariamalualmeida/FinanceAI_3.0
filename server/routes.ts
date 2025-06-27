@@ -116,6 +116,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/user', isAuthenticated, async (req: any, res) => {
     try {
+      // First check if user exists in fixed users
+      const fixedUser = FIXED_USERS.find(u => u.id === req.session.userId);
+      if (fixedUser) {
+        const { password, ...userWithoutPassword } = fixedUser;
+        return res.json(userWithoutPassword);
+      }
+
+      // Fallback to database lookup
       const user = await storage.getUser(req.session.userId!);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });

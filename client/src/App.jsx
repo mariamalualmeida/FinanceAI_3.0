@@ -96,7 +96,7 @@ export default function App() {
       <div className={`w-full h-full ${settings.theme === 'dark' ? 'dark' : ''}`}>
         <Switch>
           <Route path="/admin">
-            <AdminPanel user={user} onLogout={handleLogout} />
+            <AdminPanel user={user} onLogout={handleLogout} onClose={() => window.history.back()} />
           </Route>
           <Route>
             <div className="flex h-full w-full">
