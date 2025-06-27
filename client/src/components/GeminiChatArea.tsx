@@ -193,7 +193,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           )}
 
           {messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
+            <MessageBubble key={message.id} message={message} isGemini={true} />
           ))}
 
           {isTyping && (

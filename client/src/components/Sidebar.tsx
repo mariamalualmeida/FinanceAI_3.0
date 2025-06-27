@@ -131,8 +131,8 @@ export default function Sidebar({
         {/* Componente AdminPanel */}
         {showAdminPanel && isAdmin && (
           <AdminPanel 
-            isOpen={showAdminPanel} 
             onClose={() => setShowAdminPanel(false)} 
+            user={user}
           />
         )}
       </div>
