@@ -98,13 +98,44 @@ const UnifiedSettingsModal = ({ isOpen, onClose, currentTheme, onThemeChange, us
     setIsAdmin(user?.role === 'admin');
   }, [user]);
 
+  const updateSetting = (section, key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [key]: value
+      }
+    }));
+    setHasChanges(true);
+  };
+
+  const updateTheme = (theme) => {
+    setSettings(prev => ({ ...prev, theme }));
+    onThemeChange?.(theme);
+    setHasChanges(true);
+  };
+
+  const updateInterface = (interfaceType) => {
+    setSettings(prev => ({ ...prev, interface: interfaceType }));
+    setHasChanges(true);
+  };
+
   const handleSave = () => {
-    saveSettings();
+    localStorage.setItem('financeai-settings', JSON.stringify(settings));
+    setHasChanges(false);
   };
 
   const handleReset = () => {
     if (confirm('Tem certeza que deseja restaurar as configurações padrão?')) {
-      resetSettings();
+      setSettings({
+        theme: 'light',
+        interface: 'chatgpt',
+        profile: { name: '', email: '' },
+        interfaceSettings: { compact_mode: false, show_sidebar: true, auto_scroll: true },
+        notifications: { desktop: true, sound: true, analysis_complete: true },
+        system: { auto_save: true, cache_enabled: true, debug_mode: false }
+      });
+      setHasChanges(true);
     }
   };
 
