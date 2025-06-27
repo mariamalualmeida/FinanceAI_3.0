@@ -8,6 +8,7 @@ import {
   Upload,
   Trash2,
   Edit,
+  Edit3,
   X,
   BookOpen,
   Plus,

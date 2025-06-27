@@ -9,26 +9,28 @@ import {
 } from 'lucide-react';
 
 const ToggleField = ({ label, value, onChange, description, icon: Icon }) => (
-  <div className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-    <div className="flex items-center gap-3">
-      {Icon && <Icon size={16} className="text-gray-500 dark:text-gray-400" />}
-      <div>
-        <div className="font-medium text-gray-900 dark:text-gray-100">{label}</div>
-        {description && <div className="text-sm text-gray-500 dark:text-gray-400">{description}</div>}
+  <div className="toggle-section">
+    <div className="toggle-header">
+      <div className="flex items-center gap-3 toggle-label">
+        {Icon && <Icon size={16} className="text-gray-500 dark:text-gray-400 flex-shrink-0" />}
+        <div className="min-w-0">
+          <div className="font-medium text-gray-900 dark:text-gray-100">{label}</div>
+          {description && <div className="text-sm text-gray-500 dark:text-gray-400">{description}</div>}
+        </div>
       </div>
-    </div>
-    <button
-      onClick={() => onChange(!value)}
-      className={`relative w-10 h-6 rounded-full transition-colors ${
-        value ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-      }`}
-    >
-      <div
-        className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-          value ? 'translate-x-5' : 'translate-x-1'
+      <button
+        onClick={() => onChange(!value)}
+        className={`toggle-switch relative w-10 h-6 rounded-full transition-colors ${
+          value ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
         }`}
-      />
-    </button>
+      >
+        <div
+          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+            value ? 'translate-x-5' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </div>
   </div>
 );
 
