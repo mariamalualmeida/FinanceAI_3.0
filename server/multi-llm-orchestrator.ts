@@ -209,7 +209,7 @@ class MultiLLMOrchestrator {
       if (!primaryConfig) {
         const firstProvider = Array.from(this.providers.values())[0];
         if (firstProvider) {
-          const prompt = `Você é um assistente de análise financeira especializado chamado Mig. Responda de forma clara, precisa e útil. Solicitação: ${input}`;
+          const prompt = this.buildPrompt(input);
           return await firstProvider.generateResponse(prompt, context || undefined);
         }
         throw new Error('No LLM providers available');
@@ -371,33 +371,53 @@ class MultiLLMOrchestrator {
   }
 
   private buildPrompt(input: string): string {
-    if (!this.prompts) {
-      return input;
+    // Sistema de prompts financeiros especializado
+    const baseFinancialPrompt = `Você é o Mig, um assistente especializado em análise financeira e consultoria de crédito. Sua função é:
+
+1. ANÁLISE FINANCEIRA ESPECIALIZADA:
+   - Avaliar extratos bancários, faturas de cartão e demonstrações financeiras
+   - Calcular scores de crédito e indicadores de risco
+   - Identificar padrões de consumo e comportamento financeiro
+   - Detectar movimentações suspeitas ou gastos com apostas/jogos
+
+2. CONSULTORIA FINANCEIRA INTELIGENTE:
+   - Fornecer recomendações personalizadas para melhoria do score
+   - Sugerir estratégias de organização financeira
+   - Alertar sobre riscos de inadimplência
+   - Orientar sobre melhores práticas de gestão financeira
+
+3. COMUNICAÇÃO PROFISSIONAL:
+   - Sempre responder em português brasileiro
+   - Usar linguagem clara e acessível
+   - Fornecer insights práticos e acionáveis
+   - Manter confidencialidade e profissionalismo
+
+IMPORTANTE: Nunca invente dados financeiros. Sempre baseie suas análises em informações reais fornecidas pelos usuários.`;
+
+    // Se há prompts customizados do banco, usar em adição ao base
+    if (this.prompts) {
+      const customPrompts = [
+        this.prompts.prompt1,
+        this.prompts.prompt2,
+        this.prompts.prompt3,
+        this.prompts.prompt4,
+        this.prompts.prompt5,
+        this.prompts.prompt6,
+        this.prompts.prompt7,
+        this.prompts.prompt8,
+        this.prompts.prompt9,
+        this.prompts.prompt10,
+        this.prompts.prompt11,
+        this.prompts.prompt12
+      ].filter(p => p && p.trim().length > 0);
+
+      if (customPrompts.length > 0) {
+        const customSystemPrompt = customPrompts.join('\n\n');
+        return `${baseFinancialPrompt}\n\nCONFIGURAÇÕES ADICIONAIS:\n${customSystemPrompt}\n\nSolicitação do usuário: ${input}`;
+      }
     }
 
-    // Usar prompts em cadeia se configurado
-    const prompts = [
-      this.prompts.prompt1,
-      this.prompts.prompt2,
-      this.prompts.prompt3,
-      this.prompts.prompt4,
-      this.prompts.prompt5,
-      this.prompts.prompt6,
-      this.prompts.prompt7,
-      this.prompts.prompt8,
-      this.prompts.prompt9,
-      this.prompts.prompt10,
-      this.prompts.prompt11,
-      this.prompts.prompt12
-    ].filter(p => p && p.trim().length > 0);
-
-    if (prompts.length === 0) {
-      return input;
-    }
-
-    // Combinar prompts em sistema base
-    const systemPrompt = prompts.join('\n\n');
-    return `${systemPrompt}\n\nTarefa: ${input}`;
+    return `${baseFinancialPrompt}\n\nSolicitação do usuário: ${input}`;
   }
 
   private buildSimplePrompt(input: string): string {
