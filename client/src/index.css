@@ -977,3 +977,36 @@ textarea.scrollbar-hide {
   z-index: 10 !important;
   flex-shrink: 0 !important;
 }
+
+/* Correções para ícones da área de entrada - manter cor cinza sempre */
+.relative button,
+.relative button svg {
+  color: rgb(156, 163, 175) !important; /* gray-400 */
+}
+
+.relative button:hover,
+.relative button:hover svg {
+  color: rgb(107, 114, 128) !important; /* gray-500 */
+}
+
+.relative button:disabled,
+.relative button:disabled svg {
+  color: rgb(156, 163, 175) !important; /* gray-400 */
+  cursor: not-allowed !important;
+}
+
+/* Prevenir cor azul em botões ativos */
+button[title="Enviar mensagem"],
+button[title="Enviar mensagem"] svg {
+  color: rgb(156, 163, 175) !important; /* gray-400 */
+}
+
+button[title="Enviar mensagem"]:hover,
+button[title="Enviar mensagem"]:hover svg {
+  color: rgb(107, 114, 128) !important; /* gray-500 */
+}
+
+button[title="Enviar mensagem"]:disabled,
+button[title="Enviar mensagem"]:disabled svg {
+  color: rgb(156, 163, 175) !important; /* gray-400 */
+}
