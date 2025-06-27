@@ -1,0 +1,76 @@
+{
+  "app": {
+    "name": "FinanceAI",
+    "version": "2.0.0",
+    "buildNumber": "202506270001",
+    "codename": "AdminPanel",
+    "releaseDate": "2025-06-27"
+  },
+  "platforms": {
+    "web": {
+      "version": "2.0.0",
+      "lastUpdate": "2025-06-27",
+      "features": [
+        "Multi-LLM Orchestration",
+        "Admin Panel",
+        "Financial Analysis",
+        "Real-time Chat",
+        "Audio Recording",
+        "File Upload",
+        "Dark/Light Theme"
+      ]
+    },
+    "pwa": {
+      "version": "2.0.0",
+      "lastUpdate": "2025-06-27",
+      "installable": true,
+      "offline": false,
+      "features": [
+        "App-like experience",
+        "Installable on mobile/desktop",
+        "Push notifications ready",
+        "Responsive design"
+      ]
+    },
+    "android": {
+      "versionCode": 2,
+      "versionName": "2.0.0",
+      "lastUpdate": "2025-06-27",
+      "minSdkVersion": 24,
+      "targetSdkVersion": 34,
+      "features": [
+        "Native WebView wrapper",
+        "File picker integration",
+        "Splash screen",
+        "Pull-to-refresh",
+        "Deep linking"
+      ]
+    }
+  },
+  "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2025-06-27",
+      "changes": [
+        "Added comprehensive Admin Panel",
+        "Implemented LLM configuration management",
+        "Enhanced permission system",
+        "Updated Android app to version 2.0.0",
+        "Improved system architecture"
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2025-06-26",
+      "changes": [
+        "Initial release",
+        "Multi-LLM orchestration system",
+        "Financial analysis capabilities",
+        "Real-time chat interface",
+        "Audio recording and transcription",
+        "File upload and processing",
+        "Android APK support"
+      ]
+    }
+  ]
+}

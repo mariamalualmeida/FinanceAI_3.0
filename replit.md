@@ -153,6 +153,10 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Sistema de verificação de permissões de acesso administrativo
 - June 27, 2025. Interface de abas para diferentes seções administrativas
 - June 27, 2025. Browserslist atualizado para resolver warnings de compatibilidade
+- June 27, 2025. Sistema de versionamento unificado implementado (v2.0.0)
+- June 27, 2025. PWA completo com manifesto, service worker e funcionalidade offline
+- June 27, 2025. Android APK atualizado para versão 2.0.0 (versionCode 2)
+- June 27, 2025. Configuração centralizada de versões em version.json
 
 ## User Preferences
 
