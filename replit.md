@@ -212,6 +212,14 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Comportamento da sidebar corrigido: fecha apenas em ações específicas
 - June 28, 2025. Cores do tema escuro aprimoradas: texto claro em configurações e menus
 - June 28, 2025. Versão atualizada para v2.5.0 codename "SmartNaming" em todas plataformas
+- June 28, 2025. Context API criado para gerenciamento unificado de estado global
+- June 28, 2025. Cores do CleanSettingsModal corrigidas no tema escuro com data-modal="settings"
+- June 28, 2025. Linha separadora removida entre configurações e botão sair
+- June 28, 2025. CSS específico implementado para texto claro em modais de configuração
+- June 28, 2025. Sidebar corrigida: não fecha automaticamente após exclusão de conversas
+- June 28, 2025. Sistema de atualização de títulos em tempo real implementado
+- June 28, 2025. Limpeza de chat ao criar nova conversa ou excluir conversa atual
+- June 28, 2025. Versão atualizada para v2.6.0 codename "UXPerfection" em todas plataformas
 
 ## User Preferences
 

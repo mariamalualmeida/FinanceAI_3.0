@@ -143,6 +143,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className="bg-white dark:bg-gray-900 w-full max-w-md md:rounded-xl shadow-2xl flex flex-col max-h-screen md:max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
+          data-modal="settings"
         >
           {/* Cabeçalho Limpo */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -299,7 +300,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
           </div>
 
           {/* Rodapé com Botões */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
+          <div className="p-6 space-y-3">
             <button
               onClick={handleSave}
               disabled={!hasChanges}

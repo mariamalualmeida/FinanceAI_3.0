@@ -1,9 +1,9 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "2.5.0",
-    "buildNumber": "202506280005",
-    "codename": "SmartNaming",
+    "version": "2.6.0",
+    "buildNumber": "202506280006",
+    "codename": "UXPerfection",
     "releaseDate": "2025-06-28"
   },
   "platforms": {
@@ -64,6 +64,19 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.6.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Fixed dark mode text colors in settings modal using data-modal attributes",
+        "Removed separator line between settings and exit button for cleaner UI",
+        "Corrected sidebar behavior: prevents automatic closing after conversation deletion",
+        "Implemented real-time conversation title updates in sidebar",
+        "Fixed chat area clearing when creating new conversations or deleting current one",
+        "Added comprehensive CSS rules for consistent dark theme text visibility",
+        "Enhanced UX consistency across all components and interaction patterns"
+      ]
+    },
     {
       "version": "2.5.0",
       "date": "2025-06-28",
