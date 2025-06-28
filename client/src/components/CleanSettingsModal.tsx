@@ -290,7 +290,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
           <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
             <button
               onClick={handleReset}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl transition-colors flex items-center gap-2"
             >
               <RotateCcw size={16} />
               Restaurar Padrões
@@ -299,10 +299,10 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
             <button
               onClick={handleSave}
               disabled={!hasChanges}
-              className={`px-6 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+              className={`px-6 py-2 rounded-3xl flex items-center gap-2 transition-colors border ${
                 hasChanges
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
+                  ? 'bg-white dark:bg-gray-900 border-gray-600 dark:border-gray-400 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                  : 'bg-gray-300 dark:bg-gray-700 text-gray-500 border-gray-300 dark:border-gray-700 cursor-not-allowed'
               }`}
             >
               <Save size={16} />
