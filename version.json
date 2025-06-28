@@ -63,6 +63,19 @@
   },
   "changelog": [
     {
+      "version": "2.3.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Unified color scheme: replaced all purple/blue buttons with consistent gray-600",
+        "Fixed AdminPanel header: removed purple background, added proper gray icons",
+        "Updated CleanSettingsModal: enabled user name editing with consistent styling", 
+        "Applied rounded-3xl borders to all form elements for visual consistency",
+        "Enhanced button organization: vertical layout to prevent lateral compression",
+        "Maintained audio/transcription system functionality as requested",
+        "Improved visual hierarchy with consistent gray color palette"
+      ]
+    },
+    {
       "version": "2.2.0",
       "date": "2025-06-28",
       "changes": [

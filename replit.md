@@ -194,6 +194,14 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Bordas laterais removidas da página inicial de login para visual mais limpo
 - June 28, 2025. Versões atualizadas para v2.2.0 em todas as plataformas (WEB, PWA, Android APK)
 - June 28, 2025. Sistema de versionamento unificado atualizado com codename "CleanInterface"
+- June 28, 2025. Sistema de cores unificado v2.3.0: botões roxos/azuis substituídos por cinza-600 consistente
+- June 28, 2025. AdminPanel header corrigido: fundo roxo removido, ícones cinza aplicados
+- June 28, 2025. CleanSettingsModal aprimorado: edição de nome habilitada, estilos consistentes
+- June 28, 2025. Bordas rounded-3xl aplicadas uniformemente em todos elementos de formulário
+- June 28, 2025. Layout vertical de botões implementado para evitar compressão lateral
+- June 28, 2025. Sistema de áudio/transcrição mantido inalterado conforme solicitado
+- June 28, 2025. Hierarquia visual melhorada com paleta de cores cinza consistente
+- June 28, 2025. Versão atualizada para v2.3.0 codename "ConsistentDesign" em todas plataformas
 
 ## User Preferences
 
