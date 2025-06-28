@@ -462,10 +462,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentConversationId = newConversation.id;
       }
 
+      // Salvar mensagem do usuário
+      await storage.createMessage({
+        conversationId: currentConversationId,
+        sender: 'user',
+        content: message
+      });
+
       // Use the AI orchestrator to generate response
       const aiResponse = await multiLlmOrchestrator.processMessage(message, {
         userId: req.session.userId,
         strategy: 'balanced' // Default strategy
+      });
+
+      // Salvar resposta da IA
+      await storage.createMessage({
+        conversationId: currentConversationId,
+        sender: 'assistant',
+        content: aiResponse
       });
 
       res.json({
