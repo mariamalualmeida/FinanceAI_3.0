@@ -34,14 +34,14 @@ export const messages = pgTable("messages", {
 
 // Tabela de uploads de arquivos
 export const fileUploads = pgTable("file_uploads", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: integer("user_id").references(() => users.id).notNull(),
   conversationId: uuid("conversation_id").references(() => conversations.id),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   originalName: varchar("original_name", { length: 255 }).notNull(),
   fileSize: integer("file_size").notNull(),
   fileType: varchar("file_type", { length: 100 }).notNull(),
-  filePath: varchar("file_path", { length: 500 }).notNull(),
+  filePath: varchar("file_path", { length: 500 }),
   status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, processing, completed, failed
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
