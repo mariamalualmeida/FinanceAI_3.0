@@ -121,7 +121,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         <div className="flex items-center justify-between p-3">
           <button 
             onClick={() => {
-              onNewChat?.()
+              onNewConversation?.()
+              onClose?.()
             }}
             className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-3xl hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
           >

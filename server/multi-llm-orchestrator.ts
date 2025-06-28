@@ -44,9 +44,13 @@ class MultiLLMOrchestrator {
 
       switch (config.name) {
         case 'openai':
-          const openai = new OpenAI({ 
-            apiKey: config.apiKey || process.env.OPENAI_API_KEY 
-          });
+          const apiKey = config.apiKey || process.env.OPENAI_API_KEY;
+          if (!apiKey) {
+            console.log(`Skipping OpenAI provider - no API key available`);
+            return;
+          }
+          
+          const openai = new OpenAI({ apiKey });
           provider = {
             name: 'openai',
             client: openai,
@@ -77,9 +81,13 @@ class MultiLLMOrchestrator {
           break;
 
         case 'anthropic':
-          const anthropic = new Anthropic({ 
-            apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY 
-          });
+          const anthropicKey = config.apiKey || process.env.ANTHROPIC_API_KEY;
+          if (!anthropicKey) {
+            console.log(`Skipping Anthropic provider - no API key available`);
+            return;
+          }
+          
+          const anthropic = new Anthropic({ apiKey: anthropicKey });
           provider = {
             name: 'anthropic',
             client: anthropic,
@@ -111,9 +119,13 @@ class MultiLLMOrchestrator {
           break;
 
         case 'google':
-          const genai = new GoogleGenAI({ 
-            apiKey: config.apiKey || process.env.GOOGLE_AI_API_KEY 
-          });
+          const googleKey = config.apiKey || process.env.GOOGLE_AI_API_KEY;
+          if (!googleKey) {
+            console.log(`Skipping Google provider - no API key available`);
+            return;
+          }
+          
+          const genai = new GoogleGenAI({ apiKey: googleKey });
           provider = {
             name: 'google',
             client: genai,
@@ -144,9 +156,15 @@ class MultiLLMOrchestrator {
           break;
 
         case 'xai':
+          const xaiKey = config.apiKey || process.env.XAI_API_KEY;
+          if (!xaiKey) {
+            console.log(`Skipping xAI provider - no API key available`);
+            return;
+          }
+          
           const xai = new OpenAI({ 
             baseURL: "https://api.x.ai/v1",
-            apiKey: config.apiKey || process.env.XAI_API_KEY 
+            apiKey: xaiKey
           });
           provider = {
             name: 'xai',
@@ -233,31 +251,41 @@ class MultiLLMOrchestrator {
   }
 
   private async economicMode(input: string, context?: string): Promise<string> {
-    // Modo econômico: Uma LLM principal + backup
-    const primaryConfig = await storage.getPrimaryLlmConfig();
-    if (!primaryConfig) {
-      throw new Error('No primary LLM configured');
+    // Modo econômico: usar qualquer provedor disponível
+    const availableProviders = Array.from(this.providers.values());
+    
+    if (availableProviders.length === 0) {
+      throw new Error('No LLM providers available. Please configure at least one API key.');
     }
 
-    const primaryProvider = this.providers.get(primaryConfig.name);
-    if (!primaryProvider) {
-      throw new Error(`Primary provider ${primaryConfig.name} not available`);
-    }
-
-    try {
-      // Tentar usar a LLM principal
-      const prompt = this.buildPrompt(input);
-      return await primaryProvider.generateResponse(prompt, context || undefined);
-    } catch (error) {
-      console.warn('Primary LLM failed, trying backup:', error);
-      
-      // Fallback para backup
-      if (this.strategy?.enableBackupSystem) {
-        return this.useBackupLLM(input, context);
+    // Tentar usar OpenAI primeiro (se disponível), depois Google, depois outros
+    const providerPriority = ['openai', 'google', 'anthropic', 'xai'];
+    
+    for (const providerName of providerPriority) {
+      const provider = this.providers.get(providerName);
+      if (provider) {
+        try {
+          const prompt = this.buildPrompt(input);
+          return await provider.generateResponse(prompt, context || undefined);
+        } catch (error) {
+          console.warn(`Provider ${providerName} failed, trying next:`, error);
+          continue;
+        }
       }
-      
-      throw error;
     }
+    
+    // Se nenhum provedor prioritário funcionou, tente qualquer um disponível
+    for (const provider of availableProviders) {
+      try {
+        const prompt = this.buildPrompt(input);
+        return await provider.generateResponse(prompt, context || undefined);
+      } catch (error) {
+        console.warn(`Provider ${provider.name} failed:`, error);
+        continue;
+      }
+    }
+    
+    throw new Error('All LLM providers failed. Please check your API keys and try again.');
   }
 
   private async balancedMode(input: string, context?: string): Promise<string> {
