@@ -202,6 +202,12 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Sistema de áudio/transcrição mantido inalterado conforme solicitado
 - June 28, 2025. Hierarquia visual melhorada com paleta de cores cinza consistente
 - June 28, 2025. Versão atualizada para v2.3.0 codename "ConsistentDesign" em todas plataformas
+- June 28, 2025. xAI Grok LLM integrado: suporte completo para modelos Grok-2-1212 e Grok-Vision
+- June 28, 2025. Multi-LLM orchestrator atualizado com provider XAI usando OpenAI SDK compatível
+- June 28, 2025. Botão "Novo Provedor" removido do AdminPanel conforme solicitado pelo usuário
+- June 28, 2025. AdminPanel layout fullscreen implementado para melhor aproveitamento de espaço
+- June 28, 2025. Toggle switches corrigidos: cores azuis substituídas por cinza consistente
+- June 28, 2025. Versão atualizada para v2.4.0 codename "GrokIntegration" em todas plataformas
 
 ## User Preferences
 
