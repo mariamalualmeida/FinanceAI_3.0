@@ -38,10 +38,10 @@ export interface IStorage {
   deleteMessage(id: number): Promise<void>;
 
   // File upload operations
-  getFileUpload(id: number): Promise<FileUpload | undefined>;
+  getFileUpload(id: string): Promise<FileUpload | undefined>;
   getFileUploadsByUser(userId: number): Promise<FileUpload[]>;
   createFileUpload(fileUpload: InsertFileUpload): Promise<FileUpload>;
-  updateFileUploadStatus(id: number, status: string): Promise<FileUpload>;
+  updateFileUploadStatus(id: string, status: string): Promise<FileUpload>;
 
   // Financial analysis operations
   getFinancialAnalysis(id: number): Promise<FinancialAnalysis | undefined>;
@@ -210,7 +210,7 @@ export class DatabaseStorage implements IStorage {
     return newFileUpload;
   }
 
-  async updateFileUploadStatus(id: number, status: string): Promise<FileUpload> {
+  async updateFileUploadStatus(id: string, status: string): Promise<FileUpload> {
     const [updatedFileUpload] = await db
       .update(fileUploads)
       .set({ status })

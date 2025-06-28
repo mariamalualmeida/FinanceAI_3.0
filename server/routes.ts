@@ -667,7 +667,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/files/:id/status', isAuthenticated, async (req: any, res) => {
     try {
-      const fileUpload = await storage.getFileUpload(parseInt(req.params.id));
+      const fileUpload = await storage.getFileUpload(req.params.id);
       if (!fileUpload || fileUpload.userId !== req.session.userId) {
         return res.status(404).json({ message: 'File not found' });
       }
@@ -875,7 +875,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 // Função para processar documento financeiro
 async function processFinancialDocument(
-  uploadId: number,
+  uploadId: string,
   userId: number,
   conversationId: string,
   filePath: string,
