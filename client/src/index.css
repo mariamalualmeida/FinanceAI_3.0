@@ -1009,3 +1009,16 @@ textarea.scrollbar-hide {
   z-index: 10 !important;
   flex-shrink: 0 !important;
 }
+
+/* Correção de cores para CleanSettingsModal tema escuro */
+.dark .toggle-section {
+  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+}
+
+.dark .toggle-section .toggle-label {
+  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+}
+
+.dark .toggle-section .font-medium {
+  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+}

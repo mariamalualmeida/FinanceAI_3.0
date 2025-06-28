@@ -404,6 +404,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Se não há conversationId, criar nova conversa com título inteligente
+      let currentConversationId = conversationId;
+      if (!currentConversationId) {
+        // Gerar título baseado nas primeiras palavras da mensagem
+        const words = message.trim().split(' ');
+        const smartTitle = words.slice(0, 4).join(' '); // Primeiras 4 palavras
+        const conversationTitle = smartTitle.length > 3 ? smartTitle : 'Nova Conversa';
+        
+        const newConversation = await storage.createConversation({
+          userId: req.session.userId!,
+          title: conversationTitle
+        });
+        currentConversationId = newConversation.id;
+      }
+
       // Use the AI orchestrator to generate response
       const aiResponse = await multiLlmOrchestrator.processMessage(message, {
         userId: req.session.userId,
@@ -412,7 +427,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         success: true,
-        response: aiResponse
+        response: aiResponse,
+        conversationId: currentConversationId
       });
 
     } catch (error) {
