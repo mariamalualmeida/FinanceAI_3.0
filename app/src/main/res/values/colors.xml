@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- FinanceAI Brand Colors -->
+    <!-- FinanceAI Brand Colors - Light Theme -->
     <color name="primary_color">#6366f1</color>
     <color name="secondary_color">#8b5cf6</color>
     <color name="accent_color">#06b6d4</color>
@@ -16,4 +16,13 @@
     <color name="surface_color">#ffffff</color>
     <color name="text_primary">#1e293b</color>
     <color name="text_secondary">#64748b</color>
+    
+    <!-- FinanceAI Brand Colors - Dark Theme -->
+    <color name="primary_color_dark">#818cf8</color>
+    <color name="secondary_color_dark">#a78bfa</color>
+    <color name="accent_color_dark">#22d3ee</color>
+    <color name="background_dark">#111827</color>
+    <color name="surface_dark">#1f2937</color>
+    <color name="text_primary_dark">#f9fafb</color>
+    <color name="text_secondary_dark">#9ca3af</color>
 </resources>

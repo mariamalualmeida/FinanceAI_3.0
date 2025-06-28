@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme color overrides -->
+    <color name="background_color">@color/background_dark</color>
+    <color name="surface_color">@color/surface_dark</color>
+    <color name="text_primary">@color/text_primary_dark</color>
+    <color name="text_secondary">@color/text_secondary_dark</color>
+    <color name="primary_color">@color/primary_color_dark</color>
+    <color name="secondary_color">@color/secondary_color_dark</color>
+    <color name="accent_color">@color/accent_color_dark</color>
+</resources>
