@@ -151,7 +151,7 @@ export default function AudioRecorder({
   }
 
   return (
-    <div className="pl-[1px] pr-[1px] pt-[0px] pb-[0px] ml-[2px] mr-[2px] mt-[-3px] mb-[-3px]">
+    <div className="pt-[0px] pb-[0px] mt-[-5px] mb-[-5px] pl-[0px] pr-[0px] ml-[0px] mr-[0px]">
       {/* Botão de microfone */}
       <motion.button
         type="button"
