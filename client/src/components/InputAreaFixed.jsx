@@ -161,7 +161,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-900 shadow-sm focus-within:ring-2 focus-within:ring-blue-500/20 min-h-[80px]">
+        <div className="relative border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-900 shadow-sm min-h-[80px]">
           
           {/* File attachments preview */}
           {files.length > 0 && (
