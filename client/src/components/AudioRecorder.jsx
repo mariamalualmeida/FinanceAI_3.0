@@ -160,7 +160,7 @@ export default function AudioRecorder({
         className={`p-1.5 transition-all duration-200 ${
           isRecording 
             ? 'text-red-500 dark:text-red-400' 
-            : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
+            : 'text-gray-600 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300'
         }`}
         title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
       >
