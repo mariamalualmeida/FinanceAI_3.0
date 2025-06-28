@@ -183,7 +183,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
 
                   {/* Dropdown menu */}
                   {showDropdown === conv.id && (
-                    <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 shadow-lg z-50">
+                    <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-600 shadow-lg z-50" data-dropdown="context">
                       <button 
                         key={`rename-${conv.id}-${index}`}
                         onClick={async () => {
@@ -244,11 +244,11 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         </div>
 
         {/* Perfil */}
-        <div className="profile-section border-t px-2 py-2 flex-shrink-0 mt-auto sticky bottom-0 z-20">
+        <div className="profile-section px-2 py-2 flex-shrink-0 mt-auto sticky bottom-0 z-20" data-sidebar="menu">
           <div className="relative">
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="profile-item flex items-center gap-3 w-full rounded-md transition-colors text-minimal-base"
+              className="profile-item flex items-center gap-3 w-full rounded-3xl transition-colors text-minimal-base"
             >
               <User size={16} />
               Perfil
