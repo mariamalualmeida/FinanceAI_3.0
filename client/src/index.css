@@ -621,6 +621,44 @@ textarea.scrollbar-hide {
   overflow-scrolling: touch !important;
 }
 
+/* Profile section text colors for better readability */
+.profile-section {
+  color: #1f2937 !important; /* Dark gray for light theme */
+}
+
+.dark .profile-section {
+  color: #f9fafb !important; /* Light gray for dark theme */
+}
+
+.profile-item {
+  color: #374151 !important; /* Medium gray for light theme */
+}
+
+.dark .profile-item {
+  color: #e5e7eb !important; /* Light gray for dark theme */
+}
+
+/* Profile menu text specifically */
+.profile-section button,
+.profile-section .profile-item {
+  color: #374151 !important; /* Better contrast in light theme */
+  transition: color 0.2s ease !important;
+}
+
+.dark .profile-section button,
+.dark .profile-section .profile-item {
+  color: #e5e7eb !important; /* Better contrast in dark theme */
+}
+
+/* Hover states for profile items */
+.profile-item:hover {
+  color: #111827 !important; /* Darker on hover in light theme */
+}
+
+.dark .profile-item:hover {
+  color: #ffffff !important; /* Pure white on hover in dark theme */
+}
+
 /* Improve mobile tabs */
 .admin-tabs-mobile {
   display: flex !important;
