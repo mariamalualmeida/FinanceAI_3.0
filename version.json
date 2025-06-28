@@ -1,14 +1,14 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "2.1.0",
-    "buildNumber": "202506280001",
-    "codename": "ThemeEnhanced",
+    "version": "2.2.0",
+    "buildNumber": "202506280002",
+    "codename": "CleanInterface",
     "releaseDate": "2025-06-28"
   },
   "platforms": {
     "web": {
-      "version": "2.1.0",
+      "version": "2.2.0",
       "lastUpdate": "2025-06-28",
       "features": [
         "Multi-LLM Orchestration",
@@ -19,11 +19,14 @@
         "File Upload",
         "Enhanced Dark/Light Theme",
         "Login Theme Toggle",
-        "Rounded Input Fields"
+        "Rounded Input Fields",
+        "Clean Login Interface",
+        "Personalized Chat Greetings",
+        "Automatic Cache Cleanup"
       ]
     },
     "pwa": {
-      "version": "2.1.0",
+      "version": "2.2.0",
       "lastUpdate": "2025-06-28",
       "installable": true,
       "offline": false,
@@ -33,12 +36,14 @@
         "Push notifications ready",
         "Responsive design",
         "Dark theme support in manifest",
-        "Enhanced theme colors"
+        "Enhanced theme colors",
+        "Clean interface design",
+        "Optimized user experience"
       ]
     },
     "android": {
-      "versionCode": 3,
-      "versionName": "2.1.0",
+      "versionCode": 4,
+      "versionName": "2.2.0",
       "lastUpdate": "2025-06-28",
       "minSdkVersion": 24,
       "targetSdkVersion": 34,
@@ -50,11 +55,26 @@
         "Deep linking",
         "Dark theme support",
         "Material Design colors",
-        "Adaptive themes"
+        "Adaptive themes",
+        "Clean interface consistency",
+        "Improved user experience"
       ]
     }
   },
   "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Removed footer from login page for cleaner interface",
+        "Added personalized user greeting in chat (shows username below 'Olá')",
+        "Implemented automatic cache cleanup system on app exit",
+        "Removed border from login card for minimalist design",
+        "Enhanced AdminPanel with rounded corners and consistent theming",
+        "Improved button styling across all components",
+        "Optimized visual consistency throughout the application"
+      ]
+    },
     {
       "version": "2.1.0",
       "date": "2025-06-28",

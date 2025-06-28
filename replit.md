@@ -192,6 +192,8 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Nome do usuário agora aparece abaixo da saudação "Olá" na página do chat
 - June 28, 2025. Sistema de limpeza automática de cache implementado ao finalizar aplicação
 - June 28, 2025. Bordas laterais removidas da página inicial de login para visual mais limpo
+- June 28, 2025. Versões atualizadas para v2.2.0 em todas as plataformas (WEB, PWA, Android APK)
+- June 28, 2025. Sistema de versionamento unificado atualizado com codename "CleanInterface"
 
 ## User Preferences
 
