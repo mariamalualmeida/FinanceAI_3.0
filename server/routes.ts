@@ -180,7 +180,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Se não há conversas, criar uma conversa inicial
       if (conversations.length === 0) {
         const initialConversation = await storage.createConversation({
-          userId: req.session.userId!,
           title: 'Nova Conversa',
         });
         conversations = [initialConversation];
@@ -196,10 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/conversations', isAuthenticated, async (req: any, res) => {
     try {
       const conversationData = insertConversationSchema.parse(req.body);
-      const conversation = await storage.createConversation({
-        ...conversationData,
-        userId: req.session.userId!,
-      });
+      const conversation = await storage.createConversation(conversationData);
       res.json(conversation);
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -461,7 +457,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const conversationTitle = smartTitle.length > 3 ? smartTitle : 'Nova Conversa';
         
         const newConversation = await storage.createConversation({
-          userId: req.session.userId!,
           title: conversationTitle
         });
         currentConversationId = newConversation.id;
