@@ -38,19 +38,29 @@ class MultiLLMOrchestrator {
     }
   }
 
+  private async disableProvider(configId: number) {
+    try {
+      await storage.updateLlmConfig(configId, { isEnabled: false });
+      console.log(`Provider ${configId} disabled due to invalid API key`);
+    } catch (error) {
+      console.error(`Failed to disable provider ${configId}:`, error);
+    }
+  }
+
   private async initializeProvider(config: LlmConfig) {
     try {
       let provider: LLMProvider;
 
       switch (config.name) {
         case 'openai':
-          const apiKey = config.apiKey || process.env.OPENAI_API_KEY;
-          if (!apiKey) {
+          const openaiKey = config.apiKey || process.env.OPENAI_API_KEY;
+          if (!openaiKey) {
             console.log(`Skipping OpenAI provider - no API key available`);
+            await this.disableProvider(config.id);
             return;
           }
           
-          const openai = new OpenAI({ apiKey });
+          const openai = new OpenAI({ apiKey: openaiKey });
           provider = {
             name: 'openai',
             client: openai,
