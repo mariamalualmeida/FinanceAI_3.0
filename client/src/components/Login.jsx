@@ -69,14 +69,16 @@ export default function Login({ onLogin }) {
       {/* Theme toggle button - fixed position */}
       <button
         onClick={toggleTheme}
-        className="fixed top-4 right-4 p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors z-10"
+        className="fixed top-4 right-4 p-1 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg transition-all hover:shadow-xl z-10"
         title={`Mudar para tema ${theme === 'light' ? 'escuro' : 'claro'}`}
       >
-        {theme === 'light' ? (
-          <Moon size={20} className="text-gray-600 dark:text-gray-400" />
-        ) : (
-          <Sun size={20} className="text-gray-600 dark:text-gray-400" />
-        )}
+        <div className="p-2 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
+          {theme === 'light' ? (
+            <Moon size={20} className="text-gray-600 dark:text-gray-400" />
+          ) : (
+            <Sun size={20} className="text-gray-600 dark:text-gray-400" />
+          )}
+        </div>
       </button>
 
       <motion.div
@@ -85,7 +87,8 @@ export default function Login({ onLogin }) {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+        <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-1">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -110,15 +113,17 @@ export default function Login({ onLogin }) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Usuário
               </label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                placeholder="Digite seu usuário"
-              />
+              <div className="p-1 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl">
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors border-0 outline-none"
+                  placeholder="Digite seu usuário"
+                />
+              </div>
             </div>
 
             {/* Email (only for register) */}
@@ -127,15 +132,17 @@ export default function Login({ onLogin }) {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email
                 </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                  placeholder="Digite seu email"
-                />
+                <div className="p-1 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors border-0 outline-none"
+                    placeholder="Digite seu email"
+                  />
+                </div>
               </div>
             )}
 
@@ -144,15 +151,17 @@ export default function Login({ onLogin }) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Senha
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                placeholder="Digite sua senha"
-              />
+              <div className="p-1 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl">
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors border-0 outline-none"
+                  placeholder="Digite sua senha"
+                />
+              </div>
             </div>
 
             {/* Error Message */}
@@ -188,6 +197,7 @@ export default function Login({ onLogin }) {
             >
               Usar conta de teste
             </button>
+          </div>
           </div>
         </div>
       </motion.div>
