@@ -246,7 +246,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Ícone de anexar - canto inferior esquerdo sem fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent mt-[-10px] mb-[-10px] ml-[-10px] mr-[-10px]"
+              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent ml-[0px] mr-[0px] mt-[0px] mb-[0px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
