@@ -143,6 +143,40 @@ class MultiLLMOrchestrator {
           };
           break;
 
+        case 'xai':
+          const xai = new OpenAI({ 
+            baseURL: "https://api.x.ai/v1",
+            apiKey: config.apiKey || process.env.XAI_API_KEY 
+          });
+          provider = {
+            name: 'xai',
+            client: xai,
+            generateResponse: async (prompt: string, context?: string) => {
+              const messages = [
+                { role: 'system', content: prompt },
+                { role: 'user', content: context || 'Analise os dados fornecidos.' }
+              ];
+              
+              const response = await xai.chat.completions.create({
+                model: config.model || 'grok-2-1212',
+                messages: messages as any,
+                temperature: parseFloat(config.temperature?.toString() || '0.7'),
+                max_tokens: config.maxTokens || 4000
+              });
+              
+              return response.choices[0].message.content || '';
+            },
+            isHealthy: async () => {
+              try {
+                await xai.models.list();
+                return true;
+              } catch {
+                return false;
+              }
+            }
+          };
+          break;
+
         default:
           console.warn(`Unknown LLM provider: ${config.name}`);
           return;
