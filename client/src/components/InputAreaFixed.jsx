@@ -12,14 +12,15 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
 
-  // Auto-resize textarea
+  // Auto-resize textarea from 3 to 6 lines
   useEffect(() => {
     if (textareaRef.current) {
       const textarea = textareaRef.current
       textarea.style.height = 'auto'
       const scrollHeight = textarea.scrollHeight
-      const maxHeight = 120 // ~5 lines max
-      const minHeight = 56 // ~2 lines min
+      const lineHeight = 24 // Base line height
+      const maxHeight = lineHeight * 6 + 16 // 6 lines + padding
+      const minHeight = lineHeight * 3 + 16 // 3 lines + padding
       textarea.style.height = `${Math.min(Math.max(scrollHeight, minHeight), maxHeight)}px`
     }
   }, [text])
@@ -218,7 +219,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           )}
 
           {/* Container externo visual - contém textarea + ícones */}
-          <div className="relative border border-white dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 min-h-[100px] max-h-[180px] flex flex-col">
+          <div className="relative border border-white dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 flex flex-col">
             
             {/* Textarea interna pura - sem ícones sobrepostos */}
             <textarea
@@ -226,7 +227,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="flex-1 w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-2 pt-2 pb-1 text-base leading-6 overflow-y-auto"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-2 pt-2 pb-1 text-base leading-6 overflow-y-auto transition-all duration-200"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.shiftKey) {
                   e.preventDefault()
