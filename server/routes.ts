@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (conversations.length === 0) {
         const initialConversation = await storage.createConversation({
           title: 'Nova Conversa',
-        });
+        }, req.session.userId!);
         conversations = [initialConversation];
       }
       
@@ -195,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/conversations', isAuthenticated, async (req: any, res) => {
     try {
       const conversationData = insertConversationSchema.parse(req.body);
-      const conversation = await storage.createConversation(conversationData);
+      const conversation = await storage.createConversation(conversationData, req.session.userId!);
       res.json(conversation);
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -458,7 +458,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         const newConversation = await storage.createConversation({
           title: conversationTitle
-        });
+        }, req.session.userId!);
         currentConversationId = newConversation.id;
       }
 

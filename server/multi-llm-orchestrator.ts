@@ -47,6 +47,54 @@ class MultiLLMOrchestrator {
     }
   }
 
+  private async validateApiKey(provider: string, apiKey: string): Promise<boolean> {
+    try {
+      switch (provider) {
+        case 'openai':
+          const openaiClient = new OpenAI({ apiKey });
+          const testResponse = await openaiClient.chat.completions.create({
+            model: 'gpt-4o',
+            messages: [{ role: 'user', content: 'Test' }],
+            max_tokens: 5
+          });
+          return !!testResponse.choices[0];
+
+        case 'anthropic':
+          const anthropicClient = new Anthropic({ apiKey });
+          const anthropicResponse = await anthropicClient.messages.create({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 5,
+            messages: [{ role: 'user', content: 'Test' }]
+          });
+          return !!anthropicResponse.content[0];
+
+        case 'google':
+          const googleClient = new GoogleGenAI(apiKey);
+          const geminiModel = googleClient.getGenerativeModel({ model: 'gemini-2.5-flash' });
+          const googleResponse = await geminiModel.generateContent('Test');
+          return !!googleResponse.response.text();
+
+        case 'xai':
+          const xaiClient = new OpenAI({ 
+            baseURL: "https://api.x.ai/v1", 
+            apiKey 
+          });
+          const xaiResponse = await xaiClient.chat.completions.create({
+            model: 'grok-2-1212',
+            messages: [{ role: 'user', content: 'Test' }],
+            max_tokens: 5
+          });
+          return !!xaiResponse.choices[0];
+
+        default:
+          return false;
+      }
+    } catch (error) {
+      console.log(`API key validation failed for ${provider}:`, error.message);
+      return false;
+    }
+  }
+
   private async initializeProvider(config: LlmConfig) {
     try {
       let provider: LLMProvider;
