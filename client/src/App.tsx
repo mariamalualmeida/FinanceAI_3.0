@@ -22,6 +22,58 @@ function AppContent() {
     requireLogin: true
   })
 
+  // Clear system cache on app exit
+  useEffect(() => {
+    const clearSystemCache = () => {
+      try {
+        // Clear localStorage except for theme and essential settings
+        const keysToKeep = ['theme', 'financeai-settings'];
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+          if (!keysToKeep.includes(key)) {
+            localStorage.removeItem(key);
+          }
+        });
+
+        // Clear sessionStorage
+        sessionStorage.clear();
+
+        // Clear browser cache if possible
+        if ('caches' in window) {
+          caches.keys().then(cacheNames => {
+            return Promise.all(
+              cacheNames.map(cacheName => caches.delete(cacheName))
+            );
+          });
+        }
+
+        console.log('System cache cleared successfully');
+      } catch (error) {
+        console.error('Error clearing cache:', error);
+      }
+    };
+
+    // Add event listeners for page unload
+    const handleBeforeUnload = () => {
+      clearSystemCache();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        clearSystemCache();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearSystemCache(); // Clear cache when component unmounts
+    };
+  }, []);
+
   // Check authentication and load settings on app load
   useEffect(() => {
     const checkAuth = async () => {

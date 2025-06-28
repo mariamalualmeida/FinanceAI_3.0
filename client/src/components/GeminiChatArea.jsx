@@ -160,9 +160,14 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
             
             {/* Saudação minimalista */}
             <div className="text-center">
-              <h1 className="text-4xl font-light text-gray-900 dark:text-white mb-4">
-                {settings.userName ? `Olá, ${settings.userName}` : 'Olá'}
+              <h1 className="text-4xl font-light text-gray-900 dark:text-white mb-2">
+                Olá
               </h1>
+              {user && (
+                <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-300 mb-4">
+                  {user.username}
+                </h2>
+              )}
               <p className="text-base text-gray-600 dark:text-gray-400">
                 Como posso ajudá-lo hoje?
               </p>

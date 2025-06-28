@@ -188,6 +188,9 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Botões do modal de configurações reorganizados verticalmente com cores consistentes
 - June 28, 2025. AdminPanel redesenhado: layout responsivo, cores dos temas e rolagem corrigida
 - June 28, 2025. Todos os formulários e botões seguem agora o padrão de cores claro/escuro
+- June 28, 2025. Rodapé da página de login removido (linha divisória e botão "Usar conta de teste")
+- June 28, 2025. Nome do usuário agora aparece abaixo da saudação "Olá" na página do chat
+- June 28, 2025. Sistema de limpeza automática de cache implementado ao finalizar aplicação
 
 ## User Preferences
 
