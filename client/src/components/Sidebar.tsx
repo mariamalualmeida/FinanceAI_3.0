@@ -326,7 +326,10 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         onClose={() => setShowSearch(false)}
         conversations={conversations}
         onSelectChat={(chatId) => {
-          selectConversation(chatId)
+          const conversation = conversations.find(conv => conv.id === chatId)
+          if (conversation && onSelectConversation) {
+            onSelectConversation(conversation)
+          }
           setShowSearch(false)
         }}
       />
