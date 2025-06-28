@@ -157,7 +157,7 @@ export default function AudioRecorder({
         type="button"
         onClick={toggleRecording}
         whileTap={{ scale: 0.95 }}
-        className="p-1.5 transition-all duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 ml-[0px] mr-[0px] mt-[-30px] mb-[-30px]"
+        className="p-1.5 transition-all duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 ml-[0px] mr-[0px] mt-[-30px] mb-[-30px] pt-[-10px] pb-[-10px]"
         title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
       >
         {isRecording ? (
