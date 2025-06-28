@@ -836,6 +836,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Salvar upload no banco
       const fileUpload = await storage.createFileUpload({
         userId: req.session.userId!,
+        conversationId: conversationId,
         fileName: req.file.filename,
         originalName: req.file.originalname,
         fileSize: req.file.size,
@@ -843,6 +844,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filePath: req.file.path,
         status: 'processing'
       });
+
+      console.log('File upload created:', fileUpload);
+
+      // Verificar se o ID foi criado corretamente
+      if (!fileUpload.id) {
+        console.error('File upload ID is null or undefined:', fileUpload);
+        return res.status(500).json({ error: 'Erro ao criar upload no banco de dados' });
+      }
 
       // Processar arquivo em background
       processFinancialDocument(fileUpload.id, req.session.userId!, conversationId, req.file.path, req.file.originalname)
