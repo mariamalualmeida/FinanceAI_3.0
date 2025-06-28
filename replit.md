@@ -191,6 +191,7 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Rodapé da página de login removido (linha divisória e botão "Usar conta de teste")
 - June 28, 2025. Nome do usuário agora aparece abaixo da saudação "Olá" na página do chat
 - June 28, 2025. Sistema de limpeza automática de cache implementado ao finalizar aplicação
+- June 28, 2025. Bordas laterais removidas da página inicial de login para visual mais limpo
 
 ## User Preferences
 
