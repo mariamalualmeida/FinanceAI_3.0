@@ -1074,13 +1074,6 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações LLM</h3>
-        <button
-          onClick={() => setEditingItem({ type: 'llm', data: {} })}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          <Plus size={16} />
-          Novo Provedor
-        </button>
       </div>
 
       {loading ? (
@@ -1206,7 +1199,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
         </div>
 
         {/* Tabs Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="border-b border-gray-300 dark:border-gray-600">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon

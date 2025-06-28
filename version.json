@@ -1,9 +1,9 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "2.3.0",
-    "buildNumber": "202506280003",
-    "codename": "ConsistentDesign",
+    "version": "2.4.0",
+    "buildNumber": "202506280004",
+    "codename": "GrokIntegration",
     "releaseDate": "2025-06-28"
   },
   "platforms": {
