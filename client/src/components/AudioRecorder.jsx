@@ -157,11 +157,7 @@ export default function AudioRecorder({
         type="button"
         onClick={toggleRecording}
         whileTap={{ scale: 0.95 }}
-        className={`p-1.5 transition-all duration-200 ${
-          isRecording 
-            ? 'text-red-500 dark:text-red-400' 
-            : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
-        }`}
+        className="p-1.5 transition-all duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mt-[-5px] mb-[-5px]"
         title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
       >
         {isRecording ? (
@@ -175,7 +171,6 @@ export default function AudioRecorder({
           <Mic size={size} />
         )}
       </motion.button>
-
       {/* Preview do áudio gravado */}
       {audioBlob && (
         <div className={`mb-3 p-4 ${colorScheme.preview} border rounded-lg`}>
@@ -230,5 +225,5 @@ export default function AudioRecorder({
         </div>
       )}
     </div>
-  )
+  );
 }
