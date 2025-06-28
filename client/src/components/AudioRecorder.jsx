@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Mic, Play, Pause, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -36,6 +36,19 @@ export default function AudioRecorder({
   }
 
   const colorScheme = colors[variant]
+
+  // Cleanup para prevenir memory leaks
+  useEffect(() => {
+    return () => {
+      // Cleanup quando o componente é desmontado
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl)
+      }
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop()
+      }
+    }
+  }, [audioUrl, isRecording])
 
   const transcribeAudio = async (blob) => {
     setIsTranscribing(true)
@@ -144,10 +157,10 @@ export default function AudioRecorder({
         type="button"
         onClick={toggleRecording}
         whileTap={{ scale: 0.95 }}
-        className={`p-1.5 transition-all duration-200 rounded-xl backdrop-blur-sm ${
+        className={`p-1.5 transition-all duration-200 ${
           isRecording 
-            ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' 
-            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
+            ? 'text-red-500 dark:text-red-400' 
+            : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
         }`}
         title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
       >

@@ -155,6 +155,32 @@ class MultiLLMOrchestrator {
     }
   }
 
+  async processMessage(input: string, options: { userId?: string, strategy?: string } = {}): Promise<string> {
+    try {
+      // Initialize if not done yet
+      if (this.providers.size === 0) {
+        await this.initialize();
+      }
+
+      // Use provided strategy or default to balanced
+      const strategyMode = options.strategy || 'balanced';
+      
+      // Simple strategy mapping for now
+      switch (strategyMode) {
+        case 'economic':
+          return this.economicMode(input);
+        case 'premium':
+          return this.premiumMode(input);
+        case 'balanced':
+        default:
+          return this.balancedMode(input);
+      }
+    } catch (error) {
+      console.error('Error processing message:', error);
+      return 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.';
+    }
+  }
+
   async processRequest(input: string, context?: string): Promise<string> {
     if (!this.strategy) {
       throw new Error('No strategy configured');
@@ -375,19 +401,22 @@ class MultiLLMOrchestrator {
       this.prompts.prompt10,
       this.prompts.prompt11,
       this.prompts.prompt12
-    ].filter(p => p && p.trim().length > 0);
+    ].filter(p => p && p.trim().length > 0) as string[];
 
     if (prompts.length <= 1) {
       return this.processRequest(input, context);
     }
 
-    let currentResult: string = context || input;
+    let currentResult = (context ?? input) || '';
     
     // Processar prompts em sequência
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
+      if (!prompt) continue;
+      
       try {
-        currentResult = await this.processRequest(prompt, currentResult || '');
+        const result = await this.processRequest(prompt, currentResult || undefined);
+        currentResult = result;
         console.log(`Chain step ${i + 1} completed`);
       } catch (error) {
         console.error(`Chain step ${i + 1} failed:`, error);
