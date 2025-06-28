@@ -4,9 +4,10 @@ import { motion } from 'framer-motion'
 import MessageBubble from './MessageBubble'
 import ThemeToggle from './ThemeToggle'
 import AudioRecorder from './AudioRecorder'
+import InputAreaFixed from './InputAreaFixed'
 import { useFileUpload } from '../hooks/useFileUpload'
 
-export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
+export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -53,17 +54,38 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
           setMessages(prev => [...prev, aiMessage])
         }
       } else {
-        // Simular resposta da IA
-        setTimeout(() => {
+        // Enviar mensagem para a IA
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            message: finalText,
+            conversationId: null // TODO: implement conversation tracking
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',
-            text: `Recebi sua mensagem: "${finalText}". Como posso ajudá-lo com análise financeira?`,
+            text: result.response || 'Desculpe, não consegui processar sua mensagem.',
             timestamp: new Date()
           }
           setMessages(prev => [...prev, aiMessage])
-          setIsTyping(false)
-        }, 1500)
+        } else {
+          const aiMessage = {
+            id: Date.now() + 1,
+            sender: 'assistant',
+            text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiMessage])
+        }
+        setIsTyping(false)
       }
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
@@ -99,18 +121,22 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
   }
 
   return (
-    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-full max-h-screen overflow-hidden gemini-chat-container">
+    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-screen overflow-hidden gemini-chat-container">
       {/* Gemini Header - Fundo uniforme */}
       <header className="flex items-center justify-between py-2 px-4 bg-white dark:bg-gray-900 flex-shrink-0 z-20">
         <div className="flex items-center gap-3">
-          <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
-            aria-label="Toggle sidebar"
-          >
-            <Menu size={20} />
-          </button>
-          <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+          {!sidebarOpen && (
+            <>
+              <button
+                onClick={onToggleSidebar}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+                aria-label="Toggle sidebar"
+              >
+                <Menu size={20} />
+              </button>
+              <ThemeToggle theme={settings?.theme || 'light'} onToggle={settings?.onToggleTheme} />
+            </>
+          )}
           <div className="flex items-center gap-2 ml-2">
             <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
               <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
@@ -187,86 +213,17 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar }) {
         )}
         <div ref={messagesEndRef} />
         
-        {/* Input Area flutuante - Posicionado como overlay */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 z-40" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom))` }}>
-          <div className="max-w-4xl mx-auto">
-
-
-            <form onSubmit={handleSubmit} className="relative">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-300 dark:border-gray-500 shadow-lg focus-within:shadow-xl transition-all">
-                <div className="relative h-32">
-                  {/* Botão de anexar arquivos - canto inferior esquerdo */}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-2 left-3 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                  >
-                    <Paperclip size={18} />
-                  </button>
-                  
-                  {/* Textarea responsiva - ocupa toda a área disponível */}
-                  <textarea
-                    value={inputText}
-                    onChange={(e) => {
-                      setInputText(e.target.value)
-                    }}
-                    placeholder=""
-                    className="w-full h-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none border-0 outline-none px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
-                    style={{
-                      wordWrap: 'break-word',
-                      overflowWrap: 'break-word',
-                      whiteSpace: 'pre-wrap',
-                      touchAction: 'manipulation',
-                      WebkitTouchCallout: 'none',
-                      WebkitUserSelect: 'text'
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.shiftKey) {
-                        e.preventDefault()
-                        handleSubmit(e)
-                      }
-                      // Enter sem Shift = nova linha (comportamento padrão)
-                    }}
-                  />
-                  
-                  {/* Botões de ação - canto inferior direito */}
-                  <div className="absolute bottom-2 right-3 flex items-center gap-2">
-                    {/* Componente de áudio */}
-                    <AudioRecorder 
-                      onAudioReady={handleAudioReady}
-                      variant="purple"
-                      size={18}
-                    />
-
-                    {/* Botão de envio */}
-                    <motion.button
-                      type="submit"
-                      disabled={!inputText.trim() && !fileInputRef.current?.files?.length && !audioData}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        inputText.trim() || fileInputRef.current?.files?.length || audioData
-                          ? 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                          : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      }`}
-                      title="Enviar mensagem"
-                    >
-                      <Send size={18} />
-                    </motion.button>
-                  </div>
-                  
-                  {/* Input de arquivo oculto */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
+        {/* Área de input corrigida */}
+        <div className="fixed bottom-0 left-0 right-0 z-40">
+          <InputAreaFixed 
+            onSend={sendMessage}
+            onFileUpload={(file) => {
+              // Upload simples sem quebrar a interface
+              console.log('Arquivo anexado:', file.name)
+            }}
+            isProcessing={isTyping}
+            uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
+          />
         </div>
       </div>
     </main>

@@ -4,48 +4,208 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark mode variables */
+/* Custom CSS variables for components that need them */
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f7f7f8;
-  --bg-chat: #ffffff;
   --text-primary: #000000;
   --text-secondary: #6e6e80;
-  --border-light: #e5e5e5;
 }
 
 .dark {
   --bg-primary: #343541;
   --bg-secondary: #202123;
-  --bg-chat: #343541;
   --text-primary: #ffffff;
   --text-secondary: #c5c5d2;
-  --border-light: #4d4d4f;
 }
 
-/* Mobile scroll fixes */
+/* Reset básico */
 html, body {
-  overflow-x: hidden !important;
-  height: 100vh !important;
-  position: fixed !important;
-  width: 100% !important;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Mobile-first approach */
 @media (max-width: 768px) {
-  * {
+  html, body {
+    height: 100vh;
+    overflow-x: hidden;
+    position: fixed;
+    width: 100%;
+    overscroll-behavior: none;
+  }
+  
+  #root {
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Sidebar mobile - ocupar tela completa */
+  aside[class*="fixed"] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 50 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Força máxima para seção de perfil no mobile */
+  aside[class*="fixed"] > div:last-child {
+    position: sticky !important;
+    bottom: 0 !important;
+    flex: 0 0 auto !important;
+    margin-top: auto !important;
+    background: inherit !important;
+    z-index: 999 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 60px !important;
+  }
+  
+  /* Garantir que o perfil seja sempre visível no mobile */
+  aside[class*="fixed"] > div:last-child {
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+    background: inherit !important;
+    position: relative !important;
+    z-index: 10 !important;
+    min-height: fit-content !important;
+  }
+  
+  /* Forçar visibilidade da seção de perfil em qualquer dispositivo mobile */
+  aside[class*="fixed"] .border-t {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Força específica para mobile webkit (Safari, Chrome mobile) */
+  @supports (-webkit-appearance: none) {
+    aside[class*="fixed"] {
+      height: 100vh !important;
+      height: 100dvh !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    aside[class*="fixed"] > div:last-child {
+      flex: 0 0 auto !important;
+      margin-top: auto !important;
+      position: sticky !important;
+      bottom: 0 !important;
+    }
+  }
+  
+  /* Detecção específica para dispositivos com touch */
+  @media (hover: none) and (pointer: coarse) {
+    aside[class*="fixed"] {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    /* Forçar o perfil no final */
+    aside[class*="fixed"] > div:nth-last-child(2) {
+      flex: 0 0 auto !important;
+      margin-top: auto !important;
+    }
+  }
+  
+  /* Chat areas - viewport fixo para evitar movimentação */
+  main[class*="flex-1"] {
+    flex: 1;
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+  }
+  
+  main[class*="flex-1"] [class*="overflow-y-auto"] {
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    height: 100vh;
   }
   
-  body {
+  /* Correção para overflow de texto em inputs */
+  .mobile-textarea-scroll,
+  textarea {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: pre-wrap !important;
+    max-width: 100% !important;
     overflow-x: hidden !important;
-    overscroll-behavior: none !important;
+    box-sizing: border-box !important;
   }
   
-  /* Prevent horizontal scroll on mobile */
-  .sidebar-container {
-    max-width: 100vw !important;
+  /* Prevenir overflow horizontal em todas as mensagens */
+  .break-words {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
     overflow-x: hidden !important;
   }
+
+  /* Safe area support para dispositivos com notch */
+  @supports (height: env(safe-area-inset-top)) {
+    #root {
+      height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    aside[class*="fixed"] {
+      height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      top: env(safe-area-inset-top) !important;
+    }
+  }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  html, body {
+    height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+}
+
+/* Prevenção global de bounce e scroll instável */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  touch-action: pan-y;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Permitir seleção de texto em áreas de conteúdo */
+[class*="message"], [class*="input"], input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Força quebra de linha para textos longos */
@@ -159,6 +319,346 @@ body {
   display: none;
 }
 
+/* Fix text overflow in input area - higher specificity */
+.input-textarea-fixed {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  resize: none !important;
+  padding: 12px 140px 12px 12px !important; /* Top Right Bottom Left */
+  line-height: 1.5 !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
+  box-sizing: border-box !important;
+  touch-action: manipulation !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: text !important;
+}
+
+/* Input container positioning fix */
+.input-container {
+  position: relative;
+}
+
+.input-buttons {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+/* Fix toggle button formatting - Mobile-first */
+.toggle-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 16px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  background: var(--card) !important;
+  margin-bottom: 16px !important;
+}
+
+/* Settings modal improvements */
+.settings-modal-content {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+.settings-field-group {
+  margin-bottom: 20px !important;
+}
+
+.settings-field-group label {
+  display: block !important;
+  margin-bottom: 8px !important;
+  font-weight: 500 !important;
+  color: var(--foreground) !important;
+}
+
+.settings-input {
+  width: 100% !important;
+  padding: 12px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
+  box-sizing: border-box !important;
+}
+
+.settings-input:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.settings-button-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 24px !important;
+}
+
+@media (min-width: 640px) {
+  .settings-button-group {
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+  }
+}
+
+.toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+}
+
+.toggle-label {
+  flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.toggle-switch {
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* Fix mobile keyboard input fields */
+input[type="text"], 
+input[type="password"], 
+input[type="email"] {
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
+  -webkit-tap-highlight-color: transparent;
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* AdminPanel improvements - Mobile-first design */
+.admin-card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Mobile-first: Stack vertically by default */
+.admin-card-header {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.admin-card-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.admin-card-title {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.admin-card-title h4 {
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.admin-card-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.admin-card-details p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.admin-card-actions {
+  display: flex !important;
+  gap: 16px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--border) !important;
+  justify-content: center !important;
+}
+
+/* Touch scroll styles for textarea */
+.touch-pan-y {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar styles for mobile and desktop */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fix for mobile textarea scroll */
+textarea {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior: contain;
+}
+
+/* Hide scrollbars but keep functionality */
+textarea::-webkit-scrollbar {
+  display: none !important;
+}
+
+textarea {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Force textarea scroll to work on mobile */
+@supports (-webkit-touch-callout: none) {
+  textarea {
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+.admin-status-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  border-radius: 16px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
+}
+
+.admin-action-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 56px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  background: var(--muted) !important;
+  color: var(--muted-foreground) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
+.admin-action-btn:hover {
+  background: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+  transform: translateY(-1px) !important;
+}
+
+.admin-action-btn.edit:hover {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+.admin-action-btn.delete:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+/* Desktop: Horizontal layout for larger screens */
+@media (min-width: 768px) {
+  .admin-card-header {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+  }
+  
+  .admin-card-actions {
+    border-top: none !important;
+    padding-top: 0 !important;
+    flex-shrink: 0 !important;
+    margin-left: 16px !important;
+  }
+  
+  .admin-card-details {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Input area improvements - esconder scrollbar mas permitir touch scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Textarea touch scroll habilitado */
+textarea.scrollbar-hide {
+  -webkit-overflow-scrolling: touch !important;
+  overflow-scrolling: touch !important;
+}
+
+/* Improve mobile tabs */
+.admin-tabs-mobile {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+}
+
+.admin-tab-mobile {
+  flex: 1 !important;
+  min-width: fit-content !important;
+  padding: 16px 20px !important;
+  text-align: center !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  min-height: 64px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+@media (max-width: 640px) {
+  .admin-tabs-mobile {
+    flex-direction: column !important;
+  }
+  
+  .admin-tab-mobile {
+    flex: none !important;
+    width: 100% !important;
+  }
+}
+
 /* Classe especial para textareas com scroll móvel otimizado */
 .mobile-textarea-scroll {
   /* Herdado de scrollbar-hide */
@@ -182,7 +682,63 @@ body {
   display: none;
 }
 
-/* Mobile optimizations for layout and z-index */
+/* Correções para problemas móveis identificados */
+@media screen and (max-width: 768px) {
+  /* Melhor padding para a área de input no mobile */
+  .max-w-3xl {
+    max-width: calc(100vw - 32px) !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+  
+  /* Padding específico para o container de input */
+  .input-container-mobile {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  /* Prevenção de zoom em inputs móveis */
+  input[type="text"],
+  input[type="email"], 
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+    transform-origin: left top;
+  }
+  
+  /* Força quebra de palavras globalmente em mobile */
+  * {
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Container principal responsivo */
+  .mobile-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  
+  /* Correção para teclado virtual */
+  .chat-container {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height */
+    position: relative;
+  }
+  
+  /* Área de input com suporte ao teclado virtual */
+  .input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: env(keyboard-inset-height, 0px);
+    transition: padding-bottom 0.3s ease;
+  }
+}
 .mobile-safe-area {
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -221,4 +777,203 @@ body {
   .messages-container {
     padding-bottom: calc(12rem + env(safe-area-inset-bottom)) !important;
   }
+}
+
+/* ===== CORREÇÕES MINIMALISTAS E CONSISTÊNCIA ===== */
+
+/* Botões mais arredondados e fontes padronizadas */
+.btn-minimal {
+  border-radius: 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.4 !important;
+}
+
+.btn-minimal:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Tamanhos de fonte padronizados globalmente */
+.text-minimal-xl {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.text-minimal-lg {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+.text-minimal-base {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+.text-minimal-sm {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+/* Cores consistentes para modo escuro - sem cinza indesejado */
+.modal-consistent {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modal-consistent .modal-header {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.modal-consistent .modal-content {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Fix para sidebar perfil - remover linha e cores inconsistentes */
+.profile-section {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: none !important;
+  border-top: none !important;
+}
+
+.profile-section .profile-header {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-bottom: none !important;
+  padding: 16px !important;
+}
+
+.profile-section .profile-item {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: none !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.profile-section .profile-item:hover {
+  background: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Fix para caixa de transcrição de áudio - integração completa */
+.audio-transcription-integrated {
+  position: absolute !important;
+  bottom: 60px !important;
+  left: 12px !important;
+  right: 12px !important;
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  z-index: 100 !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.audio-transcription-integrated .transcription-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--foreground) !important;
+}
+
+.audio-transcription-integrated .transcription-text {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--muted-foreground) !important;
+  margin-bottom: 12px !important;
+  max-height: 80px !important;
+  overflow-y: auto !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.audio-transcription-integrated .transcription-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+}
+
+.audio-transcription-integrated .transcription-btn {
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.audio-transcription-integrated .transcription-btn.accept {
+  background: #10b981 !important;
+  color: white !important;
+}
+
+.audio-transcription-integrated .transcription-btn.reject {
+  background: var(--muted) !important;
+  color: var(--muted-foreground) !important;
+}
+
+.audio-transcription-integrated .transcription-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fix final para textarea overflow - MÁXIMA ESPECIFICIDADE */
+.input-textarea-final-fix {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  resize: none !important;
+  padding: 12px 140px 12px 12px !important;
+  line-height: 1.5 !important;
+  font-size: 16px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Container do input com width forçado */
+.input-container-final {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Botões de ação com posicionamento absoluto fixo */
+.input-buttons-final {
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  display: flex !important;
+  gap: 4px !important;
+  z-index: 10 !important;
+  flex-shrink: 0 !important;
 }
