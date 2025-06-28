@@ -220,6 +220,14 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Sistema de atualização de títulos em tempo real implementado
 - June 28, 2025. Limpeza de chat ao criar nova conversa ou excluir conversa atual
 - June 28, 2025. Versão atualizada para v2.6.0 codename "UXPerfection" em todas plataformas
+- June 28, 2025. Sistema de nomes inteligentes implementado: conversas nomeadas automaticamente pelas primeiras 4-6 palavras
+- June 28, 2025. Rota PATCH /api/conversations/:id criada para atualização de títulos em tempo real
+- June 28, 2025. Análise completa de 17+ problemas arquiteturais identificados e corrigidos
+- June 28, 2025. Consistência visual total: todas bordas padronizadas para rounded-3xl
+- June 28, 2025. Esquema de cores unificado: substituição completa de azul/roxo por cinza-600 consistente
+- June 28, 2025. Sistema de conversas refatorado com estado unificado e props TypeScript corrigidas
+- June 28, 2025. Interface do Sidebar corrigida com tipos adequados e fluxo de dados unificado
+- June 28, 2025. Versão atualizada para v2.7.0 codename "SmartConversations" em todas plataformas
 
 ## User Preferences
 

@@ -65,6 +65,19 @@
   },
   "changelog": [
     {
+      "version": "2.7.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Implemented intelligent conversation naming: auto-generates titles from first 4-6 words of messages",
+        "Added PATCH /api/conversations/:id route for conversation title updates",
+        "Complete visual consistency: standardized all borders to rounded-3xl format",
+        "Unified color scheme: replaced all blue/purple accents with consistent gray-600",
+        "Enhanced conversation flow: titles update automatically in real-time",
+        "Fixed all visual inconsistencies identified in comprehensive component analysis",
+        "Improved user experience with smart conversation management"
+      ]
+    },
+    {
       "version": "2.6.0",
       "date": "2025-06-28",
       "changes": [
