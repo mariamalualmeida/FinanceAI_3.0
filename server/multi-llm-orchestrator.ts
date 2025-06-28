@@ -24,17 +24,38 @@ class MultiLLMOrchestrator {
   private prompts: SystemPrompts | null = null;
 
   async initialize() {
-    // Carregear configurações dos LLMs
-    const llmConfigs = await storage.getEnabledLlmConfigs();
-    const activeStrategy = await storage.getActiveMultiLlmStrategy();
-    const systemPrompts = await storage.getActiveSystemPrompts();
+    try {
+      // Carregear configurações dos LLMs
+      const llmConfigs = await storage.getEnabledLlmConfigs();
+      const activeStrategy = await storage.getActiveMultiLlmStrategy();
+      const systemPrompts = await storage.getActiveSystemPrompts();
 
-    this.strategy = activeStrategy || null;
-    this.prompts = systemPrompts[0] || null;
+      console.log(`Found ${llmConfigs.length} LLM configs`);
 
-    // Inicializar provedores
-    for (const config of llmConfigs) {
-      await this.initializeProvider(config);
+      this.strategy = activeStrategy || null;
+      this.prompts = systemPrompts[0] || null;
+
+      // Se não há configurações, criar uma padrão para OpenAI
+      if (llmConfigs.length === 0 && process.env.OPENAI_API_KEY) {
+        console.log('Creating default OpenAI configuration');
+        const defaultConfig = await storage.createLlmConfig({
+          name: 'openai',
+          model: 'gpt-4o',
+          apiKey: process.env.OPENAI_API_KEY,
+          temperature: 0.7,
+          maxTokens: 4000,
+          isEnabled: true
+        });
+        await this.initializeProvider(defaultConfig);
+        return;
+      }
+
+      // Inicializar provedores
+      for (const config of llmConfigs) {
+        await this.initializeProvider(config);
+      }
+    } catch (error) {
+      console.error('Error initializing LLM orchestrator:', error);
     }
   }
 

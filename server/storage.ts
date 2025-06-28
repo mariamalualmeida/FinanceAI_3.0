@@ -44,10 +44,10 @@ export interface IStorage {
   updateFileUploadStatus(id: string, status: string): Promise<FileUpload>;
 
   // Financial analysis operations
-  getFinancialAnalysis(id: number): Promise<FinancialAnalysis | undefined>;
+  getFinancialAnalysis(id: string): Promise<FinancialAnalysis | undefined>;
   getAnalysesByUser(userId: number): Promise<FinancialAnalysis[]>;
   createFinancialAnalysis(analysis: InsertFinancialAnalysis): Promise<FinancialAnalysis>;
-  updateFinancialAnalysis(id: number, updates: Partial<InsertFinancialAnalysis>): Promise<FinancialAnalysis>;
+  updateFinancialAnalysis(id: string, updates: Partial<InsertFinancialAnalysis>): Promise<FinancialAnalysis>;
 
   // Transaction operations
   getTransaction(id: number): Promise<Transaction | undefined>;
@@ -220,7 +220,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Financial analysis operations
-  async getFinancialAnalysis(id: number): Promise<FinancialAnalysis | undefined> {
+  async getFinancialAnalysis(id: string): Promise<FinancialAnalysis | undefined> {
     const [analysis] = await db.select().from(financialAnalyses).where(eq(financialAnalyses.id, id));
     return analysis;
   }

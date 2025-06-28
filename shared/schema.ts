@@ -48,13 +48,13 @@ export const fileUploads = pgTable("file_uploads", {
 
 // Tabela de análises financeiras
 export const financialAnalyses = pgTable("financial_analyses", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: integer("user_id").references(() => users.id).notNull(),
   conversationId: uuid("conversation_id").references(() => conversations.id),
-  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
+  fileUploadId: uuid("file_upload_id").references(() => fileUploads.id),
   analysisType: varchar("analysis_type", { length: 100 }).notNull(), // credit_score, risk_assessment, pattern_detection
   results: jsonb("results").notNull(), // Resultados da análise em JSON
-  score: integer("score"), // Score de crédito (0-1000)
+  score: decimal("score", { precision: 5, scale: 2 }), // Score de crédito (0-1000)
   riskLevel: varchar("risk_level", { length: 50 }), // low, medium, high
   recommendations: text("recommendations"),
   createdAt: timestamp("created_at").defaultNow().notNull()
