@@ -218,8 +218,8 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Container externo visual - contém textarea + ícones */}
-          <div className="relative border border-white dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 flex flex-col">
+          {/* Container interno sem borda - só conteúdo */}
+          <div className="relative flex flex-col rounded-3xl overflow-hidden">
             
             {/* Textarea interna pura - sem ícones sobrepostos */}
             <textarea
