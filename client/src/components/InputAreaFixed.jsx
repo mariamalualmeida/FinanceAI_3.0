@@ -161,7 +161,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
           </div>
         )}
 
-        <div className="relative border border-gray-600 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-900 shadow-sm min-h-[80px]">
+        <div className="relative border border-gray-600 dark:border-gray-400 rounded-3xl bg-white dark:bg-gray-900 shadow-sm min-h-[80px]">
           
           {/* File attachments preview */}
           {files.length > 0 && (
@@ -251,7 +251,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               {/* Ícone de anexar - esquerda */}
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
+                className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors bg-transparent"
                 disabled={isDisabled}
                 title="Anexar arquivo"
               >
@@ -274,7 +274,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 <button
                   onClick={handleSend}
                   disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                  className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
+                  className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
                   title="Enviar mensagem"
                 >
                   {isProcessing ? (
