@@ -170,6 +170,125 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     }
   }
 
+  // Funções de drag & drop e upload de documentos financeiros
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFinancialDocumentUpload(files);
+    }
+  };
+
+  // Função para upload de documentos financeiros
+  const handleFinancialDocumentUpload = async (files) => {
+    if (!currentConversationId) {
+      alert('Por favor, inicie uma conversa antes de enviar arquivos.');
+      return;
+    }
+
+    setShowUploadProgress(true);
+    setUploadingFiles(files.map(file => ({ 
+      name: file.name, 
+      size: file.size, 
+      status: 'uploading' 
+    })));
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('conversationId', currentConversationId);
+
+      try {
+        // Atualizar mensagem do usuário
+        setMessages(prev => [...prev, {
+          id: Date.now(),
+          content: `📎 Enviando documento: ${file.name}`,
+          sender: 'user',
+          timestamp: new Date()
+        }]);
+
+        const response = await fetch('/api/upload-financial-document', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Atualizar status do arquivo
+          setUploadingFiles(prev => prev.map((f, idx) => 
+            idx === i ? { ...f, status: 'processing' } : f
+          ));
+
+          // Adicionar mensagem de confirmação
+          setMessages(prev => [...prev, {
+            id: Date.now() + 1,
+            content: `✅ ${result.message}`,
+            sender: 'assistant',
+            timestamp: new Date()
+          }]);
+
+          // Recarregar mensagens após processamento
+          setTimeout(() => {
+            loadConversationMessages(currentConversationId);
+          }, 3000);
+
+        } else {
+          throw new Error(result.error || 'Erro no upload');
+        }
+      } catch (error) {
+        console.error('Erro no upload:', error);
+        
+        // Atualizar status do arquivo
+        setUploadingFiles(prev => prev.map((f, idx) => 
+          idx === i ? { ...f, status: 'error' } : f
+        ));
+
+        // Adicionar mensagem de erro
+        setMessages(prev => [...prev, {
+          id: Date.now() + 2,
+          content: `❌ Erro ao enviar ${file.name}: ${error.message}`,
+          sender: 'assistant',
+          timestamp: new Date()
+        }]);
+      }
+    }
+
+    // Limpar progress após 5 segundos
+    setTimeout(() => {
+      setShowUploadProgress(false);
+      setUploadingFiles([]);
+    }, 5000);
+  };
+
+  // Função para abrir seletor de arquivos
+  const openFinancialFileSelector = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.xlsx,.xls,.csv,.txt';
+    input.multiple = true;
+    input.onchange = (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        handleFinancialDocumentUpload(files);
+      }
+    };
+    input.click();
+  };
+
   return (
     <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-screen overflow-hidden gemini-chat-container">
       {/* Gemini Header - Fundo uniforme */}
@@ -198,7 +317,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
       </header>
 
       {/* Área de conteúdo principal - Fundo uniforme */}
-      <div className="flex-1 overflow-y-auto relative" style={{ paddingBottom: '200px' }}>
+      <div 
+        className="flex-1 overflow-y-auto relative" 
+        style={{ paddingBottom: '200px' }}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center px-6">
             {/* Logo central */}
@@ -266,6 +391,63 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
             )}
           </div>
         )}
+        
+        {/* Drag & Drop Overlay */}
+        {isDragOver && (
+          <div className="fixed inset-0 bg-blue-500/20 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg border-2 border-dashed border-blue-500 max-w-md mx-4">
+              <div className="text-center">
+                <Upload className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Análise Financeira
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Solte aqui para analisar documentos financeiros (PDF, Excel, CSV)
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Progress de Upload */}
+        {showUploadProgress && uploadingFiles.length > 0 && (
+          <div className="fixed bottom-20 right-4 bg-white dark:bg-gray-800 rounded-3xl shadow-lg border p-4 max-w-sm z-50">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Processando Documentos
+            </h4>
+            <div className="space-y-2">
+              {uploadingFiles.map((file, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm">
+                  <div className="flex-1">
+                    <p className="text-gray-700 dark:text-gray-300 truncate">{file.name}</p>
+                    <div className="flex items-center gap-2">
+                      {file.status === 'uploading' && (
+                        <>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                          <span className="text-blue-600 dark:text-blue-400">Enviando...</span>
+                        </>
+                      )}
+                      {file.status === 'processing' && (
+                        <>
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+                          <span className="text-yellow-600 dark:text-yellow-400">Analisando...</span>
+                        </>
+                      )}
+                      {file.status === 'error' && (
+                        <>
+                          <AlertCircle className="w-3 h-3 text-red-500" />
+                          <span className="text-red-600 dark:text-red-400">Erro</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
         
         {/* Área de input corrigida */}
@@ -276,6 +458,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
               // Upload simples sem quebrar a interface
               console.log('Arquivo anexado:', file.name)
             }}
+            onFinancialAnalysis={openFinancialFileSelector}
             isProcessing={isTyping}
             uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
           />
