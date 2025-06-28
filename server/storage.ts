@@ -51,7 +51,7 @@ export interface IStorage {
 
   // Transaction operations
   getTransaction(id: number): Promise<Transaction | undefined>;
-  getTransactionsByAnalysis(analysisId: number): Promise<Transaction[]>;
+  getTransactionsByAnalysis(analysisId: string): Promise<Transaction[]>;
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
   createMultipleTransactions(transactions: InsertTransaction[]): Promise<Transaction[]>;
 
@@ -253,7 +253,7 @@ export class DatabaseStorage implements IStorage {
     return transaction;
   }
 
-  async getTransactionsByAnalysis(analysisId: number): Promise<Transaction[]> {
+  async getTransactionsByAnalysis(analysisId: string): Promise<Transaction[]> {
     return await db
       .select()
       .from(transactions)

@@ -238,7 +238,7 @@ Considere:
     return hasKeyword || (isHighValue && isRoundNumber);
   }
 
-  async generateReport(analysisId: number): Promise<string> {
+  async generateReport(analysisId: string): Promise<string> {
     const analysis = await storage.getFinancialAnalysis(analysisId);
     if (!analysis) throw new Error('Análise não encontrada');
 
