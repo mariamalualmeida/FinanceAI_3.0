@@ -164,6 +164,48 @@ function AppContent() {
     }
   }
 
+  // Função para criar nova conversa
+  const createNewConversation = async () => {
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: 'Nova Conversa' })
+      })
+      
+      if (response.ok) {
+        const newConversation = await response.json()
+        setCurrentConversation(newConversation)
+        await loadConversations()
+      }
+    } catch (error) {
+      console.error('Erro ao criar nova conversa:', error)
+    }
+  }
+
+  // Função para atualizar título da conversa com nome inteligente
+  const updateConversationTitle = async (conversationId: string, newTitle: string) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: newTitle })
+      })
+      
+      if (response.ok) {
+        await loadConversations()
+        // Atualizar currentConversation se for a mesma
+        if (currentConversation?.id === conversationId) {
+          setCurrentConversation({...currentConversation, title: newTitle})
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar título da conversa:', error)
+    }
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -216,7 +258,7 @@ function AppContent() {
                 onOpenAdminPanel={handleOpenAdminPanel}
                 currentConversation={currentConversation}
                 onSelectConversation={setCurrentConversation}
-                onNewConversation={() => setCurrentConversation(null)}
+                onNewConversation={createNewConversation}
               />
               <GeminiChatArea 
                 user={user}

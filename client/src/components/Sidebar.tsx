@@ -13,9 +13,12 @@ interface SidebarProps {
   onClose: () => void;
   onOpenSettings: () => void;
   onOpenAdminPanel?: () => void;
+  currentConversation?: any;
+  onSelectConversation?: (conversation: any) => void;
+  onNewConversation?: () => void;
 }
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings, onOpenAdminPanel }: SidebarProps) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings, onOpenAdminPanel, currentConversation, onSelectConversation, onNewConversation }: SidebarProps) {
   const [conversations, setConversations] = useState<any[]>([])
   const [currentChatId, setCurrentChatId] = useState<string | null>(null)
   const [showSearch, setShowSearch] = useState(false)
@@ -48,34 +51,24 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
   }
 
   const onNewChat = async () => {
-    try {
-      const response = await fetch('/api/conversations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title: 'Nova Conversa' })
-      })
-      
-      if (response.ok) {
-        const newConversation = await response.json()
-        setCurrentChatId(newConversation.id)
-        await loadConversations() // Atualizar lista de conversas
-        if (onClose) onClose() // Fechar sidebar no mobile
-      } else {
-        console.error('Erro ao criar nova conversa:', response.status)
-      }
-    } catch (error) {
-      console.error('Error creating new conversation:', error)
+    // Usar a prop do App.tsx para criar nova conversa
+    if (onNewConversation) {
+      onNewConversation()
+      if (onClose) onClose() // Fechar sidebar no mobile
     }
   }
 
   const onSelectChat = (chatId: string) => {
-    setCurrentChatId(chatId)
+    // Encontrar a conversa completa pelo ID
+    const conversation = conversations.find(conv => conv.id === chatId)
+    if (conversation && onSelectConversation) {
+      onSelectConversation(conversation)
+    }
+    
     // Close sidebar on mobile after selection
     if (window.innerWidth < 768 && onClose) {
       onClose()
     }
-    // TODO: Implement chat loading logic when backend supports it
   }
 
   const onDeleteConversation = async (conversationId: string) => {
