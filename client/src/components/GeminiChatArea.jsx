@@ -163,7 +163,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
               <h1 className="text-4xl font-light text-gray-900 dark:text-white mb-4">
                 {settings.userName ? `Olá, ${settings.userName}` : 'Olá'}
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
+              <p className="text-base text-gray-600 dark:text-gray-400">
                 Como posso ajudá-lo hoje?
               </p>
             </div>
