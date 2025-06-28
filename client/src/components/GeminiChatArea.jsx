@@ -7,7 +7,7 @@ import AudioRecorder from './AudioRecorder'
 import InputAreaFixed from './InputAreaFixed'
 import { useFileUpload } from '../hooks/useFileUpload'
 
-export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen, currentConversation, onConversationUpdate }) {
+export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen, currentConversation, onConversationUpdate, onUpdateConversationTitle }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
