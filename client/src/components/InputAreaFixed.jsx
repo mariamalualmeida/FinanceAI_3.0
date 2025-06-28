@@ -254,7 +254,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </button>
 
             {/* Ícones direitos - canto inferior direito */}
-            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+            <div className="absolute bottom-3 right-3 flex items-center gap-2 ml-[-9px] mr-[-9px] mt-[-7px] mb-[-7px] pt-[4px] pb-[4px] pl-[2px] pr-[2px]">
               
               {/* Audio recorder sem fundo */}
               <div className="bg-transparent">
