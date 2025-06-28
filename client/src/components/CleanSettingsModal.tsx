@@ -176,7 +176,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
                     inputMode="text"
                     autoComplete="username"
                     style={{ fontSize: '16px' }}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white cursor-not-allowed"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white cursor-not-allowed"
                   />
                   <p className="text-xs text-gray-500 mt-1">Nome não pode ser alterado</p>
                 </div>
@@ -193,7 +193,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
                       placeholder="Digite nova senha"
                       inputMode="text"
                       autoComplete="new-password"
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-base"
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-base"
                     />
                     <button
                       type="button"
@@ -290,7 +290,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
           <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
             <button
               onClick={handleReset}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-2 rounded-3xl border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               <RotateCcw size={16} />
               Restaurar Padrões
@@ -299,7 +299,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
             <button
               onClick={handleSave}
               disabled={!hasChanges}
-              className={`px-6 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+              className={`px-6 py-2 rounded-3xl flex items-center gap-2 transition-colors ${
                 hasChanges
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
