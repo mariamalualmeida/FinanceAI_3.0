@@ -172,23 +172,7 @@ export default function Login({ onLogin }) {
             </button>
           </form>
 
-          {/* Test User Button */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button
-              type="button"
-              onClick={() => {
-                setFormData({
-                  username: 'testuser',
-                  email: 'test@example.com',
-                  password: 'testpassword'
-                });
-                setIsLogin(true);
-              }}
-              className="w-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm py-2 transition-colors"
-            >
-              Usar conta de teste
-            </button>
-          </div>
+
         </div>
       </motion.div>
     </div>
