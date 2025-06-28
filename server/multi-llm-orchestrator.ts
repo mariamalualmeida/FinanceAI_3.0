@@ -69,7 +69,7 @@ class MultiLLMOrchestrator {
           return !!anthropicResponse.content[0];
 
         case 'google':
-          const googleClient = new GoogleGenAI(apiKey);
+          const googleClient = new GoogleGenAI({ apiKey });
           const geminiModel = googleClient.getGenerativeModel({ model: 'gemini-2.5-flash' });
           const googleResponse = await geminiModel.generateContent('Test');
           return !!googleResponse.response.text();
@@ -89,8 +89,8 @@ class MultiLLMOrchestrator {
         default:
           return false;
       }
-    } catch (error) {
-      console.log(`API key validation failed for ${provider}:`, error.message);
+    } catch (error: any) {
+      console.log(`API key validation failed for ${provider}:`, error.message || 'Unknown error');
       return false;
     }
   }
@@ -104,6 +104,14 @@ class MultiLLMOrchestrator {
           const openaiKey = config.apiKey || process.env.OPENAI_API_KEY;
           if (!openaiKey) {
             console.log(`Skipping OpenAI provider - no API key available`);
+            await this.disableProvider(config.id);
+            return;
+          }
+          
+          // Validate API key
+          const isOpenAIValid = await this.validateApiKey('openai', openaiKey);
+          if (!isOpenAIValid) {
+            console.log(`OpenAI API key is invalid - disabling provider`);
             await this.disableProvider(config.id);
             return;
           }
