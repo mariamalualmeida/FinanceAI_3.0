@@ -63,7 +63,7 @@ export const financialAnalyses = pgTable("financial_analyses", {
 // Tabela de transações extraídas
 export const transactions = pgTable("transactions", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  analysisId: integer("analysis_id").references(() => financialAnalyses.id).notNull(),
+  analysisId: uuid("analysis_id").references(() => financialAnalyses.id).notNull(),
   date: timestamp("date").notNull(),
   description: text("description").notNull(),
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),

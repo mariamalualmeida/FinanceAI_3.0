@@ -53,7 +53,7 @@ export class FinancialAnalyzer {
         conversationId: conversationId,
         analysisType: 'comprehensive',
         results: analysisResult,
-        score: analysisResult.creditScore,
+        score: analysisResult.creditScore.toString(),
         riskLevel: analysisResult.riskLevel,
         recommendations: analysisResult.recommendations.join('\n')
       });
