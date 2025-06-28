@@ -8,7 +8,7 @@
   },
   "platforms": {
     "web": {
-      "version": "2.3.0",
+      "version": "2.4.0",
       "lastUpdate": "2025-06-28",
       "features": [
         "Multi-LLM Orchestration",
@@ -22,7 +22,9 @@
         "Rounded Input Fields",
         "Clean Login Interface",
         "Personalized Chat Greetings",
-        "Automatic Cache Cleanup"
+        "Automatic Cache Cleanup",
+        "xAI Grok Integration",
+        "Streamlined Admin Interface"
       ]
     },
     "pwa": {
@@ -62,6 +64,19 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.4.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Integrated xAI Grok LLM provider: added full support for Grok-2-1212 and Grok-Vision models",
+        "Updated Multi-LLM orchestrator: added XAI case to provider selection system",
+        "Removed 'Novo Provedor' button from Admin Panel LLM section as requested",
+        "Enhanced AdminPanel fullscreen layout: improved space utilization and mobile responsiveness",
+        "Fixed toggle switches: replaced blue accent with consistent gray-600/gray-700 theme",
+        "Corrected AdminPanel header styling: consistent border and background colors",
+        "Implemented comprehensive visual consistency using input field styling as reference"
+      ]
+    },
     {
       "version": "2.3.0",
       "date": "2025-06-28",
