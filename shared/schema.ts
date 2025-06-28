@@ -85,7 +85,8 @@ export const insertUserSchema = createInsertSchema(users).omit({
 export const insertConversationSchema = createInsertSchema(conversations).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
+  userId: true  // userId será adicionado pelo servidor
 });
 
 export const insertMessageSchema = createInsertSchema(messages).omit({

@@ -817,7 +817,7 @@ textarea.scrollbar-hide {
 }
 
 .dark .text-minimal-base {
-  color: #e5e7eb !important; /* Gray-200 for dark mode - better contrast */
+  color: #f3f4f6 !important; /* Gray-100 for dark mode - high contrast */
 }
 
 .text-minimal-sm {
@@ -874,7 +874,7 @@ textarea.scrollbar-hide {
 }
 
 .dark .profile-item {
-  color: #e5e7eb !important; /* Gray-200 for dark mode - better contrast */
+  color: #f3f4f6 !important; /* Gray-100 for dark mode - high contrast */
 }
 
 .profile-item:hover {
