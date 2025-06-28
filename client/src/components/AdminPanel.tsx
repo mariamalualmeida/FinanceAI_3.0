@@ -50,7 +50,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
             </p>
             <button
               onClick={onClose}
-              className="bg-blue-600 text-white px-6 py-2 rounded-3xl hover:bg-blue-700"
+              className="bg-gray-600 text-white px-6 py-2 rounded-3xl hover:bg-gray-700"
             >
               Fechar
             </button>
@@ -426,7 +426,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Prompts do Sistema</h3>
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-3xl hover:bg-gray-700 text-sm"
           >
             <Plus size={16} />
             Novo Prompt
@@ -864,7 +864,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
           {/* System Settings */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Server className="text-purple-600" size={18} />
+              <Server className="text-gray-600 dark:text-gray-400" size={18} />
               Sistema
             </h4>
             <div className="space-y-4">
@@ -978,7 +978,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                     <h4 className="text-gray-900 dark:text-white">{user.username}</h4>
                     <span className={`admin-status-badge ${
                       user.role === 'admin' 
-                        ? 'bg-purple-100 text-purple-800' 
+                        ? 'bg-gray-100 text-gray-800' 
                         : 'bg-blue-100 text-blue-800'
                     }`}>
                       {user.role === 'admin' ? 'Admin' : 'User'}
