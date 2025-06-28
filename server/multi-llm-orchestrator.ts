@@ -28,14 +28,30 @@ class MultiLLMOrchestrator {
       // Configuração direta do OpenAI se disponível
       if (process.env.OPENAI_API_KEY) {
         console.log('Initializing OpenAI provider directly');
-        await this.initializeProviderDirect({
+        
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const provider: LLMProvider = {
           name: 'openai',
-          model: 'gpt-4o',
-          apiKey: process.env.OPENAI_API_KEY,
-          temperature: 0.7,
-          maxTokens: 4000,
-          isEnabled: true
-        });
+          client: openai,
+          generateResponse: async (prompt: string, context?: string) => {
+            const messages = [
+              { role: 'system', content: prompt },
+              { role: 'user', content: context || 'Analise os dados fornecidos.' }
+            ];
+            
+            const response = await openai.chat.completions.create({
+              model: 'gpt-4o',
+              messages: messages as any,
+              temperature: 0.7,
+              max_tokens: 4000
+            });
+            
+            return response.choices[0].message.content || '';
+          },
+          isHealthy: async () => true
+        };
+        
+        this.providers.set('openai', provider);
         console.log(`OpenAI provider initialized successfully. Total providers: ${this.providers.size}`);
         return;
       }
