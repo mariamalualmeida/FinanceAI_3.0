@@ -16,9 +16,10 @@ interface SidebarProps {
   currentConversation?: any;
   onSelectConversation?: (conversation: any) => void;
   onNewConversation?: () => void;
+  onDeleteConversation?: (conversationId: string) => void;
 }
 
-export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings, onOpenAdminPanel, currentConversation, onSelectConversation, onNewConversation }: SidebarProps) {
+export default function Sidebar({ user, onLogout, settings, onUpdateSettings, isOpen, onToggle, onClose, onOpenSettings, onOpenAdminPanel, currentConversation, onSelectConversation, onNewConversation, onDeleteConversation }: SidebarProps) {
   const [conversations, setConversations] = useState<any[]>([])
   const [currentChatId, setCurrentChatId] = useState<string | null>(null)
   const [showSearch, setShowSearch] = useState(false)
@@ -30,6 +31,13 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
   useEffect(() => {
     loadConversations()
   }, [])
+
+  // Close profile menu when sidebar closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowProfileMenu(false)
+    }
+  }, [isOpen])
 
   const loadConversations = async () => {
     try {
@@ -71,23 +79,12 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     }
   }
 
-  const onDeleteConversation = async (conversationId: string) => {
-    // Validar se o ID é válido
-    if (!conversationId || conversationId === null || conversationId === undefined) {
-      console.warn('Tentativa de excluir conversa com ID inválido:', conversationId)
-      return
-    }
-
+  const handleDeleteConversation = async (conversationId: string) => {
+    if (!conversationId || !onDeleteConversation) return
+    
     try {
-      const response = await fetch(`/api/conversations/${conversationId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      })
-      if (response.ok) {
-        loadConversations()
-      } else {
-        console.error('Erro na resposta do servidor:', response.status, response.statusText)
-      }
+      await onDeleteConversation(conversationId)
+      await loadConversations() // Recarregar a lista após exclusão
     } catch (error) {
       console.error('Error deleting conversation:', error)
     }
