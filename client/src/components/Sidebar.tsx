@@ -224,7 +224,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                         key={`delete-${conv.id}-${index}`}
                         onClick={() => {
                           if (conv.id) {
-                            onDeleteConversation(conv.id)
+                            handleDeleteConversation(conv.id)
                           }
                           setShowDropdown(null)
                         }}
@@ -326,7 +326,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         onClose={() => setShowSearch(false)}
         conversations={conversations}
         onSelectChat={(chatId) => {
-          onSelectChat(chatId)
+          selectConversation(chatId)
+          setShowSearch(false)
         }}
       />
 
