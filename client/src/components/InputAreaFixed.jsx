@@ -3,7 +3,7 @@ import { Send, Paperclip, X, FileText, Image, File, Loader2, Upload } from 'luci
 import { motion } from 'framer-motion'
 import AudioRecorder from './AudioRecorder'
 
-export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = false, uploadProgress = null }) {
+export default function InputAreaFixed({ onSend, onFileUpload, onFinancialAnalysis, isProcessing = false, uploadProgress = null }) {
   const [text, setText] = useState('')
   const [files, setFiles] = useState([])
   const [audioData, setAudioData] = useState(null)
@@ -248,15 +248,30 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Área dos ícones - separada da textarea */}
             <div className="flex justify-between items-center px-2 pb-2">
               
-              {/* Ícone de anexar - esquerda */}
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors bg-transparent"
-                disabled={isDisabled}
-                title="Anexar arquivo"
-              >
-                <Paperclip size={20} />
-              </button>
+              {/* Ícones esquerda */}
+              <div className="flex items-center gap-1">
+                {/* Ícone de anexar */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors bg-transparent"
+                  disabled={isDisabled}
+                  title="Anexar arquivo"
+                >
+                  <Paperclip size={20} />
+                </button>
+
+                {/* Botão de análise financeira */}
+                {onFinancialAnalysis && (
+                  <button
+                    onClick={onFinancialAnalysis}
+                    className="p-2 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors bg-transparent"
+                    disabled={isDisabled}
+                    title="Análise Financeira"
+                  >
+                    <FileText size={20} />
+                  </button>
+                )}
+              </div>
 
               {/* Ícones direitos */}
               <div className="flex items-center gap-2">
