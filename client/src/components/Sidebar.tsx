@@ -114,14 +114,14 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
             onClick={() => {
               onNewChat?.()
             }}
-            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
+            className="flex items-center gap-3 flex-1 p-3 mr-2 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
           >
             <Plus size={16} />
             Nova conversa
           </button>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-500/10 rounded-md text-gray-900 dark:text-white transition-colors"
+            className="p-2 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors"
             aria-label="Fechar sidebar"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -134,7 +134,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
         <div className="px-2 pb-2">
           <button
             onClick={() => setShowSearch(true)}
-            className="flex items-center gap-3 w-full p-3 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-500/10 transition-colors text-sm"
+            className="flex items-center gap-3 w-full p-3 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-500/10 transition-colors text-sm"
           >
             <Search size={16} />
             Buscar conversas...
