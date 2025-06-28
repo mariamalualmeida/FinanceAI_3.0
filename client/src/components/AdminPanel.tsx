@@ -1191,14 +1191,14 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-purple-600 dark:bg-purple-700 text-white rounded-t-3xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-t-3xl">
           <div className="flex items-center gap-3">
-            <Shield size={24} />
-            <h2 className="text-xl font-bold">Painel Administrativo</h2>
+            <Shield size={24} className="text-gray-600 dark:text-gray-400" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-3xl transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-3xl transition-colors text-gray-600 dark:text-gray-400"
           >
             <X size={20} />
           </button>
@@ -1215,8 +1215,8 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-3 whitespace-nowrap border-b-2 transition-colors ${
                     activeTab === tab.id
-                      ? 'border-purple-600 dark:border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20'
-                      : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ? 'border-gray-600 dark:border-gray-500 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50'
+                      : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >
                   <Icon size={18} />

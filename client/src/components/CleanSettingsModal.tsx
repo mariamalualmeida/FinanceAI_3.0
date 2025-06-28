@@ -178,13 +178,12 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
                   <input
                     type="text"
                     value={settings.profile.name}
-                    readOnly
+                    onChange={(e) => updateSetting('profile', 'name', e.target.value)}
                     inputMode="text"
                     autoComplete="username"
                     style={{ fontSize: '16px' }}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white cursor-not-allowed"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Nome não pode ser alterado</p>
                 </div>
 
                 <div>
@@ -306,7 +305,7 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
               disabled={!hasChanges}
               className={`w-full py-3 px-4 rounded-3xl flex items-center justify-center gap-2 transition-colors font-medium ${
                 hasChanges
-                  ? 'bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800'
+                  ? 'bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800'
                   : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
               }`}
             >
