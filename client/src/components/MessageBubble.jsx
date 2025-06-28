@@ -20,11 +20,11 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`flex w-full px-4 py-2 ${
-        isUser ? 'justify-end' : 'justify-start'
+      className={`flex w-full py-2 ${
+        isUser ? 'justify-end pr-2' : 'justify-start pl-2'
       }`}>
       
-      <div className={`flex items-start gap-3 max-w-[85%] ${
+      <div className={`flex items-start gap-3 max-w-[95%] ${
         isUser ? 'flex-row-reverse' : 'flex-row'
       }`}>
         
