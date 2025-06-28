@@ -411,7 +411,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
         chain: 2
       }
     ])
-    const [editingPrompt, setEditingPrompt] = useState(null)
+    const [editingPrompt, setEditingPrompt] = useState<any>(null)
     const [showAddForm, setShowAddForm] = useState(false)
     
     const promptCategories = [
@@ -954,7 +954,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
       { id: 2, username: 'Leonardo', email: 'leonardo@financeai.com', role: 'admin', isActive: true, lastLogin: '2025-06-27' }
     ])
     const [showUserForm, setShowUserForm] = useState(false)
-    const [editingUser, setEditingUser] = useState(null)
+    const [editingUser, setEditingUser] = useState<any>(null)
     
     return (
       <div className="space-y-4">
