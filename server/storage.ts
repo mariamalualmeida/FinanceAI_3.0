@@ -192,7 +192,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // File upload operations
-  async getFileUpload(id: number): Promise<FileUpload | undefined> {
+  async getFileUpload(id: string): Promise<FileUpload | undefined> {
     const [fileUpload] = await db.select().from(fileUploads).where(eq(fileUploads.id, id));
     return fileUpload;
   }
