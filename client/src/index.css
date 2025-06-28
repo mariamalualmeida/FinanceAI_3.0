@@ -813,6 +813,11 @@ textarea.scrollbar-hide {
   font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
+  color: #374151 !important; /* Gray-700 for light mode */
+}
+
+.dark .text-minimal-base {
+  color: #e5e7eb !important; /* Gray-200 for dark mode - better contrast */
 }
 
 .text-minimal-sm {
@@ -856,9 +861,36 @@ textarea.scrollbar-hide {
   padding: 16px !important;
 }
 
+/* Profile item specific styles for both light and dark modes */
+.profile-item {
+  background: transparent !important;
+  color: #374151 !important; /* Gray-700 for light mode */
+  border: none !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+}
+
+.dark .profile-item {
+  color: #e5e7eb !important; /* Gray-200 for dark mode - better contrast */
+}
+
+.profile-item:hover {
+  background: #f3f4f6 !important; /* Gray-100 for light mode */
+  color: #111827 !important; /* Gray-900 for light mode */
+  transform: translateY(-1px) !important;
+}
+
+.dark .profile-item:hover {
+  background: #374151 !important; /* Gray-700 for dark mode */
+  color: #ffffff !important; /* White for dark mode */
+}
+
 .profile-section .profile-item {
-  background: var(--background) !important;
-  color: var(--foreground) !important;
+  background: transparent !important;
+  color: inherit !important;
   border: none !important;
   padding: 12px 16px !important;
   border-radius: 8px !important;
