@@ -232,7 +232,7 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
                       <button 
                         key={`delete-${conv.id}-${index}`}
                         onClick={() => {
-                          if (conv.id && confirm('Tem certeza que deseja excluir esta conversa?')) {
+                          if (conv.id) {
                             onDeleteConversation(conv.id)
                           }
                           setShowDropdown(null)

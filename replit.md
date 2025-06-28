@@ -207,7 +207,11 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Botão "Novo Provedor" removido do AdminPanel conforme solicitado pelo usuário
 - June 28, 2025. AdminPanel layout fullscreen implementado para melhor aproveitamento de espaço
 - June 28, 2025. Toggle switches corrigidos: cores azuis substituídas por cinza consistente
-- June 28, 2025. Versão atualizada para v2.4.0 codename "GrokIntegration" em todas plataformas
+- June 28, 2025. Sistema de nomes inteligentes: conversas nomeadas pelas primeiras palavras da mensagem
+- June 28, 2025. Confirmação de exclusão removida para experiência mais fluida
+- June 28, 2025. Comportamento da sidebar corrigido: fecha apenas em ações específicas
+- June 28, 2025. Cores do tema escuro aprimoradas: texto claro em configurações e menus
+- June 28, 2025. Versão atualizada para v2.5.0 codename "SmartNaming" em todas plataformas
 
 ## User Preferences
 
