@@ -1011,14 +1011,24 @@ textarea.scrollbar-hide {
 }
 
 /* Correção de cores para CleanSettingsModal tema escuro */
-.dark .toggle-section {
-  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+.dark [data-modal="settings"] {
+  color: #f3f4f6 !important;
 }
 
-.dark .toggle-section .toggle-label {
-  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+.dark [data-modal="settings"] .text-gray-700,
+.dark [data-modal="settings"] .text-gray-800,
+.dark [data-modal="settings"] .text-gray-900 {
+  color: #f3f4f6 !important;
 }
 
-.dark .toggle-section .font-medium {
-  color: #f3f4f6 !important; /* Gray-100 for dark mode */
+.dark [data-modal="settings"] button {
+  color: #f3f4f6 !important;
+}
+
+.dark [data-modal="settings"] .font-medium {
+  color: #f3f4f6 !important;
+}
+
+.dark [data-modal="settings"] span {
+  color: #f3f4f6 !important;
 }
