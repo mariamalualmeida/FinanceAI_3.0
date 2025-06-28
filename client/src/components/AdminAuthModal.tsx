@@ -76,14 +76,14 @@ export default function AdminAuthModal({ isOpen, onClose, onSuccess }: AdminAuth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Senha administrativa"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                 autoFocus
                 disabled={isLoading}
               />
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-2">
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-3xl flex items-center gap-2">
                 <AlertCircle size={16} className="text-red-500" />
                 <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
               </div>
@@ -93,14 +93,14 @@ export default function AdminAuthModal({ isOpen, onClose, onSuccess }: AdminAuth
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 disabled={isLoading}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-3xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 disabled={isLoading || !password.trim()}
               >
                 {isLoading ? 'Verificando...' : 'Acessar'}

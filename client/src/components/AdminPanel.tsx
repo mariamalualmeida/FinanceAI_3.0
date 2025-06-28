@@ -50,7 +50,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
             </p>
             <button
               onClick={onClose}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              className="bg-blue-600 text-white px-6 py-2 rounded-3xl hover:bg-blue-700"
             >
               Fechar
             </button>
