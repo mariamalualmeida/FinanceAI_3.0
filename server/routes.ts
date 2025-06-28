@@ -230,6 +230,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update conversation title
+  app.patch('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const conversationId = req.params.id;
+      const { title } = req.body;
+      
+      if (!conversationId || !title) {
+        return res.status(400).json({ message: 'Missing conversation ID or title' });
+      }
+
+      // Verify conversation belongs to user
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation || conversation.userId !== req.session.userId) {
+        return res.status(404).json({ message: 'Conversation not found' });
+      }
+
+      // Update conversation title
+      const updatedConversation = await storage.updateConversation(conversationId, { title });
+      res.json(updatedConversation);
+    } catch (error) {
+      console.error('Error updating conversation:', error);
+      res.status(500).json({ message: 'Failed to update conversation' });
+    }
+  });
+
   app.delete('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
     try {
       const conversationId = req.params.id;

@@ -107,6 +107,13 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           if (result.conversationId && !currentConversationId) {
             setCurrentConversationId(result.conversationId)
             onConversationUpdate?.(result.conversationId)
+            
+            // Implementar nome inteligente: usar primeiras 4-6 palavras da mensagem
+            if (text.trim() && onUpdateConversationTitle) {
+              const words = text.trim().split(' ').slice(0, 6).join(' ')
+              const smartTitle = words.length > 40 ? words.substring(0, 40) + '...' : words
+              onUpdateConversationTitle(result.conversationId, smartTitle)
+            }
           }
           
           const aiMessage = {
@@ -178,7 +185,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
             </>
           )}
           <div className="flex items-center gap-2 ml-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
+            <svg width="24" height="24" viewBox="0 0 24 24" className="text-gray-600 dark:text-gray-400">
               <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
             </svg>
             <span className="text-lg font-normal text-gray-800 dark:text-gray-200">Mig</span>
@@ -193,7 +200,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           <div className="h-full flex flex-col items-center justify-center px-6">
             {/* Logo central */}
             <div className="mb-8">
-              <svg width="64" height="64" viewBox="0 0 24 24" className="text-blue-600 dark:text-blue-400">
+              <svg width="64" height="64" viewBox="0 0 24 24" className="text-gray-600 dark:text-gray-400">
                 <path fill="currentColor" d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
               </svg>
             </div>
