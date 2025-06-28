@@ -80,6 +80,11 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
       }
     }));
     setHasChanges(true);
+    
+    // Se for uma configuração global, atualiza também
+    if (section === 'system' && key === 'requireLogin') {
+      onUpdateGlobalSettings({ requireLogin: value });
+    }
   };
 
   const handleSave = async () => {
