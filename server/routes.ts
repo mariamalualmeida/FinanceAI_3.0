@@ -821,6 +821,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upload de documentos financeiros
+  app.post('/api/upload-financial-document', isAuthenticated, upload.single('file'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+      }
+
+      const { conversationId } = req.body;
+      if (!conversationId) {
+        return res.status(400).json({ error: 'ID da conversa é obrigatório' });
+      }
+
+      // Salvar upload no banco
+      const fileUpload = await storage.createFileUpload({
+        userId: req.session.userId!,
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        fileSize: req.file.size,
+        fileType: req.file.mimetype,
+        filePath: req.file.path,
+        status: 'processing'
+      });
+
+      // Processar arquivo em background
+      processFinancialDocument(fileUpload.id, req.session.userId!, conversationId, req.file.path, req.file.originalname)
+        .catch((error: any) => console.error('Erro no processamento:', error));
+
+      res.json({
+        success: true,
+        uploadId: fileUpload.id,
+        message: 'Arquivo enviado com sucesso. Processando análise financeira...'
+      });
+
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Função para processar documento financeiro
+async function processFinancialDocument(
+  uploadId: number,
+  userId: number,
+  conversationId: string,
+  filePath: string,
+  fileName: string
+) {
+  try {
+    // Atualizar status para processando
+    await storage.updateFileUploadStatus(uploadId, 'processing');
+
+    // Ler conteúdo do arquivo (simplificado - na prática seria mais complexo)
+    const fs = await import('fs');
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    // Analisar com IA
+    const analysisResult = await financialAnalyzer.analyzeFinancialDocument(
+      userId,
+      conversationId,
+      fileContent,
+      fileName
+    );
+
+    // Atualizar status para completo
+    await storage.updateFileUploadStatus(uploadId, 'completed');
+
+    // Criar mensagem com resultado da análise
+    const analysisMessage = `📊 **Análise Financeira Completa**
+
+**Score de Crédito:** ${analysisResult.creditScore}/1000
+**Nível de Risco:** ${analysisResult.riskLevel === 'low' ? 'Baixo' : analysisResult.riskLevel === 'medium' ? 'Médio' : 'Alto'}
+
+**Resumo Financeiro:**
+- Receitas Totais: R$ ${analysisResult.totalIncome.toFixed(2)}
+- Despesas Totais: R$ ${analysisResult.totalExpenses.toFixed(2)}
+- Saldo: R$ ${analysisResult.balance.toFixed(2)}
+- Transações Analisadas: ${analysisResult.transactionCount}
+- Transações Suspeitas: ${analysisResult.suspiciousTransactions}
+
+**Padrões Identificados:**
+- Atividade de Apostas: ${analysisResult.patterns.gambling ? 'Detectada' : 'Não Detectada'}
+- Alto Risco: ${analysisResult.patterns.highRisk ? 'Sim' : 'Não'}
+- Pagamentos Recorrentes: ${analysisResult.patterns.recurringPayments}
+- Fluxo de Caixa: ${analysisResult.patterns.cashFlow === 'positive' ? 'Positivo' : analysisResult.patterns.cashFlow === 'negative' ? 'Negativo' : 'Estável'}
+
+**Recomendações:**
+${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`;
+
+    // Salvar mensagem da análise
+    await storage.createMessage({
+      conversationId,
+      content: analysisMessage,
+      sender: 'assistant',
+      attachments: [fileName]
+    });
+
+  } catch (error) {
+    console.error('Erro no processamento do documento:', error);
+    await storage.updateFileUploadStatus(uploadId, 'failed');
+    
+    // Criar mensagem de erro
+    await storage.createMessage({
+      conversationId,
+      content: `❌ Erro ao processar o documento "${fileName}". Por favor, tente novamente ou verifique se o arquivo está no formato correto.`,
+      role: 'assistant'
+    });
+  }
 }
