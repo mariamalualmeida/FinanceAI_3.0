@@ -226,7 +226,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto ml-[0px] mr-[0px] mt-[3px] mb-[3px] pt-[-10px] pb-[-10px]"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto ml-[0px] mr-[0px] pt-[-10px] pb-[-10px] mt-[20px] mb-[20px]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
