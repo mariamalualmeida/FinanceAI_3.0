@@ -226,7 +226,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto pl-[0px] pr-[0px] pt-[0px] pb-[0px] mt-[20px] mb-[20px] ml-[0px] mr-[0px]"
+              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 p-4 pb-16 text-base leading-6 min-h-[80px] max-h-[140px] overflow-y-auto ml-[0px] mr-[0px] mt-[3px] mb-[3px]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
@@ -246,7 +246,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             {/* Ícone de anexar - canto inferior esquerdo sem fundo */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent mt-[-10px] mb-[-10px] ml-[-10px] mr-[-10px]"
+              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
               disabled={isDisabled}
               title="Anexar arquivo"
             >
@@ -269,7 +269,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               <button
                 onClick={handleSend}
                 disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors ml-[-10px] mr-[-10px] pt-[8px] pb-[8px] mt-[-5px] mb-[-5px]"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
