@@ -217,16 +217,16 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
             </div>
           )}
 
-          {/* Input area principal */}
-          <div className="relative p-1">
+          {/* Container externo visual - contém textarea + ícones */}
+          <div className="relative border border-white dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 min-h-[100px] max-h-[180px] flex flex-col">
             
-            {/* Textarea com posicionamento correto */}
+            {/* Textarea interna pura - sem ícones sobrepostos */}
             <textarea
               ref={textareaRef}
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-1 pb-10 text-base leading-6 min-h-[80px] max-h-[160px] overflow-y-auto"
+              className="flex-1 w-full resize-none border-0 outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-4 py-3 text-base leading-6 overflow-y-auto"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.shiftKey) {
                   e.preventDefault()
@@ -244,41 +244,45 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               }}
             />
 
-            {/* Ícone de anexar - canto inferior esquerdo sem fundo */}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-3 left-3 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
-              disabled={isDisabled}
-              title="Anexar arquivo"
-            >
-              <Paperclip size={18} />
-            </button>
-
-            {/* Ícones direitos - canto inferior direito */}
-            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+            {/* Área dos ícones - separada da textarea */}
+            <div className="flex justify-between items-center px-2 pb-2">
               
-              {/* Audio recorder sem fundo */}
-              <div className="bg-transparent">
-                <AudioRecorder
-                  onTranscriptionComplete={handleTranscriptionComplete}
-                  onAudioReady={setAudioData}
-                  disabled={isDisabled}
-                />
-              </div>
-
-              {/* Send button - mesma cor dos demais ícones, sem fundo */}
+              {/* Ícone de anexar - esquerda */}
               <button
-                onClick={handleSend}
-                disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
-                title="Enviar mensagem"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-transparent"
+                disabled={isDisabled}
+                title="Anexar arquivo"
               >
-                {isProcessing ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <Send size={18} />
-                )}
+                <Paperclip size={18} />
               </button>
+
+              {/* Ícones direitos */}
+              <div className="flex items-center gap-2">
+                
+                {/* Audio recorder sem fundo */}
+                <div className="bg-transparent">
+                  <AudioRecorder
+                    onTranscriptionComplete={handleTranscriptionComplete}
+                    onAudioReady={setAudioData}
+                    disabled={isDisabled}
+                  />
+                </div>
+
+                {/* Send button */}
+                <button
+                  onClick={handleSend}
+                  disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors"
+                  title="Enviar mensagem"
+                >
+                  {isProcessing ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <Send size={18} />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
