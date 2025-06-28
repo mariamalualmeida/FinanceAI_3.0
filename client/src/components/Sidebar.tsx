@@ -47,10 +47,26 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     }
   }
 
-  const onNewChat = () => {
-    setCurrentChatId(null)
-    // Clear current conversation in parent component instead of reloading
-    if (onClose) onClose()
+  const onNewChat = async () => {
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: 'Nova Conversa' })
+      })
+      
+      if (response.ok) {
+        const newConversation = await response.json()
+        setCurrentChatId(newConversation.id)
+        await loadConversations() // Atualizar lista de conversas
+        if (onClose) onClose() // Fechar sidebar no mobile
+      } else {
+        console.error('Erro ao criar nova conversa:', response.status)
+      }
+    } catch (error) {
+      console.error('Error creating new conversation:', error)
+    }
   }
 
   const onSelectChat = (chatId: string) => {
