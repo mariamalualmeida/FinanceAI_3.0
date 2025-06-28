@@ -207,6 +207,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get messages for a specific conversation
+  app.get('/api/conversations/:id/messages', isAuthenticated, async (req: any, res) => {
+    try {
+      const conversationId = req.params.id;
+      
+      if (!conversationId || conversationId === 'null' || conversationId === 'undefined') {
+        return res.status(400).json({ message: 'Invalid conversation ID' });
+      }
+
+      // Verify conversation belongs to user
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation || conversation.userId !== req.session.userId) {
+        return res.status(404).json({ message: 'Conversation not found' });
+      }
+
+      const messages = await storage.getMessagesByConversation(conversationId);
+      res.json(messages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      res.status(500).json({ message: 'Failed to fetch messages' });
+    }
+  });
+
   app.delete('/api/conversations/:id', isAuthenticated, async (req: any, res) => {
     try {
       const conversationId = req.params.id;

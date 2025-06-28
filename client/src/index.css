@@ -218,6 +218,23 @@ body {
   max-width: 100% !important;
 }
 
+/* Correção específica para texto em modal de configurações no tema escuro */
+[data-modal="settings"] .dark label,
+[data-modal="settings"] .dark .text-gray-600,
+[data-modal="settings"] .dark .text-gray-700,
+[data-modal="settings"] .dark .text-gray-800,
+[data-modal="settings"] .dark .text-gray-900 {
+  color: rgb(229 231 235) !important; /* text-gray-200 */
+}
+
+[data-modal="settings"] .dark .text-gray-500 {
+  color: rgb(156 163 175) !important; /* text-gray-400 */
+}
+
+[data-modal="settings"] .dark .text-sm {
+  color: rgb(156 163 175) !important; /* text-gray-400 */
+}
+
 /* Estilos para markdown */
 .prose p {
   word-wrap: break-word !important;

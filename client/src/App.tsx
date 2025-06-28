@@ -149,6 +149,21 @@ function AppContent() {
     setShowAdminPanel(true)
   }
 
+  // Função para carregar conversas
+  const loadConversations = async () => {
+    try {
+      const response = await fetch('/api/conversations', {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setConversations(data)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar conversas:', error)
+    }
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -199,6 +214,9 @@ function AppContent() {
                 onClose={() => setSidebarOpen(false)}
                 onOpenSettings={() => setShowSettings(true)}
                 onOpenAdminPanel={handleOpenAdminPanel}
+                currentConversation={currentConversation}
+                onSelectConversation={setCurrentConversation}
+                onNewConversation={() => setCurrentConversation(null)}
               />
               <GeminiChatArea 
                 user={user}
