@@ -195,6 +195,33 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Correção para itens do menu no tema escuro */
+.dark [data-sidebar="menu"] button,
+.dark [data-sidebar="menu"] div {
+  color: rgb(229 231 235) !important; /* text-gray-200 */
+}
+
+.dark [data-sidebar="menu"] button:hover,
+.dark [data-sidebar="menu"] div:hover {
+  color: rgb(255 255 255) !important; /* text-white */
+}
+
+/* Correção para dropdowns/modais no tema escuro */
+.dark [data-dropdown="context"] {
+  background-color: rgb(31 41 55) !important; /* bg-gray-800 */
+  border: 1px solid rgb(75 85 99) !important; /* border-gray-600 */
+  border-radius: 1.5rem !important; /* rounded-3xl */
+}
+
+.dark [data-dropdown="context"] button {
+  color: rgb(229 231 235) !important; /* text-gray-200 */
+}
+
+.dark [data-dropdown="context"] button:hover {
+  color: rgb(255 255 255) !important; /* text-white */
+  background-color: rgb(55 65 81) !important; /* hover:bg-gray-700 */
+}
+
 body {
   touch-action: pan-y;
   -webkit-touch-callout: none;
