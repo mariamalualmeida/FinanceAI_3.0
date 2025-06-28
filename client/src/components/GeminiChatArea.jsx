@@ -45,7 +45,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         const messages = await response.json()
         setMessages(messages.map(msg => ({
           id: msg.id,
-          sender: msg.role === 'user' ? 'user' : 'assistant',
+          sender: msg.sender,
           text: msg.content,
           timestamp: new Date(msg.createdAt)
         })))

@@ -175,7 +175,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
         subjects: ['risk', 'complex_analysis']
       }
     ])
-    const [editingStrategy, setEditingStrategy] = useState(null)
+    const [editingStrategy, setEditingStrategy] = useState<any>(null)
     const [showAddForm, setShowAddForm] = useState(false)
     
     const llmOptions = [
