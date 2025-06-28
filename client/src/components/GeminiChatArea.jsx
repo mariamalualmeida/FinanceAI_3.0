@@ -129,7 +129,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
             <>
               <button
                 onClick={onToggleSidebar}
-                className="p-2 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-400"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
                 aria-label="Toggle sidebar"
               >
                 <Menu size={20} />
