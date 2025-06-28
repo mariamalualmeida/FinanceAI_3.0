@@ -184,6 +184,29 @@ function AppContent() {
     }
   }
 
+  // Função para excluir conversa (sem fechar sidebar)
+  const deleteConversation = async (conversationId: string) => {
+    if (!conversationId) return
+    
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        // Se a conversa excluída era a atual, limpar
+        if (currentConversation?.id === conversationId) {
+          setCurrentConversation(null)
+        }
+        // Recarregar lista de conversas
+        await loadConversations()
+      }
+    } catch (error) {
+      console.error('Erro ao excluir conversa:', error)
+    }
+  }
+
   // Função para atualizar título da conversa com nome inteligente
   const updateConversationTitle = async (conversationId: string, newTitle: string) => {
     try {
@@ -259,6 +282,7 @@ function AppContent() {
                 currentConversation={currentConversation}
                 onSelectConversation={setCurrentConversation}
                 onNewConversation={createNewConversation}
+                onDeleteConversation={deleteConversation}
               />
               <GeminiChatArea 
                 user={user}
