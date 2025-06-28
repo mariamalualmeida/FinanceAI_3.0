@@ -24,8 +24,8 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
         isUser ? 'justify-end pr-1' : 'justify-start pl-1'
       }`}>
       
-      <div className={`flex items-start gap-3 max-w-[80%] ${
-        isUser ? 'flex-row-reverse' : 'flex-row'
+      <div className={`flex items-start gap-3 ${
+        isUser ? 'max-w-[75%] flex-row-reverse' : 'max-w-[80%] flex-row'
       }`}>
         
         {/* Avatar - apenas para IA */}
