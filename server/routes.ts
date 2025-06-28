@@ -917,8 +917,7 @@ ${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`;
     await storage.createMessage({
       conversationId,
       content: analysisMessage,
-      sender: 'assistant',
-      attachments: [fileName]
+      sender: 'assistant'
     });
 
   } catch (error) {
@@ -929,7 +928,7 @@ ${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`;
     await storage.createMessage({
       conversationId,
       content: `❌ Erro ao processar o documento "${fileName}". Por favor, tente novamente ou verifique se o arquivo está no formato correto.`,
-      role: 'assistant'
+      sender: 'assistant'
     });
   }
 }
