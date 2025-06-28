@@ -151,13 +151,13 @@ export default function AudioRecorder({
   }
 
   return (
-    <div className="pt-[0px] pb-[0px] mt-[-5px] mb-[-5px] pl-[0px] pr-[0px] ml-[0px] mr-[0px]">
+    <div className={className}>
       {/* Botão de microfone */}
       <motion.button
         type="button"
         onClick={toggleRecording}
         whileTap={{ scale: 0.95 }}
-        className="p-1.5 transition-all duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 ml-[0px] mr-[0px] mt-[0px] mb-[0px] pt-[0px] pb-[0px] pl-[0px] pr-[0px]"
+        className="p-1.5 transition-all duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mt-[-5px] mb-[-5px]"
         title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
       >
         {isRecording ? (
