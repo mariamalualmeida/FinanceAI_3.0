@@ -34,7 +34,7 @@ const ToggleField = ({ label, value, onChange, description, icon: Icon }) => (
   </div>
 );
 
-const CleanSettingsModal = ({ isOpen, onClose, user }) => {
+const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlobalSettings }) => {
   const [location, setLocation] = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState({
@@ -53,7 +53,8 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
     system: {
       autoSave: true,
       cacheEnabled: true,
-      debugMode: false
+      debugMode: false,
+      requireLogin: globalSettings?.requireLogin ?? true
     }
   });
   const [hasChanges, setHasChanges] = useState(false);
@@ -281,6 +282,13 @@ const CleanSettingsModal = ({ isOpen, onClose, user }) => {
                   description="Habilitar logs detalhados"
                   value={settings.system.debugMode}
                   onChange={(value) => updateSetting('system', 'debugMode', value)}
+                />
+                
+                <ToggleField
+                  label="Login Obrigatório"
+                  description="Exigir login para acessar o sistema (desative para acesso direto)"
+                  value={settings.system.requireLogin}
+                  onChange={(value) => updateSetting('system', 'requireLogin', value)}
                 />
               </div>
             </div>

@@ -18,7 +18,8 @@ function AppContent() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
   const [settings, setSettings] = useState({
     theme: 'light',
-    interface: 'gemini'
+    interface: 'gemini',
+    requireLogin: true
   })
 
   // Check authentication and load settings on app load
@@ -102,9 +103,25 @@ function AppContent() {
     )
   }
 
-  // Login screen
-  if (!user) {
+  // Login screen - só mostra se login for obrigatório E usuário não estiver logado
+  if (settings.requireLogin && !user) {
     return <Login onLogin={handleLogin} />
+  }
+
+  // Se login não for obrigatório e não há usuário, cria um usuário padrão
+  if (!settings.requireLogin && !user) {
+    const defaultUser = {
+      id: 1,
+      username: 'Usuário',
+      email: 'user@financeai.com',
+      role: 'user'
+    }
+    setUser(defaultUser)
+    return (
+      <div className={`flex items-center justify-center h-screen ${settings.theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
   }
 
   // Main app
@@ -144,6 +161,8 @@ function AppContent() {
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
           user={user}
+          globalSettings={settings}
+          onUpdateGlobalSettings={updateSettings}
         />
 
         {/* Admin Authentication Modal */}
