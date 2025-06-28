@@ -255,7 +255,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                 disabled={isDisabled}
                 title="Anexar arquivo"
               >
-                <Paperclip size={18} />
+                <Paperclip size={20} />
               </button>
 
               {/* Ícones direitos */}
@@ -278,9 +278,9 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
                   title="Enviar mensagem"
                 >
                   {isProcessing ? (
-                    <Loader2 size={18} className="animate-spin" />
+                    <Loader2 size={20} className="animate-spin" />
                   ) : (
-                    <Send size={18} />
+                    <Send size={20} />
                   )}
                 </button>
               </div>

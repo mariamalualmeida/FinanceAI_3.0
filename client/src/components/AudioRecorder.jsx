@@ -6,7 +6,7 @@ export default function AudioRecorder({
   onAudioReady, 
   className = '',
   variant = 'blue', // 'blue' or 'purple'
-  size = 18 
+  size = 20 
 }) {
   const [isRecording, setIsRecording] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
