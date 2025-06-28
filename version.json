@@ -1,15 +1,15 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "2.0.0",
-    "buildNumber": "202506270001",
-    "codename": "AdminPanel",
-    "releaseDate": "2025-06-27"
+    "version": "2.1.0",
+    "buildNumber": "202506280001",
+    "codename": "ThemeEnhanced",
+    "releaseDate": "2025-06-28"
   },
   "platforms": {
     "web": {
-      "version": "2.0.0",
-      "lastUpdate": "2025-06-27",
+      "version": "2.1.0",
+      "lastUpdate": "2025-06-28",
       "features": [
         "Multi-LLM Orchestration",
         "Admin Panel",
@@ -17,25 +17,29 @@
         "Real-time Chat",
         "Audio Recording",
         "File Upload",
-        "Dark/Light Theme"
+        "Enhanced Dark/Light Theme",
+        "Login Theme Toggle",
+        "Rounded Input Fields"
       ]
     },
     "pwa": {
-      "version": "2.0.0",
-      "lastUpdate": "2025-06-27",
+      "version": "2.1.0",
+      "lastUpdate": "2025-06-28",
       "installable": true,
       "offline": false,
       "features": [
         "App-like experience",
         "Installable on mobile/desktop",
         "Push notifications ready",
-        "Responsive design"
+        "Responsive design",
+        "Dark theme support in manifest",
+        "Enhanced theme colors"
       ]
     },
     "android": {
-      "versionCode": 2,
-      "versionName": "2.0.0",
-      "lastUpdate": "2025-06-27",
+      "versionCode": 3,
+      "versionName": "2.1.0",
+      "lastUpdate": "2025-06-28",
       "minSdkVersion": 24,
       "targetSdkVersion": 34,
       "features": [
@@ -43,11 +47,26 @@
         "File picker integration",
         "Splash screen",
         "Pull-to-refresh",
-        "Deep linking"
+        "Deep linking",
+        "Dark theme support",
+        "Material Design colors",
+        "Adaptive themes"
       ]
     }
   },
   "changelog": [
+    {
+      "version": "2.1.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Added theme toggle button to login page",
+        "Updated all input fields to use rounded-3xl borders",
+        "Enhanced PWA manifest with dark theme support",
+        "Implemented comprehensive Android dark theme",
+        "Updated color schemes across all platforms",
+        "Improved visual consistency with gray-600 standard"
+      ]
+    },
     {
       "version": "2.0.0",
       "date": "2025-06-27",
