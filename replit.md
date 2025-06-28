@@ -183,6 +183,11 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Android APK: tema escuro completo implementado com values-night
 - June 28, 2025. Sistema de cores unificado para todas as plataformas (Web, PWA, Android)
 - June 28, 2025. Versão atualizada para 2.1.0 em todas as plataformas
+- June 28, 2025. Sistema de login opcional implementado nas configurações do sistema
+- June 28, 2025. Cantos arredondados (rounded-3xl) aplicados em todos os botões e campos de entrada
+- June 28, 2025. Botões do modal de configurações reorganizados verticalmente com cores consistentes
+- June 28, 2025. AdminPanel redesenhado: layout responsivo, cores dos temas e rolagem corrigida
+- June 28, 2025. Todos os formulários e botões seguem agora o padrão de cores claro/escuro
 
 ## User Preferences
 
