@@ -157,7 +157,7 @@ export default function AudioRecorder({
         type="button"
         onClick={toggleRecording}
         whileTap={{ scale: 0.95 }}
-        className={`p-2 transition-all duration-200 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 rounded-3xl ${
+        className={`p-1.5 transition-all duration-200 ${
           isRecording 
             ? 'text-red-500 dark:text-red-400' 
             : 'text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
