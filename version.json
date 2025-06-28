@@ -1,9 +1,9 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "2.4.0",
-    "buildNumber": "202506280004",
-    "codename": "GrokIntegration",
+    "version": "2.5.0",
+    "buildNumber": "202506280005",
+    "codename": "SmartNaming",
     "releaseDate": "2025-06-28"
   },
   "platforms": {
@@ -64,6 +64,18 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.5.0",
+      "date": "2025-06-28",
+      "changes": [
+        "Smart conversation naming: conversations automatically named using first words of messages",
+        "Streamlined UX: removed confirmation dialog for conversation deletion",
+        "Fixed sidebar behavior: now only closes on specific actions (new chat, select chat, close button)",
+        "Enhanced dark theme: improved text contrast in settings and profile menus",
+        "Improved user experience with more fluid interaction patterns",
+        "Better visual consistency in CleanSettingsModal with proper text colors"
+      ]
+    },
     {
       "version": "2.4.0",
       "date": "2025-06-28",
