@@ -269,7 +269,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, isProcessing = fa
               <button
                 onClick={handleSend}
                 disabled={(!text.trim() && files.length === 0 && !audioData) || isDisabled}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors ml-[-10px] mr-[-10px] mt-[-10px] mb-[-10px] pt-[8px] pb-[8px]"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center bg-transparent transition-colors mt-[0px] mb-[0px] ml-[0px] mr-[0px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]"
                 title="Enviar mensagem"
               >
                 {isProcessing ? (
