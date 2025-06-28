@@ -181,7 +181,8 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
     const llmOptions = [
       { value: 'openai', label: 'OpenAI GPT-4o' },
       { value: 'anthropic', label: 'Anthropic Claude' },
-      { value: 'google', label: 'Google Gemini' }
+      { value: 'google', label: 'Google Gemini' },
+      { value: 'xai', label: 'xAI Grok' }
     ]
 
     const subjectOptions = [
@@ -1188,10 +1189,10 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full h-full flex flex-col border border-gray-300 dark:border-gray-600">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-t-3xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-t-3xl">
           <div className="flex items-center gap-3">
             <Shield size={24} className="text-gray-600 dark:text-gray-400" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h2>

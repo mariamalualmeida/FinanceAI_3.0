@@ -21,7 +21,7 @@ const ToggleField = ({ label, value, onChange, description, icon: Icon }) => (
       <button
         onClick={() => onChange(!value)}
         className={`toggle-switch relative w-10 h-6 rounded-full transition-colors ${
-          value ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+          value ? 'bg-gray-600 dark:bg-gray-700' : 'bg-gray-300 dark:bg-gray-600'
         }`}
       >
         <div
