@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Paperclip, Menu } from 'lucide-react'
+import { Send, Paperclip, Menu, Upload, FileText, X, AlertCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 import MessageBubble from './MessageBubble'
 import ThemeToggle from './ThemeToggle'
@@ -13,6 +13,9 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
   const [isTyping, setIsTyping] = useState(false)
   const [audioData, setAudioData] = useState(null)
   const [currentConversationId, setCurrentConversationId] = useState(null)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [uploadingFiles, setUploadingFiles] = useState([])
+  const [showUploadProgress, setShowUploadProgress] = useState(false)
   
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
