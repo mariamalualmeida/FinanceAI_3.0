@@ -50,7 +50,7 @@ export class FinancialAnalyzer {
       // Salvar análise no banco
       const analysis = await storage.createFinancialAnalysis({
         userId,
-        conversationId: conversationId.toString(),
+        conversationId: conversationId,
         analysisType: 'comprehensive',
         results: analysisResult,
         score: analysisResult.creditScore,

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { GoogleGenAI } from '@google/genai';
+// import { GoogleGenerativeAI } from '@google/genai';
 import { storage } from './storage';
 import type { LlmConfig, MultiLlmStrategy, SystemPrompts } from '@shared/schema';
 
@@ -69,10 +69,8 @@ class MultiLLMOrchestrator {
           return !!anthropicResponse.content[0];
 
         case 'google':
-          const googleClient = new GoogleGenAI({ apiKey });
-          const geminiModel = googleClient.getGenerativeModel({ model: 'gemini-2.5-flash' });
-          const googleResponse = await geminiModel.generateContent('Test');
-          return !!googleResponse.response.text();
+          // TODO: Implementar Google Generative AI após verificar a API correta
+          return false;
 
         case 'xai':
           const xaiClient = new OpenAI({ 
@@ -191,33 +189,14 @@ class MultiLLMOrchestrator {
             return;
           }
           
-          const genai = new GoogleGenAI({ apiKey: googleKey });
+          // TODO: Implementar Google Generative AI após resolução da biblioteca
           provider = {
             name: 'google',
-            client: genai,
+            client: null,
             generateResponse: async (prompt: string, context?: string) => {
-              const response = await genai.models.generateContent({
-                model: config.model,
-                contents: `${prompt}\n\n${context || 'Analise os dados fornecidos.'}`,
-                config: {
-                  temperature: parseFloat(config.temperature?.toString() || '0.7'),
-                  maxOutputTokens: config.maxTokens || 4000
-                }
-              });
-              
-              return response.text || '';
+              throw new Error('Google provider temporarily disabled');
             },
-            isHealthy: async () => {
-              try {
-                await genai.models.generateContent({
-                  model: config.model,
-                  contents: 'test'
-                });
-                return true;
-              } catch {
-                return false;
-              }
-            }
+            isHealthy: async () => false
           };
           break;
 
