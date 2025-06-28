@@ -116,7 +116,7 @@ export default function Login({ onLogin }) {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                className="w-full px-4 py-3 border border-gray-600 dark:border-gray-400 rounded-3xl bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 placeholder-gray-600 dark:placeholder-gray-400 transition-colors"
                 placeholder="Digite seu usuário"
               />
             </div>
@@ -133,7 +133,7 @@ export default function Login({ onLogin }) {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-600 dark:border-gray-400 rounded-3xl bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 placeholder-gray-600 dark:placeholder-gray-400 transition-colors"
                   placeholder="Digite seu email"
                 />
               </div>
@@ -150,7 +150,7 @@ export default function Login({ onLogin }) {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                className="w-full px-4 py-3 border border-gray-600 dark:border-gray-400 rounded-3xl bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 placeholder-gray-600 dark:placeholder-gray-400 transition-colors"
                 placeholder="Digite sua senha"
               />
             </div>
