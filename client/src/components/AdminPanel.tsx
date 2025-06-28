@@ -705,7 +705,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações do Sistema</h3>
           <button
             onClick={() => setEditingConfig(!editingConfig)}
-            className="flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-600 dark:border-gray-400 text-gray-600 dark:text-gray-400 px-4 py-2 rounded-3xl hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors"
+            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm"
           >
             <Settings size={16} />
             {editingConfig ? 'Cancelar' : 'Editar'}
