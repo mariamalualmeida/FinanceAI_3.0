@@ -7,11 +7,12 @@ import AudioRecorder from './AudioRecorder'
 import InputAreaFixed from './InputAreaFixed'
 import { useFileUpload } from '../hooks/useFileUpload'
 
-export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen }) {
+export default function GeminiChatArea({ user, settings, onToggleSidebar, sidebarOpen, currentConversation, onConversationUpdate }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [audioData, setAudioData] = useState(null)
+  const [currentConversationId, setCurrentConversationId] = useState(null)
   
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -21,6 +22,38 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, isTyping])
+
+  // Carregar mensagens quando conversa muda
+  useEffect(() => {
+    if (currentConversation?.id) {
+      setCurrentConversationId(currentConversation.id)
+      loadConversationMessages(currentConversation.id)
+    } else {
+      // Nova conversa - limpar chat
+      setMessages([])
+      setCurrentConversationId(null)
+    }
+  }, [currentConversation])
+
+  // Função para carregar mensagens da conversa
+  const loadConversationMessages = async (conversationId) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}/messages`, {
+        credentials: 'include'
+      })
+      if (response.ok) {
+        const messages = await response.json()
+        setMessages(messages.map(msg => ({
+          id: msg.id,
+          sender: msg.role === 'user' ? 'user' : 'assistant',
+          text: msg.content,
+          timestamp: new Date(msg.createdAt)
+        })))
+      }
+    } catch (error) {
+      console.error('Erro ao carregar mensagens:', error)
+    }
+  }
 
   // Função para enviar mensagem
   const sendMessage = async (text, files = []) => {
@@ -63,12 +96,19 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           credentials: 'include',
           body: JSON.stringify({
             message: finalText,
-            conversationId: null // TODO: implement conversation tracking
+            conversationId: currentConversationId
           })
         });
 
         if (response.ok) {
           const result = await response.json();
+          
+          // Atualizar conversationId se nova conversa foi criada
+          if (result.conversationId && !currentConversationId) {
+            setCurrentConversationId(result.conversationId)
+            onConversationUpdate?.(result.conversationId)
+          }
+          
           const aiMessage = {
             id: Date.now() + 1,
             sender: 'assistant',

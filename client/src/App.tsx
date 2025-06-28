@@ -22,6 +22,8 @@ function AppContent() {
     interface: 'gemini',
     requireLogin: true
   })
+  const [currentConversation, setCurrentConversation] = useState(null)
+  const [conversations, setConversations] = useState([])
 
   // Clear system cache on app exit
   useEffect(() => {
@@ -203,6 +205,11 @@ function AppContent() {
                 settings={{...settings, onToggleTheme: toggleTheme}}
                 onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
                 sidebarOpen={sidebarOpen}
+                currentConversation={currentConversation}
+                onConversationUpdate={(conversationId) => {
+                  // Recarregar conversas para incluir a nova
+                  loadConversations()
+                }}
               />
             </div>
           </Route>
