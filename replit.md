@@ -177,6 +177,12 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 27, 2025. Interface de upload com preview, progress e validação de arquivos
 - June 27, 2025. Orquestração inteligente por assunto com backup e validação cruzada
 - June 27, 2025. Sistema de notificações visuais para processamento de arquivos
+- June 28, 2025. Botão de tema implementado na página de login com localStorage
+- June 28, 2025. Campos de entrada atualizados para bordas rounded-3xl seguindo padrão
+- June 28, 2025. PWA manifest atualizado com suporte a tema escuro (theme_color_dark)
+- June 28, 2025. Android APK: tema escuro completo implementado com values-night
+- June 28, 2025. Sistema de cores unificado para todas as plataformas (Web, PWA, Android)
+- June 28, 2025. Versão atualizada para 2.1.0 em todas as plataformas
 
 ## User Preferences
 

@@ -2,7 +2,7 @@
   "name": "FinanceAI - Intelligent Financial Analysis",
   "short_name": "FinanceAI",
   "description": "Advanced AI-powered financial analysis platform with multi-LLM orchestration",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
