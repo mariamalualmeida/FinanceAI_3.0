@@ -199,7 +199,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Estratégias Multi-LLM</h3>
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-sm"
+            className="flex items-center gap-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white px-4 py-2 rounded-3xl text-sm transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
           >
             <Plus size={16} />
             Nova Estratégia
@@ -208,7 +208,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
 
         <div className="space-y-3">
           {strategies.map((strategy) => (
-            <div key={strategy.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div key={strategy.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -252,13 +252,13 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                 <div className="flex items-center gap-2 ml-4">
                   <button
                     onClick={() => setEditingStrategy(strategy)}
-                    className="p-2 text-gray-400 hover:text-purple-600 transition-colors"
+                    className="p-2 text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-3xl hover:bg-purple-50 dark:hover:bg-purple-900/20"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => setStrategies(strategies.filter(s => s.id !== strategy.id))}
-                    className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                    className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-3xl hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -1188,46 +1188,48 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-xl shadow-2xl w-full sm:max-w-2xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-purple-600 dark:bg-purple-700 text-white rounded-t-3xl">
           <div className="flex items-center gap-3">
-            <Shield size={20} />
-            <h2 className="text-lg font-bold">Painel Admin</h2>
+            <Shield size={24} />
+            <h2 className="text-xl font-bold">Painel Administrativo</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/20 rounded-3xl transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Mobile-First Tabs Navigation */}
-        <div className="admin-tabs-mobile">
-          {tabs.map((tab) => {
-            const Icon = tab.icon
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`admin-tab-mobile ${
-                  activeTab === tab.id
-                    ? 'bg-purple-600 dark:bg-purple-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                <Icon size={18} className="mx-auto mb-1" />
-                <span className="text-xs block">{tab.label.split(' ')[0]}</span>
-              </button>
-            )
-          })}
+        {/* Tabs Navigation */}
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="flex overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 whitespace-nowrap border-b-2 transition-colors ${
+                    activeTab === tab.id
+                      ? 'border-purple-600 dark:border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20'
+                      : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  <Icon size={18} />
+                  <span className="text-sm font-medium">{tab.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Content - Mobile-First Vertical Layout */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4">
+        {/* Content Area with Fixed Height and Scroll */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full overflow-y-auto p-6">
             {renderTabContent()}
           </div>
         </div>
