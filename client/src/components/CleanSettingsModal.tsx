@@ -300,26 +300,26 @@ const CleanSettingsModal = ({ isOpen, onClose, user, globalSettings, onUpdateGlo
           </div>
 
           {/* Rodapé com Botões */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
-            <button
-              onClick={handleReset}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-2 rounded-3xl border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-            >
-              <RotateCcw size={16} />
-              Restaurar Padrões
-            </button>
-            
+          <div className="p-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <button
               onClick={handleSave}
               disabled={!hasChanges}
-              className={`px-6 py-2 rounded-3xl flex items-center gap-2 transition-colors ${
+              className={`w-full py-3 px-4 rounded-3xl flex items-center justify-center gap-2 transition-colors font-medium ${
                 hasChanges
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
+                  ? 'bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800'
+                  : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
               }`}
             >
               <Save size={16} />
               Salvar
+            </button>
+            
+            <button
+              onClick={handleReset}
+              className="w-full py-3 px-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center justify-center gap-2 rounded-3xl border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+            >
+              <RotateCcw size={16} />
+              Restaurar Padrões
             </button>
           </div>
         </motion.div>
