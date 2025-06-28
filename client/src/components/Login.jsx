@@ -1,8 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Sun, Moon } from 'lucide-react';
 
 export default function Login({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -49,6 +66,19 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      {/* Theme toggle button - fixed position */}
+      <button
+        onClick={toggleTheme}
+        className="fixed top-4 right-4 p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors z-10"
+        title={`Mudar para tema ${theme === 'light' ? 'escuro' : 'claro'}`}
+      >
+        {theme === 'light' ? (
+          <Moon size={20} className="text-gray-600 dark:text-gray-400" />
+        ) : (
+          <Sun size={20} className="text-gray-600 dark:text-gray-400" />
+        )}
+      </button>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -86,7 +116,7 @@ export default function Login({ onLogin }) {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                 placeholder="Digite seu usuário"
               />
             </div>
@@ -103,7 +133,7 @@ export default function Login({ onLogin }) {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                   placeholder="Digite seu email"
                 />
               </div>
@@ -120,7 +150,7 @@ export default function Login({ onLogin }) {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                 placeholder="Digite sua senha"
               />
             </div>
