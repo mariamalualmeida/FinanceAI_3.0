@@ -199,7 +199,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Estratégias Multi-LLM</h3>
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white px-4 py-2 rounded-3xl text-sm transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            className="flex items-center gap-2 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-3xl text-sm transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
           >
             <Plus size={16} />
             Nova Estratégia
@@ -212,7 +212,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <Network className="text-purple-600" size={18} />
+                    <Network className="text-gray-600 dark:text-gray-400" size={18} />
                     <h4 className="font-semibold text-gray-900 dark:text-white">{strategy.name}</h4>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       strategy.costMultiplier <= 0.7 
@@ -252,7 +252,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                 <div className="flex items-center gap-2 ml-4">
                   <button
                     onClick={() => setEditingStrategy(strategy)}
-                    className="p-2 text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-3xl hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                    className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <Edit size={16} />
                   </button>
@@ -300,10 +300,10 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">LLM Backup</label>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">LLM Backup</label>
                     <select
                       defaultValue={editingStrategy?.backupLLM || 'google'}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors"
                     >
                       {llmOptions.map(option => (
                         <option key={option.value} value={option.value}>{option.label}</option>
@@ -311,10 +311,10 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">LLM Validação</label>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">LLM Validação</label>
                     <select
                       defaultValue={editingStrategy?.validationLLM || ''}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors"
                     >
                       <option value="">Nenhum</option>
                       {llmOptions.map(option => (
@@ -324,18 +324,18 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Multiplicador de Custo</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Multiplicador de Custo</label>
                   <input
                     type="number"
                     step="0.1"
                     min="0.1"
                     max="5"
                     defaultValue={editingStrategy?.costMultiplier || 1.0}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Assuntos Aplicáveis</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Assuntos Aplicáveis</label>
                   <div className="grid grid-cols-2 gap-2">
                     {subjectOptions.map(subject => (
                       <label key={subject.value} className="flex items-center gap-2">
@@ -376,7 +376,7 @@ export default function AdminPanel({ onClose, user }: AdminPanelProps) {
                     setEditingStrategy(null)
                     setShowAddForm(false)
                   }}
-                  className="px-4 py-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-3xl transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+                  className="px-4 py-2 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-3xl transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
                 >
                   {editingStrategy ? 'Salvar' : 'Criar'}
                 </button>
