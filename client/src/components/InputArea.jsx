@@ -48,7 +48,8 @@ export default function InputArea({ onSend, onFileUpload }) {
       e.preventDefault()
       handleSend()
     }
-    // Enter sem Shift = nova linha (comportamento padrão)
+    // Enter sozinho = nova linha (especialmente no mobile)
+    // Para enviar: usar botão de envio ou Shift+Enter
   }
 
   return (
@@ -101,7 +102,7 @@ export default function InputArea({ onSend, onFileUpload }) {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite sua mensagem..."
-            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-3 py-3 pb-20 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto"
+            className="w-full h-full bg-transparent border-0 outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-3 py-3 pb-24 leading-6 text-base scrollbar-hide mobile-textarea-scroll overflow-y-auto max-h-[100px]"
             style={{
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
