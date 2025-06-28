@@ -21,7 +21,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={`flex w-full py-2 ${
-        isUser ? 'justify-end pr-1' : 'justify-start pl-1'
+        isUser ? 'justify-end' : 'justify-start pl-1'
       }`}>
       
       <div className={`flex items-start gap-3 ${
