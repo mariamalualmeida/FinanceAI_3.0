@@ -270,6 +270,7 @@ function AppContent() {
                   // Recarregar conversas para incluir a nova
                   loadConversations()
                 }}
+                onUpdateConversationTitle={updateConversationTitle}
               />
             </div>
           </Route>

@@ -123,14 +123,14 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
             onClick={() => {
               onNewChat?.()
             }}
-            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
+            className="flex items-center gap-3 flex-1 p-3 mr-2 rounded-3xl hover:bg-gray-100 dark:hover:bg-gray-500/10 text-gray-900 dark:text-white transition-colors text-sm"
           >
             <Plus size={16} />
             Nova conversa
           </button>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-500/10 rounded-md text-gray-900 dark:text-white transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-500/10 rounded-3xl text-gray-900 dark:text-white transition-colors"
             aria-label="Fechar sidebar"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
