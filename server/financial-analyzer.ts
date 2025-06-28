@@ -36,7 +36,7 @@ export class FinancialAnalyzer {
 
   async analyzeFinancialDocument(
     userId: number,
-    conversationId: number,
+    conversationId: string,
     fileContent: string,
     fileName: string
   ): Promise<FinancialAnalysisResult> {
@@ -50,7 +50,7 @@ export class FinancialAnalyzer {
       // Salvar análise no banco
       const analysis = await storage.createFinancialAnalysis({
         userId,
-        conversationId,
+        conversationId: conversationId.toString(),
         analysisType: 'comprehensive',
         results: analysisResult,
         score: analysisResult.creditScore,
@@ -100,10 +100,9 @@ ${content}
 Responda apenas com um array JSON válido de transações:`;
 
     try {
-      const response = await multiLlmOrchestrator.processChainedPrompts(
-        'Extrair transações financeiras do documento',
-        prompt
-      );
+      const response = await multiLlmOrchestrator.processMessage(prompt, {
+        strategy: 'balanced'
+      });
 
       const result = JSON.parse(response || '{"transactions": []}');
       return result.transactions || [];
@@ -153,10 +152,9 @@ Considere:
 - Diversificação de gastos`;
 
     try {
-      const response = await multiLlmOrchestrator.processChainedPrompts(
-        'Análise financeira completa e cálculo de score de crédito',
-        prompt
-      );
+      const response = await multiLlmOrchestrator.processMessage(prompt, {
+        strategy: 'balanced'
+      });
 
       const analysis = JSON.parse(response || '{}');
       
