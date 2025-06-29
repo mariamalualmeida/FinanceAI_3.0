@@ -603,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload and analysis
-  app.post('/api/upload', isAuthenticated, upload.single('files'), async (req: any, res) => {
+  app.post('/api/upload', isAuthenticated, upload.single('file'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ 
