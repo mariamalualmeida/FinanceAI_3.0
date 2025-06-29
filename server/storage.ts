@@ -472,6 +472,15 @@ export class DatabaseStorage implements IStorage {
   async deleteMultiLlmStrategy(id: number): Promise<void> {
     await db.delete(multiLlmStrategy).where(eq(multiLlmStrategy.id, id));
   }
+
+  // Métodos ausentes para compatibilidade
+  async getConversationsByUserId(userId: number): Promise<Conversation[]> {
+    return this.getConversationsByUser(userId);
+  }
+
+  async deleteMessagesByConversation(conversationId: string): Promise<void> {
+    await db.delete(messages).where(eq(messages.conversationId, conversationId));
+  }
 }
 
 export const storage = new DatabaseStorage();

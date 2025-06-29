@@ -287,8 +287,19 @@ export class NoLimitExtractor {
         totalCredits: 0,
         totalDebits: 0,
         finalBalance: 0,
-        transactionCount: 0
+        transactionCount: 0,
+        creditScore: 0,
+        riskLevel: 'high',
+        accuracy: 0,
+        recommendations: 'Erro no processamento do documento'
       }
     };
   }
+}
+
+// Função exportada para compatibilidade
+export async function extractFinancialData(filePath: string, fileName: string) {
+  const extractor = new NoLimitExtractor();
+  const result = await extractor.extractFromDocument(filePath, fileName);
+  return result.data;
 }
