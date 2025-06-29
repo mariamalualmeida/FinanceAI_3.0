@@ -15,6 +15,7 @@ import {
 import { financialAnalyzer } from './financial-analyzer';
 import { multiLlmOrchestrator } from './multi-llm-orchestrator';
 import { fileProcessor } from './services/fileProcessor';
+import { registerTestResultsRoutes } from './routes-test-results';
 
 declare module "express-session" {
   interface SessionData {
