@@ -1043,13 +1043,26 @@ ${analyses.map((analysis, i) =>
     try {
       const files = req.files as Express.Multer.File[];
       const message = req.body.message || '';
-      const conversationId = req.body.conversationId;
+      let conversationId = req.body.conversationId;
 
       if (!files || files.length === 0) {
         return res.status(400).json({ 
           success: false, 
           message: 'No files uploaded' 
         });
+      }
+
+      // Criar conversa automaticamente se não existir
+      if (!conversationId || conversationId === 'null' || conversationId === 'undefined') {
+        const firstFile = files[0];
+        const smartTitle = message.trim() || `Análise de ${firstFile.originalname}`;
+        const conversationTitle = smartTitle.length > 3 ? smartTitle.substring(0, 50) : `Documento ${firstFile.originalname}`;
+        
+        const newConversation = await storage.createConversation({
+          title: conversationTitle
+        }, req.session.userId!);
+        conversationId = newConversation.id;
+        console.log(`📋 Nova conversa criada: "${conversationTitle}" (${conversationId})`);
       }
 
       const results = [];
@@ -1178,26 +1191,39 @@ ${analyses.map((analysis, i) =>
         aiResponse = 'Não foi possível processar os arquivos enviados. Verifique os formatos e tente novamente.';
       }
 
-      // Create user message if there's text
-      if (message.trim() && conversationId) {
+      // Create user message (sempre criar, mesmo sem texto)
+      if (conversationId) {
+        const userMessageContent = message.trim() || `📎 Enviou ${files.length} arquivo(s): ${files.map(f => f.originalname).join(', ')}`;
+        
         await storage.createMessage({
           conversationId,
           sender: 'user',
-          content: message,
-          metadata: { attachments: results.map(r => r.filename) }
+          content: userMessageContent,
+          metadata: { 
+            attachments: files.map(f => ({
+              originalname: f.originalname,
+              filename: f.filename,
+              fileType: path.extname(f.originalname).toLowerCase().slice(1),
+              fileSize: f.size,
+              mimeType: f.mimetype
+            }))
+          }
         });
 
         // Create AI response message
-        await storage.createMessage({
-          conversationId,
-          sender: 'assistant',
-          content: aiResponse
-        });
+        if (aiResponse) {
+          await storage.createMessage({
+            conversationId,
+            sender: 'assistant',
+            content: aiResponse
+          });
+        }
       }
 
       res.json({
         success: true,
         message: 'Arquivos processados com sucesso',
+        conversationId: conversationId, // Retornar o ID da conversa
         results,
         analysis: fileAnalyses,
         aiResponse
