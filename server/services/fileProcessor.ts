@@ -86,6 +86,7 @@ from bank_specific_parsers_1750515734450_1750930357073 import parse_nubank_extra
 from categorization_logic_1750515734451_1750930357059 import categorizar_transacao_granular, categorize_transactions_detailed
 from config_1750515734453_1750930357044 import SITES_APOSTAS, PROCESSADORAS_PAGAMENTO_NAO_APOSTA, MAPPING_COLUNAS_PADRAO_GENERICO
 from caixa_extrato_parser import parse_caixa_extrato_pdf, process_caixa_extrato_text
+from brazilian_banks_parser import parse_brazilian_bank_document, BrazilianBanksParser
 
 def extract_transactions(file_path, file_type):
     """Main function to extract and categorize transactions from documents."""
@@ -111,7 +112,20 @@ def extract_transactions(file_path, file_type):
                 transactions = parse_c6_fatura_pdf(text_content, doc_type)
             elif 'caixa' in bank.lower() or 'CAIXA' in text_content:
                 # Use the new Caixa parser
-                transactions = parse_caixa_extrato_pdf(text_content, doc_type)
+                caixa_result = process_caixa_extrato_text(text_content)
+                if caixa_result.get('processing_success', False):
+                    transactions = caixa_result.get('transactions', [])
+            
+            # Try the unified Brazilian banks parser as fallback
+            if not transactions:
+                try:
+                    unified_result = parse_brazilian_bank_document(text_content, doc_type)
+                    if unified_result.get('processing_success', False):
+                        transactions = unified_result.get('transactions', [])
+                        bank = unified_result.get('bank', bank)
+                        print(f"Unified parser extracted {len(transactions)} transactions from {unified_result.get('bank', 'unknown')} bank")
+                except Exception as e:
+                    print(f"Unified parser failed: {e}")
             
             # Generic fallback for PDFs that might be bank statements
             if not transactions and text_content.strip():
