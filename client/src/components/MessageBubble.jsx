@@ -9,8 +9,8 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
   if (message.text) {
     console.log('Renderizando mensagem:', {
       sender: message.sender,
-      textLength: message.text.length,
-      hasLineBreaks: message.text.includes('\n'),
+      textLength: message.text?.length || 0,
+      hasLineBreaks: message.text?.includes('\n') || false,
       text: message.text
     })
   }
@@ -80,7 +80,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
                 isUser ? 'text-left' : 'text-left'
               }`}>
                 <div className="whitespace-pre-wrap break-words">
-                  {message.text}
+                  {message.text || message.content || ''}
                 </div>
               </div>
 
