@@ -31,6 +31,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, onFinancialAnalys
     
     const finalText = text || (audioData?.transcription ? audioData.transcription : '')
     
+    // Enviar texto e arquivos juntos para processamento
     if (audioData) {
       onSend(finalText, files, audioData)
     } else {
@@ -59,20 +60,16 @@ export default function InputAreaFixed({ onSend, onFileUpload, onFinancialAnalys
     
     const droppedFiles = Array.from(e.dataTransfer.files)
     if (droppedFiles.length > 0) {
+      // Apenas anexar arquivos na caixa - não processar automaticamente
       setFiles(prev => [...prev, ...droppedFiles])
-      if (onFileUpload && droppedFiles.length > 0) {
-        onFileUpload(droppedFiles[0])
-      }
     }
   }
 
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files)
     if (selectedFiles.length > 0) {
+      // Apenas anexar arquivos na caixa - não processar automaticamente
       setFiles(prev => [...prev, ...selectedFiles])
-      if (onFileUpload && selectedFiles.length > 0) {
-        onFileUpload(selectedFiles[0])
-      }
     }
     e.target.value = ''
   }
@@ -163,12 +160,12 @@ export default function InputAreaFixed({ onSend, onFileUpload, onFinancialAnalys
 
         <div className="relative border border-gray-600 dark:border-gray-400 rounded-3xl bg-white dark:bg-gray-900 shadow-sm min-h-[80px]">
           
-          {/* File attachments preview */}
+          {/* File attachments preview - horizontal com scroll */}
           {files.length > 0 && (
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none' }}>
                 {files.map((file, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
+                  <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 whitespace-nowrap flex-shrink-0">
                     {file.type.startsWith('image/') ? (
                       <Image size={16} className="text-blue-500" />
                     ) : file.type === 'application/pdf' ? (
