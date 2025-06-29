@@ -1,4 +1,7 @@
 import OpenAI from 'openai';
+import { MIG_AGENT_PROMPTS, getMigPrompt, processMigPrompt } from '../prompts/mig-agent-prompts';
+import { FinancialConsultant } from '../consultancy/financial-consultant';
+import { SmartGoalsEngine } from '../consultancy/smart-goals-engine';
 
 export interface LLMProvider {
   name: string;

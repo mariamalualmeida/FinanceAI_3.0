@@ -8,7 +8,7 @@ import { getMigPrompt } from '../prompts/mig-agent-prompts';
 
 export interface SmartGoalTemplate {
   id: string;
-  category: 'emergency' | 'debt' | 'savings' | 'investment' | 'purchase' | 'retirement';
+  category: 'emergency' | 'debt' | 'investment' | 'purchase' | 'retirement';
   title: string;
   description: string;
   priority: 'high' | 'medium' | 'low';
@@ -405,8 +405,7 @@ export class SmartGoalsEngine {
     switch (template.category) {
       case 'emergency': return clientProfile.emergencyFund;
       case 'debt': return 0; // Progresso na quitação
-      case 'investment':
-      case 'savings': return clientProfile.currentSavings;
+      case 'investment': return clientProfile.currentSavings;
       default: return 0;
     }
   }
@@ -485,7 +484,6 @@ export class SmartGoalsEngine {
     const baseMessages = {
       emergency: '🛡️ Parabéns! Sua segurança financeira foi estabelecida!',
       debt: '🎊 Liberdade financeira conquistada! Sem mais dívidas!',
-      savings: '💰 Meta de poupança alcançada! Você é um poupador disciplinado!',
       investment: '📈 Primeira conquista como investidor! Seu dinheiro agora trabalha para você!',
       purchase: '🏠 Sonho realizado! Sua disciplina trouxe resultados concretos!',
       retirement: '⏰ Pensando no futuro! Sua aposentadoria agradece!'
@@ -501,7 +499,6 @@ export class SmartGoalsEngine {
     const suggestions = {
       emergency: 'Agora que você tem segurança, que tal começar a investir?',
       debt: 'Livre das dívidas! Hora de formar sua reserva de emergência!',
-      savings: 'Com o hábito de poupar, considere diversificar em investimentos!',
       investment: 'Parabéns! Que tal aumentar o valor dos aportes mensais?',
       purchase: 'Meta conquistada! Hora de planejar o próximo grande objetivo!',
       retirement: 'Excelente! Considere aumentar sua contribuição previdenciária!'
