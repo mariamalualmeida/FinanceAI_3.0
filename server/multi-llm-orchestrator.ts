@@ -27,6 +27,11 @@ class MultiLLMOrchestrator {
     try {
       console.log('Initializing Multi-LLM Orchestrator with API keys...');
       
+      // Debug environment variables
+      console.log('GEMINI_API_KEY present:', !!process.env.GEMINI_API_KEY);
+      console.log('ANTHROPIC_API_KEY present:', !!process.env.ANTHROPIC_API_KEY);
+      console.log('OPENAI_API_KEY present:', !!process.env.OPENAI_API_KEY);
+      
       // Prioridade 1: Gemini (principal)
       if (process.env.GEMINI_API_KEY) {
         console.log('Initializing Gemini provider as PRIMARY');
