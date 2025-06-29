@@ -9,6 +9,7 @@ import { PWASettings } from './components/PWASettings';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { SyncStatus } from './components/SyncStatus';
+import AnalyticsDashboard from '../shared/components/AnalyticsDashboard';
 
 // PWA-optimized QueryClient with offline support
 const queryClient = new QueryClient({
