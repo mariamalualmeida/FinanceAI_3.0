@@ -91,7 +91,7 @@ async function testAllFixesComplete() {
                     // 4. Verificar extração de dados reais
                     console.log('\n4. 📊 TESTE EXTRAÇÃO DE DADOS REAIS...');
                     
-                    const aiMessage = aiMessages.find(m => m.content.includes('ANÁLISE FINANCEIRA'));
+                    const aiMessage = aiMessages.find(m => m.content.includes('ANÁLISE FINANCEIRA') || m.content.includes('Análise Financeira'));
                     if (aiMessage) {
                         const content = aiMessage.content;
                         
