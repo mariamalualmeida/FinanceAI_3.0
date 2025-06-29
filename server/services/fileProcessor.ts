@@ -141,27 +141,49 @@ def extract_transactions(file_path, file_type):
         if file_type == 'pdf':
             text_content = extracted_data.get('text', '')
             
-            # Try bank-specific parsers first
-            if 'nubank' in bank.lower() and doc_type == 'extrato_bancario':
-                transactions = parse_nubank_extrato_pdf(text_content, doc_type)
-            elif 'c6' in bank.lower() and doc_type == 'fatura_cartao':
-                transactions = parse_c6_fatura_pdf(text_content, doc_type)
-            elif 'caixa' in bank.lower() or 'CAIXA' in text_content:
-                # Use the new Caixa parser
-                caixa_result = process_caixa_extrato_text(text_content)
-                if caixa_result.get('processing_success', False):
-                    transactions = caixa_result.get('transactions', [])
+            # Use the NEW unified Brazilian banks parser FIRST
+            try:
+                parser = BrazilianBanksParser()
+                detected_bank = parser.detect_bank(text_content)
+                detected_doc_type = parser.detect_document_type(text_content)
+                
+                print(f"Detected bank: {detected_bank}, doc type: {detected_doc_type}")
+                
+                if detected_doc_type == 'extrato_bancario':
+                    transactions = parser.parse_bank_statement(text_content, detected_bank)
+                elif detected_doc_type == 'fatura_cartao':
+                    transactions = parser.parse_credit_card_statement(text_content, detected_bank)
+                
+                if transactions:
+                    bank = detected_bank
+                    doc_type = detected_doc_type
+                    print(f"NEW parser extracted {len(transactions)} transactions from {detected_bank}")
+                
+            except Exception as e:
+                print(f"NEW unified parser error: {e}")
             
-            # Try the unified Brazilian banks parser as fallback
+            # Fallback to old parsers only if new parser didn't work
             if not transactions:
-                try:
-                    unified_result = parse_brazilian_bank_document(text_content, doc_type)
-                    if unified_result.get('processing_success', False):
-                        transactions = unified_result.get('transactions', [])
-                        bank = unified_result.get('bank', bank)
-                        print(f"Unified parser extracted {len(transactions)} transactions from {unified_result.get('bank', 'unknown')} bank")
-                except Exception as e:
-                    print(f"Unified parser failed: {e}")
+                if 'nubank' in bank.lower() and doc_type == 'extrato_bancario':
+                    transactions = parse_nubank_extrato_pdf(text_content, doc_type)
+                elif 'c6' in bank.lower() and doc_type == 'fatura_cartao':
+                    transactions = parse_c6_fatura_pdf(text_content, doc_type)
+                elif 'caixa' in bank.lower() or 'CAIXA' in text_content:
+                    # Use the Caixa specific parser
+                    caixa_result = process_caixa_extrato_text(text_content)
+                    if caixa_result.get('processing_success', False):
+                        transactions = caixa_result.get('transactions', [])
+                
+                # Try the old unified parser as last resort
+                if not transactions:
+                    try:
+                        unified_result = parse_brazilian_bank_document(text_content, doc_type)
+                        if unified_result.get('processing_success', False):
+                            transactions = unified_result.get('transactions', [])
+                            bank = unified_result.get('bank', bank)
+                            print(f"Old unified parser extracted {len(transactions)} transactions from {unified_result.get('bank', 'unknown')} bank")
+                    except Exception as e:
+                        print(f"Old unified parser failed: {e}")
             
             # Generic fallback for PDFs that might be bank statements
             if not transactions and text_content.strip():
