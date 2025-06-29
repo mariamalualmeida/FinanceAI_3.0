@@ -632,6 +632,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'uploaded',
       });
 
+      // Criar mensagem do usuário com o anexo IMEDIATAMENTE
+      if (conversationId) {
+        await storage.createMessage({
+          conversationId,
+          sender: 'user',
+          content: `📎 Enviou arquivo: ${file.originalname}`,
+          metadata: {
+            attachments: [{
+              id: fileUpload.id,
+              originalname: file.originalname,
+              filename: file.filename,
+              fileType: path.extname(file.originalname).toLowerCase().slice(1),
+              fileSize: file.size,
+              mimeType: file.mimetype || 'application/octet-stream'
+            }]
+          }
+        });
+        console.log(`[Upload] ✅ Mensagem com anexo criada: ${file.originalname}`);
+      }
+
       // Process file asynchronously with NoLimitExtractor
       setTimeout(async () => {
         try {

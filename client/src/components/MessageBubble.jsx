@@ -53,16 +53,27 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
             }`}>
               
               {/* Arquivos anexados */}
-              {message.files && message.files.length > 0 && (
+              {(message.files && message.files.length > 0) || (message.metadata?.attachments && message.metadata.attachments.length > 0) ? (
                 <div className="mb-3 flex flex-wrap gap-2">
-                  {message.files.map((file, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                  {/* Arquivos diretos */}
+                  {message.files?.map((file, index) => (
+                    <div key={`file-${index}`} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
                       <File size={16} className="text-gray-500" />
                       <span className="text-sm text-gray-700 dark:text-gray-300">{file.name}</span>
                     </div>
                   ))}
+                  {/* Anexos de metadata */}
+                  {message.metadata?.attachments?.map((attachment, index) => (
+                    <div key={`attachment-${index}`} className="flex items-center gap-2 bg-blue-100 dark:bg-blue-800 px-3 py-2 rounded-lg">
+                      <File size={16} className="text-blue-600 dark:text-blue-300" />
+                      <span className="text-sm text-blue-700 dark:text-blue-200">{attachment.originalname}</span>
+                      <span className="text-xs text-blue-500 dark:text-blue-400">
+                        ({(attachment.fileSize / 1024).toFixed(1)} KB)
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
+              ) : null}
               
               {/* Texto da mensagem */}
               <div className={`text-gray-900 dark:text-gray-100 leading-relaxed text-sm ${
