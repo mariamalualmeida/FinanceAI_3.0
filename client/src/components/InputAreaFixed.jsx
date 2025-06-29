@@ -260,17 +260,7 @@ export default function InputAreaFixed({ onSend, onFileUpload, onFinancialAnalys
                   <Paperclip size={20} />
                 </button>
 
-                {/* Botão de análise financeira */}
-                {onFinancialAnalysis && (
-                  <button
-                    onClick={onFinancialAnalysis}
-                    className="p-2 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors bg-transparent"
-                    disabled={isDisabled}
-                    title="Análise Financeira"
-                  >
-                    <FileText size={20} />
-                  </button>
-                )}
+
               </div>
 
               {/* Ícones direitos */}
