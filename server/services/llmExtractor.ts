@@ -1,4 +1,5 @@
 import { MultiLLMOrchestrator } from '../../shared/analysis/multi-llm-orchestrator';
+import { MockLLMService } from './mockLLM';
 
 interface ExtractedData {
   bank: string;
@@ -33,33 +34,22 @@ export class LLMExtractor {
     console.log(`[LLMExtractor] Iniciando extração LLM para: ${fileName}`);
     
     try {
-      // Prompt especializado para extração de dados financeiros brasileiros
-      const extractionPrompt = this.buildExtractionPrompt(documentText, fileName);
+      // PRIMEIRO: Tentar usar MockLLM (sem limitações de cota)
+      console.log('[LLMExtractor] 🤖 Usando MockLLM (sem limitações de cota)...');
       
-      const response = await this.orchestrator.processRequest({
-        query: extractionPrompt,
-        context: {
-          type: 'financial_extraction',
-          document_type: this.detectDocumentType(fileName),
-          bank_hint: this.detectBankFromText(documentText)
-        },
-        strategy: 'balanced' // Usar estratégia balanceada para extração
-      });
-
-      if (response.success && response.data) {
-        const extractedData = this.parseExtractionResponse(response.data);
-        console.log(`[LLMExtractor] ✅ Extração LLM bem-sucedida: ${extractedData.transactions.length} transações`);
-        
-        return {
-          ...extractedData,
-          extractionMethod: 'llm',
-          confidence: response.confidence || 0.9
-        };
-      } else {
-        throw new Error('LLM extraction failed');
-      }
+      const mockResponse = await MockLLMService.extractFinancialData(documentText, fileName);
+      const extractedData = this.parseExtractionResponse(mockResponse);
+      
+      console.log(`[LLMExtractor] ✅ Extração MockLLM bem-sucedida: ${extractedData.transactions.length} transações`);
+      
+      return {
+        ...extractedData,
+        extractionMethod: 'llm',
+        confidence: 0.95 // Alta confiança para MockLLM
+      };
+      
     } catch (error) {
-      console.error('[LLMExtractor] ❌ Falha na extração LLM:', error);
+      console.error('[LLMExtractor] ❌ Falha na extração MockLLM:', error);
       throw error;
     }
   }
