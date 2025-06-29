@@ -94,8 +94,43 @@ class BrazilianBanksParser:
                 'transaction_indicators': ['PIX', 'Transferência', 'Compra', 'Pagamento']
             },
             'picpay': {
-                'identifiers': ['PICPAY', 'PIC PAY'],
-                'account_pattern': r'Conta:\s*(@[\w\.]+)',
+                'identifiers': ['PICPAY', 'PIC PAY', 'MASTERCARD GOLD', 'Oi\u00ea'],
+                'account_pattern': r'Leonardo Almeida Santos|@[\w\.]+',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'R?\$?\s*([\d\.,]+)',
+                'transaction_indicators': ['Fatura anterior', 'Pagamento recebido', 'Despesas do m\u00eas', 'Total da fatura']
+            },
+            'stone': {
+                'identifiers': ['STONE', 'STONE INSTITUIÇÃO', 'STONE PAGAMENTO'],
+                'account_pattern': r'Conta\s*(\d{7}-\d)',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'([\d\.,]+)',
+                'transaction_indicators': ['Recebimento vendas', 'Antecipação', 'Transferência', 'Pagamento']
+            },
+            'infinitepay': {
+                'identifiers': ['INFINITEPAY', 'INFINITE PAY', 'LEONARDO DE ALMEIDA SANTOS'],
+                'account_pattern': r'CPF/CNPJ:\s*([\d\.-]+)',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'[+-]?([\d\.,]+)',
+                'transaction_indicators': ['Pix Para', 'Pix De', 'Saldo do dia', 'UBER DO BRASIL']
+            },
+            'pagbank': {
+                'identifiers': ['PAGBANK', 'PAG BANK', 'PAGSEGURO'],
+                'account_pattern': r'Conta:\s*(\d+)',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'R?\$?\s*([\d\.,]+)',
+                'transaction_indicators': ['PIX', 'Transferência', 'Recebimento', 'Pagamento']
+            },
+            'mercadopago': {
+                'identifiers': ['MERCADO PAGO', 'MERCADOPAGO', 'MP'],
+                'account_pattern': r'CVU:\s*(\d+)',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'R?\$?\s*([\d\.,]+)',
+                'transaction_indicators': ['Transferência', 'Recebimento', 'Compra', 'Venda']
+            },
+            'will_bank': {
+                'identifiers': ['WILL BANK', 'WILL', 'BANCO WILL'],
+                'account_pattern': r'Conta:\s*(\d+)',
                 'date_format': r'(\d{2})/(\d{2})/(\d{4})',
                 'value_pattern': r'R?\$?\s*([\d\.,]+)',
                 'transaction_indicators': ['PIX', 'Transferência', 'Pagamento', 'Recebimento']
