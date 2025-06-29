@@ -155,41 +155,7 @@ Responda APENAS em formato JSON:
     }
   }
 
-  private async validateWithGemini(genAI: GoogleGenerativeAI, documentText: string, extractedData: any): Promise<ValidationResult> {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    
-    const prompt = `
-Analise este documento financeiro brasileiro e compare com os dados extraídos:
-
-DOCUMENTO: ${documentText.substring(0, 2000)}
-DADOS EXTRAÍDOS: ${JSON.stringify(extractedData, null, 2)}
-
-Retorne JSON com validationScore (0-100), accuracy (transactions, dates, amounts, descriptions), discrepancies e recommendations.`;
-
-    try {
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
-      
-      // Extrair JSON da resposta
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        return {
-          documentName: extractedData.filename || 'Unknown',
-          extractedData,
-          validationScore: parsed.validationScore || 0,
-          discrepancies: parsed.discrepancies || [],
-          accuracy: parsed.accuracy || { transactions: 0, dates: 0, amounts: 0, descriptions: 0 },
-          recommendations: parsed.recommendations || []
-        };
-      }
-      
-      return this.createErrorResult(extractedData);
-    } catch (error) {
-      console.error('Gemini validation error:', error);
-      return this.createErrorResult(extractedData);
-    }
-  }
+  // Gemini validation removed for now
 
   private async validateWithXAI(xai: OpenAI, documentText: string, extractedData: any): Promise<ValidationResult> {
     const prompt = `
