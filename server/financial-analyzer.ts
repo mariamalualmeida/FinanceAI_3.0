@@ -58,8 +58,14 @@ export class FinancialAnalyzer {
       // Calculate credit score using the file processor
       const creditScore = await fileProcessor.calculateCreditScore(transactions, processedDocument.metadata.personalData);
       
-      // Perform comprehensive analysis
-      const analysisResult = await this.performAnalysis(formattedTransactions, processedDocument.text);
+      // Perform comprehensive analysis (bypass LLM if quota exceeded)
+      let analysisResult: FinancialAnalysisResult;
+      try {
+        analysisResult = await this.performAnalysis(formattedTransactions, processedDocument.text);
+      } catch (error) {
+        console.log('LLM analysis failed, using fallback analysis:', error);
+        analysisResult = this.generateBasicAnalysis(formattedTransactions);
+      }
       
       // Override with calculated values from processing
       analysisResult.creditScore = creditScore;
