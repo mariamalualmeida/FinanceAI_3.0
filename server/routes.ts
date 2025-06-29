@@ -738,9 +738,11 @@ Para melhor análise, envie extratos em PDF ou Excel.
         });
       }
 
-      // Se não há conversationId, criar nova conversa com título inteligente
+      // Verificar se conversationId é um UUID válido
       let currentConversationId = conversationId;
-      if (!currentConversationId) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
+      if (!currentConversationId || !uuidRegex.test(currentConversationId)) {
         // Gerar título baseado nas primeiras palavras da mensagem
         const words = message.trim().split(' ');
         const smartTitle = words.slice(0, 4).join(' '); // Primeiras 4 palavras
