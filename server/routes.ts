@@ -639,9 +639,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateFileUploadStatus(fileUpload.id, 'processing');
           console.log(`[NoLimit] Processando arquivo: ${file.originalname}`);
 
-          // Usar NoLimitExtractor para análise sem limitações
-          const { extractFinancialData } = await import('./services/noLimitExtractor.js');
-          const extractedData = await extractFinancialData(file.path, file.originalname, req.session.userId);
+          // Usar RealDocumentExtractor para análise de arquivos reais
+          const { extractFromRealDocument } = await import('./services/realDocumentExtractor.js');
+          const extractedData = await extractFromRealDocument(file.path, file.originalname, req.session.userId);
           
           console.log(`[NoLimit] ✅ Extração concluída: ${extractedData.transactions.length} transações`);
           

@@ -67,15 +67,15 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     }
   }
 
-  const onSelectChat = (chatId: string) => {
+  const onSelectChat = (chatId: string, fromMenuAction?: boolean) => {
     // Encontrar a conversa completa pelo ID
     const conversation = conversations.find(conv => conv.id === chatId)
     if (conversation && onSelectConversation) {
       onSelectConversation(conversation)
     }
     
-    // Fechar sidebar automaticamente ao selecionar conversa
-    if (onClose) {
+    // Fechar sidebar apenas se não for uma ação do menu (renomear, arquivar, excluir)
+    if (onClose && !fromMenuAction) {
       onClose()
     }
   }
