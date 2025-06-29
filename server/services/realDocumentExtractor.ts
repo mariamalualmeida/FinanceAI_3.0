@@ -345,7 +345,7 @@ export class RealDocumentExtractor {
     
     creditScore = Math.min(creditScore, 850);
     
-    const riskLevel = creditScore >= 700 ? 'low' : creditScore >= 550 ? 'medium' : 'high';
+    const riskLevel: 'low' | 'medium' | 'high' = creditScore >= 700 ? 'low' : creditScore >= 550 ? 'medium' : 'high';
     
     const recommendations = [];
     if (finalBalance < 0) recommendations.push('Saldo negativo requer atenção');
