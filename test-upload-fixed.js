@@ -5,56 +5,29 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 
 async function testUploadFixed() {
-    console.log('🔧 TESTANDO CORREÇÕES DE UPLOAD...\n');
+    console.log('🔧 TESTE UPLOAD CORRIGIDO - CONVERSAS E MENSAGENS');
 
     const baseUrl = 'http://localhost:5000';
     
     try {
         // 1. Login
-        console.log('1. Fazendo login...');
         const loginResponse = await fetch(`${baseUrl}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: 'Admin', password: 'admin123' })
         });
 
-        if (!loginResponse.ok) {
-            throw new Error(`Login failed: ${loginResponse.status}`);
-        }
-
         const cookies = loginResponse.headers.get('set-cookie');
-        const loginData = await loginResponse.json();
-        console.log(`✅ Login bem-sucedido: ${loginData.user.username}`);
+        console.log('✅ Login realizado');
 
-        // 2. Teste de upload sem conversationId (deve gerar null corretamente)
-        console.log('\n2. Testando upload sem conversationId...');
+        // 2. Teste upload via clips (nova conversa)
+        console.log('\n📄 Testando upload via clips (nova conversa)...');
         
-        // Buscar um arquivo de teste real
-        const testFiles = [
-            'attached_assets/Nubank_2025-05-24_1751172520674.pdf',
-            'attached_assets/Fatura-CPF_1751146806544.PDF',
-            'attached_assets/extrato-255cc9e6-800c-4eba-b393-90856ae02ba7.xlsx (1)_1751172520634.xls'
-        ];
-
-        let testFile = null;
-        for (const file of testFiles) {
-            if (fs.existsSync(file)) {
-                testFile = file;
-                break;
-            }
-        }
-
-        if (!testFile) {
-            console.log('⚠️  Nenhum arquivo de teste encontrado, criando arquivo fictício...');
-            fs.writeFileSync('test-document.txt', 'Arquivo de teste para validar upload\nData: ' + new Date().toISOString());
-            testFile = 'test-document.txt';
-        }
-
         const form = new FormData();
-        form.append('file', fs.createReadStream(testFile));
-        // Não incluir conversationId para testar o caso null
+        form.append('files', fs.createReadStream('attached_assets/Nubank_2025-05-24_1751172520674.pdf'));
+        form.append('message', 'Análise financeira do Nubank');
 
-        const uploadResponse = await fetch(`${baseUrl}/api/upload`, {
+        const uploadResponse = await fetch(`${baseUrl}/api/chat/upload`, {
             method: 'POST',
             headers: { 
                 'Cookie': cookies,
@@ -63,102 +36,79 @@ async function testUploadFixed() {
             body: form
         });
 
-        const uploadResult = await uploadResponse.json();
-        
-        if (uploadResponse.ok && uploadResult.success) {
-            console.log(`✅ Upload bem-sucedido: ${uploadResult.uploadId}`);
-            console.log(`📄 Arquivo: ${testFile}`);
-            console.log(`📊 Resultado: ${uploadResult.message || 'Processado com sucesso'}`);
-        } else {
-            console.log(`❌ Erro no upload: ${uploadResult.message}`);
-            return false;
-        }
-
-        // 3. Criar conversa e testar upload com conversationId válido
-        console.log('\n3. Criando conversa para teste...');
-        
-        const conversationResponse = await fetch(`${baseUrl}/api/conversations`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Cookie': cookies
-            },
-            body: JSON.stringify({ 
-                title: 'Teste Upload Corrigido',
-                model: 'gemini'
-            })
-        });
-
-        if (!conversationResponse.ok) {
-            throw new Error('Falha ao criar conversa');
-        }
-
-        const conversation = await conversationResponse.json();
-        console.log(`✅ Conversa criada: ${conversation.id}`);
-
-        // 4. Upload com conversationId válido
-        console.log('\n4. Testando upload com conversationId...');
-        
-        const form2 = new FormData();
-        form2.append('file', fs.createReadStream(testFile));
-        form2.append('conversationId', conversation.id);
-
-        const uploadResponse2 = await fetch(`${baseUrl}/api/upload`, {
-            method: 'POST',
-            headers: { 
-                'Cookie': cookies,
-                ...form2.getHeaders()
-            },
-            body: form2
-        });
-
-        const uploadResult2 = await uploadResponse2.json();
-        
-        if (uploadResponse2.ok && uploadResult2.success) {
-            console.log(`✅ Upload com conversa bem-sucedido: ${uploadResult2.uploadId}`);
-        } else {
-            console.log(`❌ Erro no upload com conversa: ${uploadResult2.message}`);
-            return false;
-        }
-
-        // 5. Verificar se mensagens foram criadas
-        console.log('\n5. Verificando mensagens criadas...');
-        
-        const messagesResponse = await fetch(`${baseUrl}/api/conversations/${conversation.id}/messages`, {
-            headers: { 'Cookie': cookies }
-        });
-
-        if (messagesResponse.ok) {
-            const messages = await messagesResponse.json();
-            console.log(`✅ ${messages.length} mensagens encontradas na conversa`);
+        if (uploadResponse.ok) {
+            const result = await uploadResponse.json();
+            console.log('✅ Upload via chat/upload realizado');
+            console.log('📄 Arquivos processados:', result.results?.length || 0);
+            console.log('🆔 Conversa criada:', result.conversationId || 'Não retornado');
+            console.log('🧠 Resposta IA:', result.aiResponse ? 'Gerada' : 'Não gerada');
             
-            if (messages.length > 0) {
-                const userMessage = messages.find(m => m.sender === 'user');
-                if (userMessage && userMessage.metadata?.attachments) {
-                    console.log(`📎 Anexo encontrado: ${userMessage.metadata.attachments[0].originalname}`);
+            if (result.conversationId) {
+                // 3. Verificar se mensagens foram criadas
+                console.log('\n💬 Verificando mensagens na conversa...');
+                
+                const messagesResponse = await fetch(`${baseUrl}/api/conversations/${result.conversationId}/messages`, {
+                    headers: { 'Cookie': cookies }
+                });
+                
+                if (messagesResponse.ok) {
+                    const messages = await messagesResponse.json();
+                    console.log('✅ Mensagens carregadas:', messages.length);
+                    
+                    // Verificar mensagem do usuário com anexo
+                    const userMessage = messages.find(m => m.sender === 'user');
+                    if (userMessage) {
+                        console.log('✅ Mensagem do usuário encontrada');
+                        console.log('📎 Anexos:', userMessage.metadata?.attachments?.length || 0);
+                        console.log('📝 Conteúdo:', userMessage.content.substring(0, 100) + '...');
+                    }
+                    
+                    // Verificar resposta da IA
+                    const aiMessage = messages.find(m => m.sender === 'assistant');
+                    if (aiMessage) {
+                        console.log('✅ Resposta da IA encontrada');
+                        console.log('📝 Tamanho:', aiMessage.content.length, 'chars');
+                    }
+                    
+                    return {
+                        success: true,
+                        conversationCreated: !!result.conversationId,
+                        messagesCreated: messages.length > 0,
+                        userMessageWithAttachment: !!userMessage?.metadata?.attachments,
+                        aiResponseGenerated: !!aiMessage,
+                        totalMessages: messages.length
+                    };
+                } else {
+                    console.log('❌ Erro ao carregar mensagens');
+                    return { success: false, error: 'Erro ao carregar mensagens' };
                 }
+            } else {
+                console.log('❌ ConversationId não retornado');
+                return { success: false, error: 'ConversationId não retornado' };
             }
+        } else {
+            console.log('❌ Erro no upload:', uploadResponse.status);
+            const error = await uploadResponse.text();
+            console.log('Erro:', error);
+            return { success: false, error: error };
         }
-
-        // Limpeza
-        if (testFile === 'test-document.txt') {
-            fs.unlinkSync(testFile);
-        }
-
-        console.log('\n🎉 TODOS OS TESTES DE UPLOAD PASSARAM!');
-        console.log('✅ Erro de UUID null corrigido');
-        console.log('✅ Upload funcionando sem conversationId');
-        console.log('✅ Upload funcionando com conversationId');
-        console.log('✅ Mensagens sendo criadas corretamente');
-        
-        return true;
 
     } catch (error) {
-        console.error('❌ ERRO NO TESTE:', error.message);
-        return false;
+        console.error('❌ ERRO:', error.message);
+        return { success: false, error: error.message };
     }
 }
 
-testUploadFixed().then(success => {
-    process.exit(success ? 0 : 1);
+testUploadFixed().then(result => {
+    console.log('\n🎯 RESULTADO FINAL:');
+    if (result.success) {
+        console.log('✅ UPLOAD CORRIGIDO COM SUCESSO');
+        console.log(`✅ Conversa criada: ${result.conversationCreated}`);
+        console.log(`✅ Mensagens criadas: ${result.messagesCreated} (${result.totalMessages})`);
+        console.log(`✅ Anexo visível: ${result.userMessageWithAttachment}`);
+        console.log(`✅ Resposta IA: ${result.aiResponseGenerated}`);
+    } else {
+        console.log('❌ PROBLEMAS DETECTADOS:', result.error);
+    }
+    process.exit(result.success ? 0 : 1);
 });

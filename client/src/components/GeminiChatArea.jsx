@@ -41,6 +41,21 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
 
   // Função para carregar mensagens da conversa
   const loadConversationMessages = async (conversationId) => {
+    // Validação crítica: verificar se conversationId é válido
+    if (!conversationId || conversationId === 'null' || conversationId === 'undefined') {
+      console.warn('ConversationId inválido:', conversationId)
+      setMessages([])
+      return
+    }
+
+    // Validar formato UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(conversationId)) {
+      console.warn('ConversationId não é um UUID válido:', conversationId)
+      setMessages([])
+      return
+    }
+
     try {
       const response = await fetch(`/api/conversations/${conversationId}/messages`, {
         credentials: 'include'
@@ -51,11 +66,17 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           id: msg.id,
           sender: msg.sender,
           text: msg.content,
-          timestamp: new Date(msg.createdAt)
+          content: msg.content,
+          timestamp: new Date(msg.createdAt),
+          metadata: msg.metadata
         })))
+      } else {
+        console.error('Erro ao carregar mensagens:', response.status, response.statusText)
+        setMessages([])
       }
     } catch (error) {
       console.error('Erro ao carregar mensagens:', error)
+      setMessages([])
     }
   }
 
@@ -275,7 +296,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     }, 5000);
   };
 
-  // Função para upload via clips - simples e direto
+  // Função para upload via clips - corrigida para criar conversa se necessário
   const handleClipsUpload = async (file) => {
     try {
       console.log('📎 Processando arquivo via clips:', file.name);
@@ -288,36 +309,68 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         progress: 0
       }]);
       
-      // Criar FormData com o arquivo real do usuário
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('conversationId', currentConversationId);
-      
-      // Upload via API normal (não a do financial-document)
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        // Atualizar status para concluído
-        setUploadingFiles(prev => prev.map(f => ({ 
-          ...f, 
-          status: 'completed',
-          progress: 100
-        })));
+      // Se não há conversa atual, usar a rota de chat/upload que cria automaticamente
+      if (!currentConversationId) {
+        const formData = new FormData();
+        formData.append('files', file);
+        formData.append('message', `Análise do arquivo: ${file.name}`);
         
-        console.log('✅ Upload via clips concluído:', result);
+        const response = await fetch('/api/chat/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
         
-        // Recarregar mensagens para mostrar o arquivo anexado
-        setTimeout(() => {
-          loadConversationMessages(currentConversationId);
-        }, 1000);
+        const result = await response.json();
         
+        if (response.ok && result.success) {
+          setUploadingFiles(prev => prev.map(f => ({ 
+            ...f, 
+            status: 'completed',
+            progress: 100
+          })));
+          
+          console.log('✅ Upload via clips concluído (nova conversa):', result);
+          
+          // Se uma nova conversa foi criada, atualizá-la
+          if (result.conversationId) {
+            setCurrentConversationId(result.conversationId);
+            onConversationUpdate && onConversationUpdate(); // Atualizar lista de conversas
+            loadConversationMessages(result.conversationId);
+          }
+        } else {
+          throw new Error(result.message || 'Erro no upload');
+        }
       } else {
-        throw new Error(result.message || 'Erro no upload');
+        // Se já há uma conversa, usar upload simples
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('conversationId', currentConversationId);
+        
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          setUploadingFiles(prev => prev.map(f => ({ 
+            ...f, 
+            status: 'completed',
+            progress: 100
+          })));
+          
+          console.log('✅ Upload via clips concluído:', result);
+          
+          // Recarregar mensagens da conversa atual
+          setTimeout(() => {
+            loadConversationMessages(currentConversationId);
+          }, 1000);
+        } else {
+          throw new Error(result.message || 'Erro no upload');
+        }
       }
       
     } catch (error) {
