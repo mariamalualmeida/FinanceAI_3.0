@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-// import { GoogleGenerativeAI } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { storage } from './storage';
 import type { LlmConfig, MultiLlmStrategy, SystemPrompts } from '@shared/schema';
 
@@ -25,9 +25,85 @@ class MultiLLMOrchestrator {
 
   async initialize() {
     try {
-      // Configuração direta do OpenAI se disponível
+      console.log('Initializing Multi-LLM Orchestrator with API keys...');
+      
+      // Prioridade 1: Gemini (principal)
+      if (process.env.GEMINI_API_KEY) {
+        console.log('Initializing Gemini provider as PRIMARY');
+        
+        const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const provider: LLMProvider = {
+          name: 'gemini',
+          client: gemini,
+          generateResponse: async (prompt: string, context?: string) => {
+            const fullPrompt = context ? `${prompt}\n\nContexto: ${context}` : prompt;
+            
+            const response = await gemini.models.generateContent({
+              model: 'gemini-2.5-flash',
+              contents: fullPrompt
+            });
+            
+            return response.text || '';
+          },
+          isHealthy: async () => {
+            try {
+              const testResponse = await gemini.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: 'Test'
+              });
+              return !!testResponse.text;
+            } catch {
+              return false;
+            }
+          }
+        };
+        
+        this.providers.set('gemini', provider);
+        console.log('✅ Gemini provider initialized as PRIMARY');
+      }
+
+      // Prioridade 2: Claude/Anthropic (backup)
+      if (process.env.ANTHROPIC_API_KEY) {
+        console.log('Initializing Anthropic provider as BACKUP');
+        
+        const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+        const provider: LLMProvider = {
+          name: 'anthropic',
+          client: anthropic,
+          generateResponse: async (prompt: string, context?: string) => {
+            const messages = [
+              { role: 'user', content: context ? `${prompt}\n\nContexto: ${context}` : prompt }
+            ];
+            
+            const response = await anthropic.messages.create({
+              model: 'claude-sonnet-4-20250514',
+              messages: messages as any,
+              max_tokens: 4000
+            });
+            
+            return response.content[0].type === 'text' ? response.content[0].text : '';
+          },
+          isHealthy: async () => {
+            try {
+              const testResponse = await anthropic.messages.create({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 5,
+                messages: [{ role: 'user', content: 'Test' }]
+              });
+              return !!testResponse.content[0];
+            } catch {
+              return false;
+            }
+          }
+        };
+        
+        this.providers.set('anthropic', provider);
+        console.log('✅ Anthropic provider initialized as BACKUP');
+      }
+
+      // Prioridade 3: OpenAI (se disponível)
       if (process.env.OPENAI_API_KEY) {
-        console.log('Initializing OpenAI provider directly');
+        console.log('Initializing OpenAI provider as TERTIARY');
         
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         const provider: LLMProvider = {
@@ -48,15 +124,27 @@ class MultiLLMOrchestrator {
             
             return response.choices[0].message.content || '';
           },
-          isHealthy: async () => true
+          isHealthy: async () => {
+            try {
+              const testResponse = await openai.chat.completions.create({
+                model: 'gpt-4o',
+                messages: [{ role: 'user', content: 'Test' }],
+                max_tokens: 5
+              });
+              return !!testResponse.choices[0];
+            } catch {
+              return false;
+            }
+          }
         };
         
         this.providers.set('openai', provider);
-        console.log(`OpenAI provider initialized successfully. Total providers: ${this.providers.size}`);
-        return;
+        console.log('✅ OpenAI provider initialized as TERTIARY');
       }
 
-      console.log('No OpenAI API key found');
+      console.log(`Multi-LLM Orchestrator initialized with ${this.providers.size} providers`);
+      console.log(`Available providers: ${Array.from(this.providers.keys()).join(', ')}`);
+      
     } catch (error) {
       console.error('Error initializing LLM orchestrator:', error);
     }
