@@ -14,6 +14,7 @@ import {
 } from "@shared/schema";
 import { financialAnalyzer } from './financial-analyzer';
 import { multiLlmOrchestrator } from './multi-llm-orchestrator';
+import { fileProcessor } from './services/fileProcessor';
 
 declare module "express-session" {
   interface SessionData {
