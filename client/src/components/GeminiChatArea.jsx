@@ -84,7 +84,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     const finalText = text || (audioData?.transcription ? audioData.transcription : '')
     setInputText('')
     setAudioData(null)
-    setIsTyping(true)
+    setIsTyping(true) // Ativar processamento imediatamente
 
     try {
       if (files.length > 0) {
@@ -113,11 +113,10 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
             onConversationUpdate && onConversationUpdate()
           }
           
-          // Recarregar mensagens da conversa
-          setTimeout(() => {
-            loadConversationMessages(result.conversationId || currentConversationId)
-          }, 500)
+          // Recarregar mensagens da conversa imediatamente
+          loadConversationMessages(result.conversationId || currentConversationId)
         } else {
+          setIsTyping(false)
           throw new Error(result.message || 'Erro ao processar arquivos')
         }
       } else {
@@ -170,6 +169,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
       }
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
+    } finally {
       setIsTyping(false)
     }
   }
