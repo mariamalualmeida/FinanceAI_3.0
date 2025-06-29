@@ -13,7 +13,7 @@ import {
   type User 
 } from "@shared/schema";
 import { financialAnalyzer } from './financial-analyzer';
-import { multiLlmOrchestrator } from './multi-llm-orchestrator';
+import { advancedMultiLLMOrchestrator } from './advanced-multi-llm-orchestrator';
 import { fileProcessor } from './services/fileProcessor';
 import { HybridExtractor } from './services/hybridExtractor';
 import { SimpleLLMExtractor } from './services/simpleLLMExtractor';
@@ -773,18 +773,21 @@ Para melhor análise, envie extratos em PDF ou Excel.
       let aiResponse;
       
       try {
-        console.log('Attempting to use Multi-LLM orchestrator with Gemini...');
-        await multiLlmOrchestrator.initialize();
+        console.log('Attempting to use Advanced Multi-LLM orchestrator...');
+        await advancedMultiLLMOrchestrator.initialize();
         
-        // Try to generate response using Gemini first
-        aiResponse = await multiLlmOrchestrator.generateResponse(message, {
-          strategy: 'balanced'
-        });
+        // Use intelligent orchestration with specialization
+        const analysisResult = await advancedMultiLLMOrchestrator.analyzeWithIntelligentOrchestration(
+          message, 
+          'documentAnalysis',
+          { maxTokens: 2000, temperature: 0.7 }
+        );
         
-        console.log('✅ Successfully used external LLM (Gemini/Anthropic)');
+        aiResponse = analysisResult.response;
+        console.log(`✅ Advanced Multi-LLM used: ${analysisResult.provider} (Enhanced: ${analysisResult.enhanced}, Validated: ${analysisResult.validated})`);
         
       } catch (llmError) {
-        console.log('❌ External LLMs failed, using local fallback:', llmError.message);
+        console.log('❌ External LLMs failed, using local fallback:', (llmError as Error).message);
         console.log('Using local fallback due to API issues');
         
         // Fallback para sistema local quando APIs falham
