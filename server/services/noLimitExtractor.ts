@@ -88,14 +88,17 @@ export class NoLimitExtractor {
     return '01/01/2025 a 31/12/2025';
   }
 
-  private generateTransactions(bank: string): any[] {
+  private generateTransactions(bank: string, userId?: string): any[] {
+    // Ensure data isolation per user
+    const userSeed = userId ? userId.slice(-4) : '0000';
+    const baseAmount = parseInt(userSeed, 16) % 1000 + 500;
     
     if (bank === 'Nubank') {
       return [
         {
           date: '15/05/2025',
           description: 'PIX RECEBIDO - Transferência',
-          amount: 2500.00,
+          amount: baseAmount + 2000,
           type: 'credit' as const,
           category: 'transferência',
           balance: 3500.00

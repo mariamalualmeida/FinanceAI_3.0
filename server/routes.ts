@@ -603,9 +603,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload and analysis
-  app.post('/api/upload', isAuthenticated, upload.single('file'), async (req: any, res) => {
+  app.post('/api/upload', isAuthenticated, upload.any(), async (req: any, res) => {
     try {
-      if (!req.file) {
+      const file = req.files && req.files.length > 0 ? req.files[0] : req.file;
+      if (!file) {
         return res.status(400).json({ 
           success: false, 
           message: 'No file uploaded' 
@@ -618,11 +619,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fileUpload = await storage.createFileUpload({
         userId: req.session.userId!,
         conversationId,
-        originalName: req.file.originalname,
-        fileName: req.file.filename,
-        fileType: path.extname(req.file.originalname).toLowerCase().slice(1),
-        fileSize: req.file.size,
-        filePath: req.file.path,
+        originalName: file.originalname,
+        fileName: file.filename,
+        fileType: path.extname(file.originalname).toLowerCase().slice(1),
+        fileSize: file.size,
+        filePath: file.path,
         status: 'uploaded',
       });
 
@@ -630,11 +631,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       setTimeout(async () => {
         try {
           await storage.updateFileUploadStatus(fileUpload.id, 'processing');
-          console.log(`[NoLimit] Processando arquivo: ${req.file!.originalname}`);
+          console.log(`[NoLimit] Processando arquivo: ${file.originalname}`);
 
           // Usar NoLimitExtractor para análise sem limitações
           const { extractFinancialData } = await import('./services/noLimitExtractor.js');
-          const extractedData = await extractFinancialData(req.file!.path, req.file!.originalname);
+          const extractedData = await extractFinancialData(file.path, file.originalname);
           
           console.log(`[NoLimit] ✅ Extração concluída: ${extractedData.transactions.length} transações`);
           
@@ -643,7 +644,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const summary = extractedData.summary;
             const analysisMessage = `**📊 ANÁLISE FINANCEIRA - ${extractedData.bank?.toUpperCase() || 'DOCUMENTO FINANCEIRO'}**
 
-**📄 Arquivo Processado:** ${req.file!.originalname}
+**📄 Arquivo Processado:** ${file.originalname}
 **🏦 Instituição:** ${extractedData.bank || 'Banco Brasileiro'}
 **👤 Titular:** ${extractedData.accountHolder || 'Conta Analisada'}
 **📅 Período:** ${extractedData.period || 'Período Analisado'}
@@ -894,6 +895,115 @@ Como posso ajudar você hoje?`;
         success: false,
         message: 'Server error',
         error: error.message
+      });
+    }
+  });
+
+  // Consolidated Analysis endpoint - Multiple documents
+  app.post('/api/analysis/consolidated', isAuthenticated, upload.array('files', 10), async (req: any, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      const conversationId = req.body.conversationId;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'No files uploaded for consolidated analysis' 
+        });
+      }
+
+      const analyses = [];
+      let totalCredits = 0, totalDebits = 0, totalTransactions = 0;
+      const institutions = new Set();
+      const accountHolders = new Set();
+
+      // Process each document
+      for (const file of files) {
+        const { extractFinancialData } = await import('./services/noLimitExtractor.js');
+        const data = await extractFinancialData(file.path, file.originalname);
+        
+        analyses.push({
+          filename: file.originalname,
+          bank: data.bank,
+          accountHolder: data.accountHolder,
+          transactions: data.transactions.length,
+          summary: data.summary
+        });
+
+        totalCredits += data.summary.totalCredits;
+        totalDebits += data.summary.totalDebits;
+        totalTransactions += data.transactions.length;
+        
+        if (data.bank) institutions.add(data.bank);
+        if (data.accountHolder) accountHolders.add(data.accountHolder);
+      }
+
+      // Consolidated analysis
+      const consolidatedScore = Math.round((totalCredits / Math.max(totalDebits, 1)) * 100);
+      const riskLevel = consolidatedScore >= 300 ? 'low' : consolidatedScore >= 150 ? 'medium' : 'high';
+
+      const consolidatedMessage = `**🏦 ANÁLISE CONSOLIDADA - MÚLTIPLOS DOCUMENTOS**
+
+**📊 VISÃO GERAL:**
+• **Documentos analisados:** ${files.length}
+• **Instituições:** ${Array.from(institutions).join(', ') || 'Múltiplas'}
+• **Titulares:** ${Array.from(accountHolders).join(', ') || 'Múltiplos'}
+
+**💰 RESUMO CONSOLIDADO:**
+• **Total de Créditos:** R$ ${totalCredits.toFixed(2)}
+• **Total de Débitos:** R$ ${totalDebits.toFixed(2)}
+• **Saldo Líquido:** R$ ${(totalCredits - totalDebits).toFixed(2)}
+• **Total de Transações:** ${totalTransactions}
+
+**🎯 SCORE CONSOLIDADO:** ${consolidatedScore}/1000
+**⚠️ Nível de Risco:** ${riskLevel === 'low' ? '🟢 BAIXO' : riskLevel === 'medium' ? '🟡 MÉDIO' : '🔴 ALTO'}
+
+**📋 DETALHAMENTO POR DOCUMENTO:**
+${analyses.map((analysis, i) => 
+  `${i + 1}. **${analysis.filename}**
+   • Banco: ${analysis.bank || 'N/A'}
+   • Titular: ${analysis.accountHolder || 'N/A'}
+   • Transações: ${analysis.transactions}
+   • Créditos: R$ ${analysis.summary.totalCredits.toFixed(2)}
+   • Débitos: R$ ${analysis.summary.totalDebits.toFixed(2)}`
+).join('\n\n')}
+
+**💡 RECOMENDAÇÕES CONSOLIDADAS:**
+• Perfil financeiro baseado em ${files.length} documentos
+• ${riskLevel === 'low' ? 'Cliente de baixo risco com bom histórico' : 'Requer análise adicional'}
+• Capacidade de pagamento: ${consolidatedScore >= 200 ? 'Adequada' : 'Limitada'}
+
+---
+*Análise consolidada NoLimitExtractor - ${files.length} documentos processados*`;
+
+      if (conversationId) {
+        await storage.createMessage({
+          conversationId,
+          sender: 'assistant',
+          content: consolidatedMessage
+        });
+      }
+
+      res.json({
+        success: true,
+        consolidated: {
+          documentsProcessed: files.length,
+          totalCredits,
+          totalDebits,
+          totalTransactions,
+          consolidatedScore,
+          riskLevel,
+          institutions: Array.from(institutions),
+          accountHolders: Array.from(accountHolders)
+        },
+        analyses
+      });
+
+    } catch (error) {
+      console.error('Consolidated analysis error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to process consolidated analysis'
       });
     }
   });
