@@ -113,6 +113,20 @@ class BrazilianBanksParser:
                 'date_format': r'(\d{2})/(\d{2})/(\d{4})',
                 'value_pattern': r'R?\$?\s*([\d\.,]+)',
                 'transaction_indicators': ['PIX', 'Transferência', 'Investimento', 'Resgate']
+            },
+            'infinitepay': {
+                'identifiers': ['INFINITEPAY', 'InfinitePay', 'ajuda@infinitepay.io'],
+                'account_pattern': r'CPF:\s*(\d{3}\.\d{3}\.\d{3}-\d{2})',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'([+-]?[\d\.,]+)',
+                'transaction_indicators': ['Pix', 'PIX', 'Transferência', 'Pagamento', 'Recebimento']
+            },
+            'stone': {
+                'identifiers': ['STONE', 'Stone Instituição de Pagamento'],
+                'account_pattern': r'Conta\s*(\d+-\d)',
+                'date_format': r'(\d{2})/(\d{2})/(\d{4})',
+                'value_pattern': r'R?\$?\s*([\d\.,]+)',
+                'transaction_indicators': ['Recebimento vendas', 'Transferência', 'Pix', 'Pagamento']
             }
         }
     
@@ -218,6 +232,12 @@ class BrazilianBanksParser:
             return self._parse_nubank_transactions(text_content)
         elif bank == 'inter':
             return self._parse_inter_transactions(text_content)
+        elif bank == 'infinitepay':
+            return self._parse_infinitepay_transactions(text_content)
+        elif bank == 'stone':
+            return self._parse_stone_transactions(text_content)
+        elif bank == 'picpay':
+            return self._parse_picpay_transactions(text_content)
         else:
             return self._parse_generic_transactions(text_content, bank)
     
@@ -492,6 +512,155 @@ class BrazilianBanksParser:
                         })
                     except Exception as e:
                         continue
+        
+        return transactions
+    
+    def _parse_infinitepay_transactions(self, text_content: str) -> List[Dict]:
+        """Parser específico para InfinitePay"""
+        transactions = []
+        
+        # Padrões específicos do InfinitePay
+        # Formato: data | Pix | Para/De nome | valor
+        pix_pattern = r'(\d{2}\/\d{2}\/\d{4})\s+(?:Saldo do dia|Pix)\s+(?:Para|De)\s+([^0-9+-]+?)\s+([+-]?[\d\.,]+)'
+        
+        for match in re.finditer(pix_pattern, text_content):
+            date_str, description, value_str = match.groups()
+            
+            try:
+                date = datetime.strptime(date_str, '%d/%m/%Y').isoformat()
+                value = self._parse_value(value_str.replace('+', '').replace('-', ''))
+                
+                # Determinar sinal baseado no prefixo
+                if value_str.startswith('-'):
+                    value = -abs(value)
+                
+                transactions.append({
+                    'date': date,
+                    'description': f"PIX - {self._clean_description(description)}",
+                    'value': value,
+                    'type': 'debit' if value < 0 else 'credit',
+                    'category': 'PIX',
+                    'bank': 'infinitepay'
+                })
+            except Exception as e:
+                continue
+        
+        # Padrão alternativo para linhas de transação sem data explícita
+        simple_pix_pattern = r'Pix\s+(?:Para|De)\s+([^0-9+-]+?)\s+([+-]?[\d\.,]+)'
+        
+        for match in re.finditer(simple_pix_pattern, text_content):
+            description, value_str = match.groups()
+            
+            try:
+                value = self._parse_value(value_str.replace('+', '').replace('-', ''))
+                
+                if value_str.startswith('-'):
+                    value = -abs(value)
+                
+                # Usar data padrão se não encontrar data específica
+                current_date = datetime.now().isoformat()
+                
+                transactions.append({
+                    'date': current_date,
+                    'description': f"PIX - {self._clean_description(description)}",
+                    'value': value,
+                    'type': 'debit' if value < 0 else 'credit',
+                    'category': 'PIX',
+                    'bank': 'infinitepay'
+                })
+            except Exception as e:
+                continue
+        
+        return transactions
+    
+    def _parse_stone_transactions(self, text_content: str) -> List[Dict]:
+        """Parser específico para Stone (conta empresarial)"""
+        transactions = []
+        
+        # Padrão Stone: DATA | TIPO | LANÇAMENTO | VALOR | SALDO | CONTRAPARTE
+        pattern = r'(\d{2}\/\d{2}\/\d{4})\s+(Crédito|Débito)\s+([^0-9]+?)\s+([\d\.,]+)\s+([\d\.,]+)\s*([^0-9]*)'
+        
+        for match in re.finditer(pattern, text_content):
+            date_str, transaction_type, description, value_str, balance_str, counterpart = match.groups()
+            
+            try:
+                date = datetime.strptime(date_str, '%d/%m/%Y').isoformat()
+                value = self._parse_value(value_str)
+                
+                # Stone: Débito = saída, Crédito = entrada
+                if transaction_type.lower() == 'débito':
+                    value = -abs(value)
+                
+                transactions.append({
+                    'date': date,
+                    'description': self._clean_description(description),
+                    'value': value,
+                    'type': 'debit' if value < 0 else 'credit',
+                    'category': self._categorize_transaction(description),
+                    'bank': 'stone',
+                    'counterpart': self._clean_description(counterpart) if counterpart else None
+                })
+            except Exception as e:
+                continue
+        
+        return transactions
+    
+    def _parse_picpay_transactions(self, text_content: str) -> List[Dict]:
+        """Parser específico para PicPay"""
+        transactions = []
+        
+        # Padrão PicPay fatura: data | descrição | valor
+        pattern = r'(\d{2}\/\d{2})\s+([^0-9]+?)\s+([\d\.,]+)'
+        
+        current_year = datetime.now().year
+        
+        for match in re.finditer(pattern, text_content):
+            date_str, description, value_str = match.groups()
+            
+            try:
+                # Adicionar ano atual
+                full_date = f"{date_str}/{current_year}"
+                date = datetime.strptime(full_date, '%d/%m/%Y').isoformat()
+                value = self._parse_value(value_str)
+                
+                # Faturas são sempre débito
+                value = -abs(value)
+                
+                transactions.append({
+                    'date': date,
+                    'description': self._clean_description(description),
+                    'value': value,
+                    'type': 'debit',
+                    'category': self._categorize_transaction(description),
+                    'bank': 'picpay',
+                    'document_type': 'credit_card'
+                })
+            except Exception as e:
+                continue
+        
+        # Padrão alternativo para extratos PicPay
+        transfer_pattern = r'(\d{2}\/\d{2}\/\d{4})\s+([^0-9]+?)\s+([+-]?[\d\.,]+)'
+        
+        for match in re.finditer(transfer_pattern, text_content):
+            date_str, description, value_str = match.groups()
+            
+            try:
+                date = datetime.strptime(date_str, '%d/%m/%Y').isoformat()
+                value = self._parse_value(value_str.replace('+', '').replace('-', ''))
+                
+                if value_str.startswith('-'):
+                    value = -abs(value)
+                
+                transactions.append({
+                    'date': date,
+                    'description': self._clean_description(description),
+                    'value': value,
+                    'type': 'debit' if value < 0 else 'credit',
+                    'category': self._categorize_transaction(description),
+                    'bank': 'picpay'
+                })
+            except Exception as e:
+                continue
         
         return transactions
     
