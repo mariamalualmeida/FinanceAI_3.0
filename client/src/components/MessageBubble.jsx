@@ -2,6 +2,24 @@ import { motion } from 'framer-motion'
 import TypingIndicator from './TypingIndicator'
 import { File } from 'lucide-react'
 
+// Função para renderizar conteúdo da mensagem de forma segura
+function renderMessageContent(message) {
+  let content = message.text || message.content;
+  
+  // Se o conteúdo é um objeto, converter para string
+  if (typeof content === 'object' && content !== null) {
+    // Se é um objeto de análise financeira
+    if (content.totalCredits !== undefined || content.analysis !== undefined) {
+      return JSON.stringify(content, null, 2);
+    }
+    // Para outros objetos
+    return JSON.stringify(content, null, 2);
+  }
+  
+  // Garantir que sempre retornamos string
+  return String(content || '');
+}
+
 export default function MessageBubble({ message, isTyping = false, isGemini = false }) {
   const isUser = message.sender === 'user'
   
@@ -81,7 +99,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
                 isUser ? 'text-left' : 'text-left'
               }`}>
                 <div className="whitespace-pre-wrap break-words">
-                  {message.text || message.content || ''}
+                  {renderMessageContent(message)}
                 </div>
               </div>
 
