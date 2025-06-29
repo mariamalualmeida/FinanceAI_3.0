@@ -28,27 +28,63 @@ export class FileProcessor {
 
   async processDocument(filePath: string, fileType: string): Promise<ProcessedDocument> {
     try {
-      // Create a temporary Python script that imports and uses the existing modules
-      const tempScriptPath = path.join(this.pythonScriptPath, `process_${uuidv4()}.py`);
-      
-      const pythonScript = this.generatePythonScript(filePath, fileType);
-      await fs.writeFile(tempScriptPath, pythonScript);
+      // Direct Python execution with inline script
+      const { stdout, stderr } = await execAsync(`python3 -c "
+import sys
+sys.path.append('attached_assets')
+import json
+import PyPDF2
 
-      // Execute the Python script
-      const { stdout, stderr } = await execAsync(`python ${tempScriptPath}`, {
-        cwd: this.pythonScriptPath,
-        timeout: 60000, // 60 seconds timeout
+try:
+    # Extract text from PDF
+    with open('${filePath}', 'rb') as file:
+        pdf_reader = PyPDF2.PdfReader(file)
+        text_content = ''
+        for page in pdf_reader.pages:
+            text_content += page.extract_text() + '\\\\n'
+    
+    # Try Caixa parser first if it's a Caixa document
+    if 'CAIXA' in text_content.upper() or 'CEF' in text_content.upper():
+        from caixa_extrato_parser import process_caixa_extrato_text
+        result = process_caixa_extrato_text(text_content)
+    else:
+        # Use unified Brazilian banks parser
+        from brazilian_banks_parser import parse_brazilian_bank_document
+        result = parse_brazilian_bank_document(text_content)
+    
+    # Add basic text content
+    result['text'] = text_content[:1000] + '...' if len(text_content) > 1000 else text_content
+    result['tables'] = []
+    result['doc_type'] = result.get('document_type', 'extrato_bancario')
+    
+    print(json.dumps(result, ensure_ascii=False, default=str))
+    
+except Exception as e:
+    error_result = {
+        'success': False,
+        'processing_success': False,
+        'error': str(e),
+        'text': '',
+        'tables': [],
+        'doc_type': 'unknown',
+        'bank': 'unknown',
+        'transactions': [],
+        'transaction_count': 0,
+        'total_income': 0,
+        'total_expenses': 0,
+        'net_balance': 0
+    }
+    print(json.dumps(error_result))
+"`, {
+        timeout: 60000,
       });
 
-      // Clean up temp script
-      await fs.unlink(tempScriptPath).catch(() => {}); // Ignore errors
-
       if (stderr && !stderr.includes('warning')) {
-        throw new Error(`Python processing error: ${stderr}`);
+        console.error('Python stderr:', stderr);
       }
 
       // Parse the JSON output from Python
-      const result = JSON.parse(stdout);
+      const result = JSON.parse(stdout.trim());
       
       return {
         text: result.text || '',
