@@ -623,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const conversationId = req.body.conversationId || null;
+      const conversationId = req.body.conversationId && req.body.conversationId !== 'null' ? req.body.conversationId : null;
 
       // Create file upload record
       const fileUpload = await storage.createFileUpload({
