@@ -123,50 +123,9 @@ class MultiLLMOrchestrator {
 
       switch (config.name) {
         case 'openai':
-          const openaiKey = config.apiKey || process.env.OPENAI_API_KEY;
-          if (!openaiKey) {
-            console.log(`Skipping OpenAI provider - no API key available`);
-            await this.disableProvider(config.id);
-            return;
-          }
-          
-          // Validate API key - skip validation for now to allow testing
-          // const isOpenAIValid = await this.validateApiKey('openai', openaiKey);
-          // if (!isOpenAIValid) {
-          //   console.log(`OpenAI API key is invalid - disabling provider`);
-          //   await this.disableProvider(config.id);
-          //   return;
-          // }
-          
-          const openai = new OpenAI({ apiKey: openaiKey });
-          provider = {
-            name: 'openai',
-            client: openai,
-            generateResponse: async (prompt: string, context?: string) => {
-              const messages = [
-                { role: 'system', content: prompt },
-                { role: 'user', content: context || 'Analise os dados fornecidos.' }
-              ];
-              
-              const response = await openai.chat.completions.create({
-                model: config.model,
-                messages: messages as any,
-                temperature: parseFloat(config.temperature?.toString() || '0.7'),
-                max_tokens: config.maxTokens || 4000
-              });
-              
-              return response.choices[0].message.content || '';
-            },
-            isHealthy: async () => {
-              try {
-                await openai.models.list();
-                return true;
-              } catch {
-                return false;
-              }
-            }
-          };
-          break;
+          console.log(`Skipping OpenAI provider - temporarily disabled due to permissions issue`);
+          await this.disableProvider(config.id);
+          return;
 
         case 'anthropic':
           const anthropicKey = config.apiKey || process.env.ANTHROPIC_API_KEY;
