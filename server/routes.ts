@@ -19,6 +19,7 @@ import { HybridExtractor } from './services/hybridExtractor';
 import { SimpleLLMExtractor } from './services/simpleLLMExtractor';
 import { NoLimitExtractor } from './services/noLimitExtractor';
 import { registerTestResultsRoutes } from './routes-test-results';
+import EnhancedFinancialAnalyzer from './services/enhanced-financial-analyzer';
 
 declare module "express-session" {
   interface SessionData {
@@ -96,6 +97,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }
   
+  // Initialize Enhanced Financial Analyzer
+  const enhancedAnalyzer = new EnhancedFinancialAnalyzer(advancedMultiLLMOrchestrator);
+  console.log('🚀 Enhanced Financial Analyzer v3.0 initialized');
+
   // Initialize users on server start
   initializeDefaultUsers();
 
@@ -1773,6 +1778,165 @@ function registerTestRoutes(app: any) {
         success: false,
         message: 'Erro na validação em massa',
         error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Enhanced Financial Analysis Routes
+  app.post('/api/enhanced-analysis', isAuthenticated, upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const { conversationId, enableParallel = false, enableFraudDetection = true } = req.body;
+      
+      if (!conversationId) {
+        return res.status(400).json({ error: 'Conversation ID required' });
+      }
+
+      // Read file content
+      const fileContent = await fs.readFile(req.file.path, 'utf-8');
+      
+      // Run enhanced analysis
+      const result = await enhancedAnalyzer.analyzeDocument(
+        req.file.originalname,
+        fileContent,
+        req.session.userId!,
+        conversationId,
+        {
+          enableParallel: enableParallel === 'true',
+          enableFraudDetection: enableFraudDetection === 'true',
+          generateReport: true,
+          priority: 8 // High priority for API calls
+        }
+      );
+
+      // Clean up uploaded file
+      await fs.unlink(req.file.path);
+
+      res.json({
+        success: true,
+        analysis: result,
+        message: `Enhanced analysis completed in ${result.processingMetrics.totalTime}ms`
+      });
+
+    } catch (error) {
+      console.error('Enhanced analysis error:', error);
+      res.status(500).json({
+        error: 'Enhanced analysis failed',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Export Report Routes
+  app.post('/api/export-report', isAuthenticated, async (req, res) => {
+    try {
+      const { analysisData, format, template = 'detailed' } = req.body;
+      
+      if (!analysisData || !format) {
+        return res.status(400).json({ error: 'Analysis data and format required' });
+      }
+
+      const reportGenerator = (await import('../shared/analysis/report-generator')).reportGenerator;
+      const reportData = reportGenerator.generateReport(analysisData, {
+        type: format,
+        template,
+        includeCharts: true,
+        locale: 'pt-BR'
+      });
+
+      let responseData: any;
+      let contentType: string;
+      let filename: string;
+
+      switch (format) {
+        case 'pdf':
+          responseData = reportGenerator.generatePDFContent(reportData);
+          contentType = 'text/html'; // HTML que pode ser convertido para PDF
+          filename = `relatorio_financeiro_${Date.now()}.html`;
+          break;
+        case 'excel':
+          responseData = reportGenerator.generateExcelData(reportData);
+          contentType = 'application/json';
+          filename = `relatorio_financeiro_${Date.now()}.json`;
+          break;
+        case 'json':
+        default:
+          responseData = reportGenerator.generateJSONReport(reportData);
+          contentType = 'application/json';
+          filename = `relatorio_financeiro_${Date.now()}.json`;
+          break;
+      }
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(responseData);
+
+    } catch (error) {
+      console.error('Export report error:', error);
+      res.status(500).json({
+        error: 'Failed to export report',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // System Statistics Route
+  app.get('/api/system-stats', isAuthenticated, async (req, res) => {
+    try {
+      const stats = enhancedAnalyzer.getSystemStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('System stats error:', error);
+      res.status(500).json({
+        error: 'Failed to get system stats',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Enhanced Configuration Routes
+  app.post('/api/config/parallel', isAuthenticated, async (req, res) => {
+    try {
+      const { maxConcurrent } = req.body;
+      
+      if (!maxConcurrent || maxConcurrent < 1 || maxConcurrent > 10) {
+        return res.status(400).json({ error: 'Invalid maxConcurrent value (1-10)' });
+      }
+
+      enhancedAnalyzer.updateParallelConfig(maxConcurrent);
+      
+      res.json({
+        success: true,
+        message: `Parallel processing updated to ${maxConcurrent} concurrent jobs`
+      });
+
+    } catch (error) {
+      console.error('Config update error:', error);
+      res.status(500).json({
+        error: 'Failed to update configuration',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.post('/api/config/validation', isAuthenticated, async (req, res) => {
+    try {
+      const config = req.body;
+      enhancedAnalyzer.updateValidationConfig(config);
+      
+      res.json({
+        success: true,
+        message: 'Validation configuration updated'
+      });
+
+    } catch (error) {
+      console.error('Validation config error:', error);
+      res.status(500).json({
+        error: 'Failed to update validation configuration',
+        details: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
