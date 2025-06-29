@@ -1,0 +1,173 @@
+{
+  "duplicatedFiles": [
+    {
+      "basename": "schema",
+      "files": [
+        {
+          "path": "shared/schema.ts",
+          "size": 11576
+        },
+        {
+          "path": "shared/types/schema.ts",
+          "size": 11576
+        }
+      ],
+      "type": "Potential duplicate"
+    }
+  ],
+  "unusedFiles": [],
+  "orphanedFiles": [
+    {
+      "path": "attached_assets/InputArea_1750941764403.jsx",
+      "size": 917,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "attached_assets/MessageBubble_1750941764420.jsx",
+      "size": 369,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "attached_assets/Sidebar_1750941764442.jsx",
+      "size": 1373,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "audit-script.js",
+      "size": 5382,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "build-system/unified-build.js",
+      "size": 8771,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "client/public/sw.js",
+      "size": 5109,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "client/src/components/InputArea.jsx",
+      "size": 11050,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "client/src/components/Toast.jsx",
+      "size": 2027,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "client/src/hooks/use-toast.js",
+      "size": 464,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "client/src/hooks/useToast.js",
+      "size": 1064,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "drizzle.config.ts",
+      "size": 325,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "final-system-test.js",
+      "size": 5108,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "fix-openai-problem.js",
+      "size": 1730,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "postcss.config.js",
+      "size": 80,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "pwa/app.tsx",
+      "size": 2759,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "pwa/lite-api/routes.ts",
+      "size": 9225,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "pwa/offline/service-worker.js",
+      "size": 8228,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/auth.ts",
+      "size": 1003,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/services/automaticValidator.ts",
+      "size": 9770,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/services/documentValidator.ts",
+      "size": 8712,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/services/financialAnalyzer.ts",
+      "size": 1573,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/services/llmService.ts",
+      "size": 3152,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "server/services/realDocumentExtractor.ts",
+      "size": 13230,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "shared/components/ChatInterface.tsx",
+      "size": 8570,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "shared/schema.ts",
+      "size": 11576,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "shared/utils/version-config.ts",
+      "size": 8152,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "system-audit-complete.js",
+      "size": 12067,
+      "type": "Potentially unused"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "size": 2627,
+      "type": "Potentially unused"
+    }
+  ],
+  "brokenFiles": [
+    {
+      "path": "test-financial-complete.js",
+      "issues": [
+        "Unmatched bracket at position 3078",
+        "Unclosed brackets: {, {, {, {, {, (, {, ("
+      ],
+      "type": "Syntax issues"
+    }
+  ],
+  "executionErrors": [],
+  "sizeConcerns": []
+}
