@@ -6,12 +6,13 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
   const isUser = message.sender === 'user'
   
   // Log para debug
-  if (message.text) {
+  if (message.text || message.content) {
+    const messageText = message.text || message.content || '';
     console.log('Renderizando mensagem:', {
       sender: message.sender,
-      textLength: message.text?.length || 0,
-      hasLineBreaks: message.text?.includes('\n') || false,
-      text: message.text
+      textLength: messageText.length || 0,
+      hasLineBreaks: messageText.includes('\n') || false,
+      text: messageText
     })
   }
   
