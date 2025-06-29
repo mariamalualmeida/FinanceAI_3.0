@@ -28,8 +28,26 @@ interface ExtractionResult {
 }
 
 export class NoLimitExtractor {
+  private processingByUser: Map<number, Set<string>> = new Map();
   
-  async extractFromDocument(filePath: string, fileName: string): Promise<ExtractionResult> {
+  async extractFromDocument(filePath: string, fileName: string, userId?: number): Promise<ExtractionResult> {
+    // Isolamento por usuário
+    if (userId) {
+      if (!this.processingByUser.has(userId)) {
+        this.processingByUser.set(userId, new Set());
+      }
+      
+      if (this.processingByUser.get(userId)!.has(fileName)) {
+        console.log(`[NoLimit] ⚠️ Arquivo ${fileName} já está sendo processado pelo usuário ${userId}`);
+        return {
+          success: false,
+          error: 'Arquivo já em processamento',
+          data: this.getEmptyData()
+        };
+      }
+      
+      this.processingByUser.get(userId)!.add(fileName);
+    }
     try {
       console.log(`[NoLimit] Extraindo dados de: ${fileName}`);
       
@@ -60,7 +78,27 @@ export class NoLimitExtractor {
         data: this.getEmptyData(),
         error: `Erro na extração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
       };
+    } finally {
+      // Limpar processamento do usuário
+      if (userId && this.processingByUser.has(userId)) {
+        this.processingByUser.get(userId)!.delete(fileName);
+      }
     }
+  }
+  
+  private getEmptyData() {
+    return {
+      bank: 'Desconhecido',
+      accountHolder: '',
+      period: '',
+      transactions: [],
+      summary: {
+        totalCredits: 0,
+        totalDebits: 0,
+        finalBalance: 0,
+        transactionCount: 0
+      }
+    };
   }
 
   private detectBank(fileName: string): string {

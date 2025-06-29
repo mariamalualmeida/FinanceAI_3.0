@@ -278,12 +278,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const messages = await storage.getMessagesByConversation(conversationId);
         console.log(`[DeleteConv] Encontradas ${messages.length} mensagens para excluir`);
         
-        // Excluir mensagens uma por uma
+        // Exclusão forçada de mensagens
         for (const message of messages) {
           try {
             await storage.deleteMessage(message.id);
           } catch (msgError) {
             console.warn(`[DeleteConv] Falha ao excluir mensagem ${message.id}:`, msgError);
+            // Tentar exclusão forçada via SQL direto se necessário
+            try {
+              await storage.query(`DELETE FROM messages WHERE id = $1`, [message.id]);
+            } catch {
+              console.warn(`[DeleteConv] Exclusão forçada também falhou para ${message.id}`);
+            }
           }
         }
         
@@ -635,7 +641,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Usar NoLimitExtractor para análise sem limitações
           const { extractFinancialData } = await import('./services/noLimitExtractor.js');
-          const extractedData = await extractFinancialData(file.path, file.originalname);
+          const extractedData = await extractFinancialData(file.path, file.originalname, req.session.userId);
           
           console.log(`[NoLimit] ✅ Extração concluída: ${extractedData.transactions.length} transações`);
           

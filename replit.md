@@ -445,6 +445,14 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. Performance validada: Upload 121ms, Chat 73ms, Taxa de sucesso 100% todos componentes
 - June 29, 2025. NoLimitExtractor confirmado: Processamento ilimitado sem dependência de APIs externas
 - June 29, 2025. Sistema declarado PRONTO PARA PRODUÇÃO: Todos testes críticos aprovados
+- June 29, 2025. Sistema de Performance otimizado: Validação cruzada apenas para queries >100 chars ou complexas
+- June 29, 2025. Indicadores visuais de upload implementados: Progress bar, status por arquivo, botão fechar
+- June 29, 2025. Sidebar corrigida: Fecha automaticamente ao selecionar conversas do histórico
+- June 29, 2025. Upload via ícone clips corrigido: Erro originalname resolvido com validação segura
+- June 29, 2025. Isolamento por usuário no NoLimitExtractor: Evita processamento cruzado entre usuários
+- June 29, 2025. Exclusão forçada de mensagens: Sistema robusto com fallback para casos de erro UUID
+- June 29, 2025. Meta-análises excessivas removidas: Sistema responde diretamente sem análises sobre análises
+- June 29, 2025. Interface de upload melhorada: Modal flutuante com contador, status individuais e botão X
 
 ## User Preferences
 
