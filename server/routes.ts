@@ -769,13 +769,22 @@ Para melhor análise, envie extratos em PDF ou Excel.
         content: message
       });
 
-      // Bypass problematic LLM orchestrator and use local system directly
+      // Try using Multi-LLM orchestrator with Gemini as primary
       let aiResponse;
-      console.log('Using local FinanceAI system (APIs temporarily disabled)');
       
-      // Force local fallback due to OpenAI permission issues
-      const useLocalFallback = true;
-      if (useLocalFallback) {
+      try {
+        console.log('Attempting to use Multi-LLM orchestrator with Gemini...');
+        await multiLlmOrchestrator.initialize();
+        
+        // Try to generate response using Gemini first
+        aiResponse = await multiLlmOrchestrator.generateResponse(message, {
+          strategy: 'balanced'
+        });
+        
+        console.log('✅ Successfully used external LLM (Gemini/Anthropic)');
+        
+      } catch (llmError) {
+        console.log('❌ External LLMs failed, using local fallback:', llmError.message);
         console.log('Using local fallback due to API issues');
         
         // Fallback para sistema local quando APIs falham
