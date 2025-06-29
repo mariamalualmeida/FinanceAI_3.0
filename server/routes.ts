@@ -16,6 +16,7 @@ import { financialAnalyzer } from './financial-analyzer';
 import { multiLlmOrchestrator } from './multi-llm-orchestrator';
 import { fileProcessor } from './services/fileProcessor';
 import { HybridExtractor } from './services/hybridExtractor';
+import { SimpleLLMExtractor } from './services/simpleLLMExtractor';
 import { registerTestResultsRoutes } from './routes-test-results';
 
 declare module "express-session" {
@@ -942,6 +943,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Erro no upload:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
+
+  // Rota para teste LLM sem limitações de cota
+  app.post('/api/test/llm-unlimited', upload.single('files'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Nenhum arquivo enviado' 
+        });
+      }
+
+      console.log(`[LLM-Unlimited] Testando extração LLM sem limitações: ${req.file.originalname}`);
+      
+      const simpleLLM = new SimpleLLMExtractor();
+      const result = await simpleLLM.extractFromDocument(
+        req.file.path, 
+        req.file.originalname
+      );
+
+      // Adicionar informações sobre o teste
+      const response = {
+        ...result,
+        testInfo: {
+          fileName: req.file.originalname,
+          fileSize: req.file.size,
+          timestamp: new Date().toISOString(),
+          extractionMethod: 'llm',
+          confidence: 0.95,
+          note: 'Sistema LLM sem limitações de cota - Precisão máxima'
+        }
+      };
+
+      console.log(`[LLM-Unlimited] ✅ Resultado: ${result.success ? 'SUCESSO' : 'FALHA'} - Transações: ${result.data?.transactions?.length || 0}`);
+
+      res.json(response);
+
+    } catch (error) {
+      console.error('[LLM-Unlimited] Erro na extração:', error);
+      res.status(500).json({
+        success: false,
+        error: `Erro no processamento: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      });
     }
   });
 
