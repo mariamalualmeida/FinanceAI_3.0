@@ -336,10 +336,40 @@ class BrazilianBanksParser:
         """Parser específico para Banco do Brasil"""
         transactions = []
         
-        # Padrão BB similar aos outros
-        pattern = r'(\d{2}\/\d{2}\/\d{4})\s+([^0-9]+?)\s+([\d\.,]+)\s+([CD])'
+        # Padrão específico do BB (formato: Data Data Tipo Descrição Valor)
+        pattern = r'(\d{2}\/\d{2})\s+(\d{2}\/\d{2})\s+(Entrada|Saída|Débito de Cartão)\s+([^R]+)\s+R\$\s*([\d\.,]+|[\-\d\.,]+)'
+        
+        current_year = datetime.now().year
         
         for match in re.finditer(pattern, text_content):
+            date_str, date_contabil, tipo, description, value_str = match.groups()
+            
+            try:
+                # Usar a data de lançamento
+                date = datetime.strptime(f"{date_str}/{current_year}", '%d/%m/%Y').isoformat()
+                value = self._parse_value(value_str.replace('-', ''))
+                
+                # Determinar sinal baseado no tipo ou sinal no valor
+                if tipo == 'Saída' or 'Débito' in tipo or value_str.startswith('-'):
+                    value = -abs(value)
+                
+                transactions.append({
+                    'date': date,
+                    'description': self._clean_description(description),
+                    'value': value,
+                    'type': 'debit' if value < 0 else 'credit',
+                    'category': self._categorize_transaction(description),
+                    'bank': 'bb',
+                    'document_type': 'extrato_bancario',
+                    'transaction_type': tipo
+                })
+            except Exception as e:
+                continue
+        
+        # Padrão alternativo para outras formatações do BB
+        pattern2 = r'(\d{2}\/\d{2}\/\d{4})\s+([^0-9]+?)\s+([\d\.,]+)\s+([CD])'
+        
+        for match in re.finditer(pattern2, text_content):
             date_str, description, value_str, value_type = match.groups()
             
             try:
