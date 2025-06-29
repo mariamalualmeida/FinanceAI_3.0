@@ -491,6 +491,11 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. MessageBubble atualizado: Suporte completo a anexos com ícones, nomes e tamanhos
 - June 29, 2025. Teste final 100% aprovado: Upload, processamento, análise e visualização funcionando perfeitamente
 - June 29, 2025. SISTEMA PRONTO PARA PRODUÇÃO: Interface web, PWA e Android APK operacionais
+- June 29, 2025. UPLOAD SEPARADO IMPLEMENTADO: Clips apenas anexa, envio processa arquivos + texto
+- June 29, 2025. Modal flutuante removido: Upload agora acontece direto na caixa de texto
+- June 29, 2025. Layout horizontal: Arquivos exibidos com scroll horizontal como ChatGPT
+- June 29, 2025. Comportamento corrigido: Ícone girando durante upload, seta após carregamento
+- June 29, 2025. Fluxo unificado: Clips → Anexar → Digitar → Enviar → Processar + Resposta IA
 - June 29, 2025. PROBLEMA OPENAI RESOLVIDO: Sistema forçado para modo local devido a permissões insuficientes da API
 - June 29, 2025. Chat funcionando 100%: Sistema local ativo, fallback implementado, todas funcionalidades operacionais
 - June 29, 2025. APIs disponíveis: Claude, Gemini, Grok funcionais + NoLimitExtractor sempre ativo
