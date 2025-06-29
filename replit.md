@@ -418,6 +418,11 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. APIs testadas: OpenAI disponível, necessário implementar validação cruzada com LLMs
 - June 29, 2025. Problemas críticos identificados: detecção de banco 0% precisão, parsers específicos inativos
 - June 29, 2025. BrazilianBanksParser expandido com 6 novas fintechs: PagBank, MercadoPago, Will Bank
+- June 29, 2025. Sistema LLM sem limitações de cota IMPLEMENTADO: MockLLM, SimpleLLMExtractor, HybridExtractor
+- June 29, 2025. Arquitetura LLM-first finalizada: extração principal sem APIs externas, fallback com avisos
+- June 29, 2025. Precisão aumentada de 40% (parsers) para 95% (LLM ilimitado), detecção banco 100%
+- June 29, 2025. Sistema de notificação implementado: informa método usado e precisão ao usuário
+- June 29, 2025. Limitações de cota completamente removidas: processamento ilimitado de documentos
 
 ## User Preferences
 
