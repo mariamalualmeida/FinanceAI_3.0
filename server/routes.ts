@@ -712,7 +712,15 @@ Para melhor análise, envie extratos em PDF ou Excel.
 
       res.json({
         success: true,
-        fileId: fileUpload.id,
+        uploadId: fileUpload.id,
+        method: 'NoLimitExtractor',
+        analysis: {
+          totalCredits: 0,
+          totalDebits: 0,
+          finalBalance: 0,
+          transactionCount: 0
+        },
+        accuracy: 'Processando...',
         message: 'File uploaded successfully and is being processed'
       });
 
