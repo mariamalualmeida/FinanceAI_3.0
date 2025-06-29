@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const fetch = require('node-fetch');
-const FormData = require('form-data');
+import fs from 'fs';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 async function testCompleteSystem() {
     console.log('\n🔄 TESTE COMPLETO DO SISTEMA - Documentos Reais');
@@ -20,11 +20,15 @@ async function testCompleteSystem() {
             body: JSON.stringify({ username: 'admin', password: 'admin123' })
         });
         
-        if (loginResponse.headers.get('set-cookie')) {
-            cookies = loginResponse.headers.get('set-cookie');
+        const setCookieHeader = loginResponse.headers.get('set-cookie');
+        
+        if (loginResponse.status === 200) {
+            if (setCookieHeader) {
+                cookies = setCookieHeader;
+            }
             console.log('✅ Login realizado com sucesso');
         } else {
-            throw new Error('Falha no login');
+            throw new Error(`Falha no login: ${loginResponse.status}`);
         }
         
         // 2. CRIAR CONVERSA
