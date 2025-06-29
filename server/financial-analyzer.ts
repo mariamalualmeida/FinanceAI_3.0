@@ -1,5 +1,6 @@
 import { storage } from './storage';
 import { multiLlmOrchestrator } from './multi-llm-orchestrator';
+import { fileProcessor } from './services/fileProcessor';
 import type { InsertFinancialAnalysis, InsertTransaction } from '@shared/schema';
 
 interface ExtractedTransaction {
@@ -64,16 +65,16 @@ export class FinancialAnalyzer {
       analysisResult.creditScore = creditScore;
       analysisResult.totalIncome = financialSummary.total_income || 0;
       analysisResult.totalExpenses = financialSummary.total_expenses || 0;
-      analysisResult.netBalance = financialSummary.net_balance || 0;
+      analysisResult.balance = financialSummary.net_balance || 0;
       analysisResult.transactionCount = financialSummary.transaction_count || 0;
       
       // Update risk level based on credit score
       if (creditScore >= 700) {
-        analysisResult.riskLevel = 'baixo';
+        analysisResult.riskLevel = 'low';
       } else if (creditScore >= 500) {
-        analysisResult.riskLevel = 'medio';
+        analysisResult.riskLevel = 'medium';
       } else {
-        analysisResult.riskLevel = 'alto';
+        analysisResult.riskLevel = 'high';
       }
 
       // Save analysis to database
@@ -89,7 +90,7 @@ export class FinancialAnalyzer {
 
       // Save individual transactions
       if (formattedTransactions.length > 0) {
-        const transactionRecords = formattedTransactions.map(t => ({
+        const transactionRecords = formattedTransactions.map((t: any) => ({
           analysisId: analysis.id,
           date: new Date(t.date),
           description: t.description,
