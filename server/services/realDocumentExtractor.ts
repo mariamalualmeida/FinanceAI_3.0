@@ -181,7 +181,7 @@ export class RealDocumentExtractor {
         date: this.generateRandomDate(),
         description: this.generateRealDescription(bank),
         amount: this.generateRealAmount(),
-        type: Math.random() > 0.3 ? 'debit' : 'credit',
+        type: (Math.random() > 0.3 ? 'debit' : 'credit') as 'debit' | 'credit',
         category: this.categorizeTransaction(''),
         balance: undefined
       });
@@ -200,7 +200,7 @@ export class RealDocumentExtractor {
         date: this.generateRandomDate(),
         description: `Transação ${i + 1}`,
         amount: Math.floor(Math.random() * 500) + 10,
-        type: Math.random() > 0.5 ? 'debit' : 'credit',
+        type: (Math.random() > 0.5 ? 'debit' : 'credit') as 'debit' | 'credit',
         category: 'Geral'
       });
     }
@@ -296,7 +296,7 @@ export class RealDocumentExtractor {
       ]
     };
     
-    const bankDescriptions = descriptions[bank] || descriptions['default'];
+    const bankDescriptions = descriptions[bank as keyof typeof descriptions] || descriptions['default'];
     return bankDescriptions[Math.floor(Math.random() * bankDescriptions.length)];
   }
   
