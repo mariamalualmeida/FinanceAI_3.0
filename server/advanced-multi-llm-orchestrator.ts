@@ -159,7 +159,7 @@ export class AdvancedMultiLLMOrchestrator {
               max_tokens: options.maxTokens || 2000,
               messages: [{ role: 'user', content: prompt }]
             });
-            return response.content[0].text || '';
+            return (response.content[0] as any).text || '';
           },
           isAvailable: async () => {
             try {
