@@ -446,20 +446,11 @@ export class AdvancedMultiLLMOrchestrator {
   private async performCrossValidation(response: string, originalPrompt: string) {
     try {
       const validationPrompt = `
-        Analise a seguinte resposta para uma pergunta sobre análise financeira:
+        Valide se a resposta está adequada para a pergunta: "${originalPrompt}"
         
-        PERGUNTA ORIGINAL: ${originalPrompt}
+        Resposta: ${response}
         
-        RESPOSTA PARA VALIDAR: ${response}
-        
-        Sua tarefa:
-        1. A resposta está correta e completa?
-        2. Há erros factuais ou inconsistências?
-        3. Faltam informações importantes?
-        
-        Responda APENAS:
-        VÁLIDA: [SIM/NÃO]
-        CORREÇÕES: [se necessário, forneça versão corrigida]
+        Responda apenas: VÁLIDA: SIM ou VÁLIDA: NÃO
       `;
       
       // Usar um provedor diferente para validação
@@ -468,12 +459,10 @@ export class AdvancedMultiLLMOrchestrator {
       
       if (validationResult.success) {
         const isValid = validationResult.response.includes('VÁLIDA: SIM');
-        const correctionMatch = validationResult.response.match(/CORREÇÕES: (.+)/s);
-        const correctedResponse = correctionMatch ? correctionMatch[1].trim() : null;
         
         return {
           isValid,
-          correctedResponse: !isValid ? correctedResponse : null,
+          correctedResponse: null, // Não mais correções automáticas
           validator: validatorName
         };
       }
