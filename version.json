@@ -35,7 +35,7 @@
       ]
     },
     "pwa": {
-      "version": "3.0.0", 
+      "version": "3.1.0", 
       "lastUpdate": "2025-06-29",
       "installable": true,
       "offline": true,
@@ -56,7 +56,7 @@
     },
     "android": {
       "versionCode": 6,
-      "versionName": "3.0.0",
+      "versionName": "3.1.0",
       "lastUpdate": "2025-06-29",
       "minSdkVersion": 24,
       "targetSdkVersion": 34,
@@ -81,6 +81,22 @@
     }
   },
   "changelog": [
+    {
+      "version": "3.1.0",
+      "date": "2025-06-29",
+      "changes": [
+        "Sistema de Prompts Mig: 12 prompts especializados para consultoria financeira brasileira",
+        "Consultor Financeiro Personalizado: Planos de ação SMART adaptados à realidade brasileira",
+        "Sistema de Metas Inteligentes: Geração automática com acompanhamento e gamificação",
+        "Engine Nativo Android: Consultoria 100% offline em Kotlin com SQLite Room",
+        "Interface de Consultoria: Componente React completo com visão geral, metas, planos e relatórios",
+        "Detecção Inteligente de Análise: Roteamento automático para prompts específicos do Mig",
+        "Planos de Ação Brasileiros: Considerando perfis profissionais, regiões e contexto socioeconômico",
+        "Sistema de Progresso: Acompanhamento de metas com mensagens motivacionais e ajustes dinâmicos",
+        "Relatórios com Mig: Análises personalizadas do consultor virtual especializado",
+        "Integração Multi-Plataforma: Funcionalidades nativas implementadas em WEB, PWA e Android APK"
+      ]
+    },
     {
       "version": "3.0.0",
       "date": "2025-06-29",
