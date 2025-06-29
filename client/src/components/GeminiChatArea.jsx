@@ -14,9 +14,6 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
   const [audioData, setAudioData] = useState(null)
   const [currentConversationId, setCurrentConversationId] = useState(null)
   const [isDragOver, setIsDragOver] = useState(false)
-  const [uploadingFiles, setUploadingFiles] = useState([])
-  const [showUploadProgress, setShowUploadProgress] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState({})
   
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -85,31 +82,43 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     if (!text.trim() && files.length === 0 && !audioData) return
 
     const finalText = text || (audioData?.transcription ? audioData.transcription : '')
-    const userMessage = {
-      id: Date.now(),
-      sender: 'user',
-      text: finalText,
-      files: files.map(f => ({ name: f.name, size: f.size, type: f.type })),
-      timestamp: new Date()
-    }
-    
-    setMessages(prev => [...prev, userMessage])
     setInputText('')
     setAudioData(null)
     setIsTyping(true)
 
     try {
       if (files.length > 0) {
-        const { success, result } = await uploadFiles(files, finalText)
-        
-        if (success && result.analysis) {
-          const aiMessage = {
-            id: Date.now() + 1,
-            sender: 'assistant',
-            text: result.analysis || 'Arquivo processado com sucesso!',
-            timestamp: new Date()
+        // Usar a rota de chat/upload para processar arquivos com texto
+        const formData = new FormData()
+        files.forEach(file => {
+          formData.append('files', file)
+        })
+        formData.append('message', finalText)
+        if (currentConversationId) {
+          formData.append('conversationId', currentConversationId)
+        }
+
+        const response = await fetch('/api/chat/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        })
+
+        const result = await response.json()
+
+        if (response.ok && result.success) {
+          // Se uma nova conversa foi criada, atualizá-la
+          if (result.conversationId && !currentConversationId) {
+            setCurrentConversationId(result.conversationId)
+            onConversationUpdate && onConversationUpdate()
           }
-          setMessages(prev => [...prev, aiMessage])
+          
+          // Recarregar mensagens da conversa
+          setTimeout(() => {
+            loadConversationMessages(result.conversationId || currentConversationId)
+          }, 500)
+        } else {
+          throw new Error(result.message || 'Erro ao processar arquivos')
         }
       } else {
         // Enviar mensagem para a IA
@@ -207,187 +216,12 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     e.preventDefault();
     setIsDragOver(false);
     
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFinancialDocumentUpload(files);
-    }
+    // Drag & drop removido - usar apenas o sistema de anexos da caixa de texto
   };
 
-  // Função para upload de documentos financeiros
-  const handleFinancialDocumentUpload = async (files) => {
-    if (!currentConversationId) {
-      alert('Por favor, inicie uma conversa antes de enviar arquivos.');
-      return;
-    }
 
-    setShowUploadProgress(true);
-    setUploadingFiles(files.map(file => ({ 
-      name: file.name, 
-      size: file.size, 
-      status: 'uploading' 
-    })));
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('conversationId', currentConversationId);
 
-      try {
-        // Atualizar mensagem do usuário
-        setMessages(prev => [...prev, {
-          id: Date.now(),
-          content: `📎 Enviando documento: ${file.name}`,
-          sender: 'user',
-          timestamp: new Date()
-        }]);
-
-        const response = await fetch('/api/upload-financial-document', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          // Atualizar status do arquivo
-          setUploadingFiles(prev => prev.map((f, idx) => 
-            idx === i ? { ...f, status: 'processing' } : f
-          ));
-
-          // Adicionar mensagem de confirmação
-          setMessages(prev => [...prev, {
-            id: Date.now() + 1,
-            content: `✅ ${result.message}`,
-            sender: 'assistant',
-            timestamp: new Date()
-          }]);
-
-          // Recarregar mensagens após processamento
-          setTimeout(() => {
-            loadConversationMessages(currentConversationId);
-          }, 3000);
-
-        } else {
-          throw new Error(result.error || 'Erro no upload');
-        }
-      } catch (error) {
-        console.error('Erro no upload:', error);
-        
-        // Atualizar status do arquivo
-        setUploadingFiles(prev => prev.map((f, idx) => 
-          idx === i ? { ...f, status: 'error' } : f
-        ));
-
-        // Adicionar mensagem de erro
-        setMessages(prev => [...prev, {
-          id: Date.now() + 2,
-          content: `❌ Erro ao enviar ${file.name}: ${error.message}`,
-          sender: 'assistant',
-          timestamp: new Date()
-        }]);
-      }
-    }
-
-    // Limpar progress após 5 segundos
-    setTimeout(() => {
-      setShowUploadProgress(false);
-      setUploadingFiles([]);
-    }, 5000);
-  };
-
-  // Função para upload via clips - corrigida para criar conversa se necessário
-  const handleClipsUpload = async (file) => {
-    try {
-      console.log('📎 Processando arquivo via clips:', file.name);
-      
-      // Mostrar indicador visual
-      setShowUploadProgress(true);
-      setUploadingFiles([{
-        name: file.name,
-        status: 'uploading',
-        progress: 0
-      }]);
-      
-      // Se não há conversa atual, usar a rota de chat/upload que cria automaticamente
-      if (!currentConversationId) {
-        const formData = new FormData();
-        formData.append('files', file);
-        formData.append('message', `Análise do arquivo: ${file.name}`);
-        
-        const response = await fetch('/api/chat/upload', {
-          method: 'POST',
-          credentials: 'include',
-          body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-          setUploadingFiles(prev => prev.map(f => ({ 
-            ...f, 
-            status: 'completed',
-            progress: 100
-          })));
-          
-          console.log('✅ Upload via clips concluído (nova conversa):', result);
-          
-          // Se uma nova conversa foi criada, atualizá-la
-          if (result.conversationId) {
-            setCurrentConversationId(result.conversationId);
-            onConversationUpdate && onConversationUpdate(); // Atualizar lista de conversas
-            loadConversationMessages(result.conversationId);
-          }
-        } else {
-          throw new Error(result.message || 'Erro no upload');
-        }
-      } else {
-        // Se já há uma conversa, usar upload simples
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('conversationId', currentConversationId);
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          credentials: 'include',
-          body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-          setUploadingFiles(prev => prev.map(f => ({ 
-            ...f, 
-            status: 'completed',
-            progress: 100
-          })));
-          
-          console.log('✅ Upload via clips concluído:', result);
-          
-          // Recarregar mensagens da conversa atual
-          setTimeout(() => {
-            loadConversationMessages(currentConversationId);
-          }, 1000);
-        } else {
-          throw new Error(result.message || 'Erro no upload');
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Erro no upload via clips:', error);
-      setUploadingFiles(prev => prev.map(f => ({ 
-        ...f, 
-        status: 'error',
-        progress: 0
-      })));
-    }
-    
-    // Limpar progress após 3 segundos
-    setTimeout(() => {
-      setShowUploadProgress(false);
-      setUploadingFiles([]);
-    }, 3000);
-  };
 
   return (
     <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 h-screen overflow-hidden gemini-chat-container">
@@ -509,52 +343,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           </div>
         )}
 
-        {/* Progress de Upload Melhorado */}
-        {showUploadProgress && uploadingFiles.length > 0 && (
-          <div className="fixed bottom-20 right-4 bg-white dark:bg-gray-800 rounded-3xl shadow-lg border p-4 max-w-sm z-50">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                Processando ({uploadingFiles.length})
-              </h4>
-              <button 
-                onClick={() => setShowUploadProgress(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="space-y-3 max-h-48 overflow-y-auto">
-              {uploadingFiles.map((file, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <div className="flex-1">
-                    <p className="text-gray-700 dark:text-gray-300 truncate">{file.name}</p>
-                    <div className="flex items-center gap-2">
-                      {file.status === 'uploading' && (
-                        <>
-                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                          <span className="text-blue-600 dark:text-blue-400">Enviando...</span>
-                        </>
-                      )}
-                      {file.status === 'processing' && (
-                        <>
-                          <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-                          <span className="text-yellow-600 dark:text-yellow-400">Analisando...</span>
-                        </>
-                      )}
-                      {file.status === 'error' && (
-                        <>
-                          <AlertCircle className="w-3 h-3 text-red-500" />
-                          <span className="text-red-600 dark:text-red-400">Erro</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         <div ref={messagesEndRef} />
         
@@ -562,13 +351,6 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
         <div className="fixed bottom-0 left-0 right-0 z-40">
           <InputAreaFixed 
             onSend={sendMessage}
-            onFileUpload={(file) => {
-              // Upload simples via clips - apenas anexar
-              console.log('Arquivo selecionado via clips:', file.name)
-              // Processar arquivo real do usuário via API de upload normal
-              handleClipsUpload(file)
-            }}
-
             isProcessing={isTyping}
             uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
           />
