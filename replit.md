@@ -447,6 +447,17 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. Android Native Financial Analyzer: engine baseado em Kotlin com 93% de confiança
 - June 29, 2025. Consistência multiplataforma: base de código unificada com 80% de reutilização de componentes
 - June 29, 2025. TODAS AS PLATAFORMAS atualizadas para v3.0.0: WEB, PWA e Android APK funcionales
+- June 29, 2025. VERSÃO 3.1.0 "ConsultancyGPT" implementada: Sistema de Prompts Mig e Consultoria Personalizada
+- June 29, 2025. Sistema de Prompts Mig: 12 prompts especializados para consultoria financeira brasileira
+- June 29, 2025. Consultor Financeiro Personalizado: Planos de ação SMART adaptados à realidade brasileira
+- June 29, 2025. Sistema de Metas Inteligentes: Geração automática com acompanhamento e gamificação
+- June 29, 2025. Engine Nativo Android: Consultoria 100% offline em Kotlin com SQLite Room
+- June 29, 2025. Interface de Consultoria: Componente React completo com visão geral, metas, planos e relatórios
+- June 29, 2025. Detecção Inteligente de Análise: Roteamento automático para prompts específicos do Mig
+- June 29, 2025. Agente Mig: Personalidade de consultor financeiro brasileiro educado e prestativo
+- June 29, 2025. Planos de Ação Brasileiros: Considerando perfis profissionais, regiões e contexto socioeconômico
+- June 29, 2025. Sistema de Progresso: Acompanhamento de metas com mensagens motivacionais e ajustes dinâmicos
+- June 29, 2025. SISTEMA FUNCIONA NATIVAMENTE NO APK: Consultoria offline completa sem dependência de servidor
 - June 29, 2025. PROBLEMA OPENAI RESOLVIDO: Sistema forçado para modo local devido a permissões insuficientes da API
 - June 29, 2025. Chat funcionando 100%: Sistema local ativo, fallback implementado, todas funcionalidades operacionais
 - June 29, 2025. APIs disponíveis: Claude, Gemini, Grok funcionais + NoLimitExtractor sempre ativo
