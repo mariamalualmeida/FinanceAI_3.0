@@ -327,8 +327,8 @@ class MultiLLMOrchestrator {
       throw new Error('No LLM providers available. Please configure at least one API key.');
     }
 
-    // Tentar usar OpenAI primeiro (se disponível), depois Google, depois outros
-    const providerPriority = ['openai', 'google', 'anthropic', 'xai'];
+    // Usar APIs funcionais primeiro: Google, Anthropic, xAI, depois OpenAI
+    const providerPriority = ['google', 'anthropic', 'xai', 'openai'];
     
     for (const providerName of providerPriority) {
       const provider = this.providers.get(providerName);
