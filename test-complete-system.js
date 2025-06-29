@@ -1,302 +1,322 @@
-// Teste completo do sistema: conversa + upload + análise
-import { spawn } from 'child_process';
-import fetch from 'node-fetch';
-import fs from 'fs';
-import path from 'path';
+#!/usr/bin/env node
 
-const BASE_URL = 'http://localhost:5000';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 async function loginAndGetSession() {
-  const loginResponse = await fetch(`${BASE_URL}/api/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'Admin', password: 'admin123' })
-  });
-  
-  const cookies = loginResponse.headers.get('set-cookie');
-  return cookies;
+    console.log('🔐 Fazendo login...');
+    const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'admin', password: 'admin123' })
+    });
+    
+    const cookies = response.headers.get('set-cookie');
+    if (response.status === 200) {
+        console.log('✅ Login realizado');
+        return cookies;
+    }
+    throw new Error('Falha no login');
 }
 
 async function createConversation(cookies) {
-  const response = await fetch(`${BASE_URL}/api/conversations`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Cookie': cookies },
-    body: JSON.stringify({ title: 'Teste de Análise Financeira' })
-  });
-  
-  const result = await response.json();
-  return result.id;
+    console.log('💬 Criando conversa...');
+    const response = await fetch('http://localhost:5000/api/conversations', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Cookie': cookies 
+        },
+        body: JSON.stringify({ title: 'Teste Sistema Completo' })
+    });
+    
+    const conversation = await response.json();
+    if (response.ok) {
+        console.log('✅ Conversa criada:', conversation.id);
+        return conversation.id;
+    }
+    throw new Error('Falha ao criar conversa');
 }
 
 async function uploadDocumentWithConversation(filePath, cookies, conversationId) {
-  return new Promise((resolve, reject) => {
-    const curlCommand = [
-      'curl', '-X', 'POST',
-      '-H', `Cookie: ${cookies}`,
-      '-F', `file=@${filePath}`,
-      '-F', `conversationId=${conversationId}`,
-      `${BASE_URL}/api/upload-financial-document`
-    ];
+    console.log('📎 Testando upload via clips...');
     
-    const curl = spawn('curl', curlCommand.slice(1));
-    let output = '';
-    let error = '';
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Arquivo não encontrado: ${filePath}`);
+    }
     
-    curl.stdout.on('data', (data) => {
-      output += data.toString();
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(filePath));
+    formData.append('conversationId', conversationId);
+    
+    const response = await fetch('http://localhost:5000/api/upload', {
+        method: 'POST',
+        headers: { 'Cookie': cookies },
+        body: formData
     });
     
-    curl.stderr.on('data', (data) => {
-      error += data.toString();
+    const result = await response.json();
+    
+    if (response.ok) {
+        console.log('✅ Upload realizado:', result.uploadId);
+        console.log('📄 Status:', result.message);
+        return result;
+    } else {
+        throw new Error(`Upload falhou: ${result.message}`);
+    }
+}
+
+async function checkMessagesAndData(cookies, conversationId) {
+    console.log('🔍 Verificando mensagens e dados...');
+    
+    // Aguardar processamento
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    const response = await fetch(`http://localhost:5000/api/conversations/${conversationId}/messages`, {
+        headers: { 'Cookie': cookies }
     });
     
-    curl.on('close', (code) => {
-      if (code === 0) {
-        try {
-          const result = JSON.parse(output);
-          resolve(result);
-        } catch (e) {
-          resolve({ success: false, error: 'Invalid JSON response', raw: output });
+    const messages = await response.json();
+    
+    if (!Array.isArray(messages)) {
+        throw new Error('Resposta de mensagens inválida');
+    }
+    
+    console.log(`📝 Total de mensagens: ${messages.length}`);
+    
+    let hasRealData = false;
+    let hasFileAttachment = false;
+    let realTransactionCount = 0;
+    
+    messages.forEach((msg, index) => {
+        console.log(`\n   Mensagem ${index + 1}:`);
+        console.log(`   - Remetente: ${msg.sender}`);
+        console.log(`   - Tipo: ${msg.type || 'text'}`);
+        
+        if (msg.attachments && msg.attachments.length > 0) {
+            hasFileAttachment = true;
+            console.log(`   - 📎 Anexos: ${msg.attachments.length}`);
+            msg.attachments.forEach(att => {
+                console.log(`     📄 ${att.originalname} (${att.size} bytes)`);
+            });
         }
-      } else {
-        reject(new Error(`Curl failed with code ${code}: ${error}`));
-      }
+        
+        if (msg.content) {
+            // Verificar se contém dados reais (números, valores, transações)
+            const hasNumbers = /\d+/.test(msg.content);
+            const hasCurrency = /R\$|reais|crédito|débito/i.test(msg.content);
+            const hasTransactions = /transaç|moviment|saldo/i.test(msg.content);
+            
+            if (hasNumbers && (hasCurrency || hasTransactions)) {
+                hasRealData = true;
+                
+                // Contar transações mencionadas
+                const transactionMatches = msg.content.match(/transaç\w*:\s*(\d+)/i);
+                if (transactionMatches) {
+                    realTransactionCount = parseInt(transactionMatches[1]);
+                }
+            }
+            
+            if (msg.content.length > 200) {
+                console.log(`   - 📝 Conteúdo: ${msg.content.substring(0, 200)}...`);
+            } else {
+                console.log(`   - 📝 Conteúdo: ${msg.content}`);
+            }
+        }
     });
-  });
+    
+    return {
+        hasRealData,
+        hasFileAttachment,
+        realTransactionCount,
+        messageCount: messages.length,
+        messages
+    };
+}
+
+async function testMessageDeletion(cookies, conversationId) {
+    console.log('🗑️ Testando exclusão de mensagens...');
+    
+    // Obter mensagens atuais
+    const messagesResponse = await fetch(`http://localhost:5000/api/conversations/${conversationId}/messages`, {
+        headers: { 'Cookie': cookies }
+    });
+    
+    const messages = await messagesResponse.json();
+    
+    if (!Array.isArray(messages) || messages.length === 0) {
+        console.log('⚠️ Nenhuma mensagem para excluir');
+        return false;
+    }
+    
+    console.log(`📝 Encontradas ${messages.length} mensagens para excluir`);
+    
+    // Tentar excluir a primeira mensagem
+    const messageToDelete = messages[0];
+    console.log(`🎯 Tentando excluir mensagem: ${messageToDelete.id}`);
+    
+    const deleteResponse = await fetch(`http://localhost:5000/api/messages/${messageToDelete.id}`, {
+        method: 'DELETE',
+        headers: { 'Cookie': cookies }
+    });
+    
+    if (deleteResponse.ok) {
+        console.log('✅ Mensagem excluída com sucesso');
+        
+        // Verificar se realmente foi excluída
+        const checkResponse = await fetch(`http://localhost:5000/api/conversations/${conversationId}/messages`, {
+            headers: { 'Cookie': cookies }
+        });
+        
+        const updatedMessages = await checkResponse.json();
+        const wasDeleted = updatedMessages.length < messages.length;
+        
+        console.log(`📊 Antes: ${messages.length} | Depois: ${updatedMessages.length} | Excluída: ${wasDeleted ? 'Sim' : 'Não'}`);
+        return wasDeleted;
+    } else {
+        console.log('❌ Falha ao excluir mensagem');
+        return false;
+    }
+}
+
+async function testConversationDeletion(cookies) {
+    console.log('🗂️ Testando exclusão de conversa completa...');
+    
+    // Listar conversas atuais
+    const conversationsResponse = await fetch('http://localhost:5000/api/conversations', {
+        headers: { 'Cookie': cookies }
+    });
+    
+    const conversations = await conversationsResponse.json();
+    
+    if (!Array.isArray(conversations) || conversations.length === 0) {
+        console.log('⚠️ Nenhuma conversa para excluir');
+        return false;
+    }
+    
+    const conversationToDelete = conversations[0];
+    console.log(`🎯 Tentando excluir conversa: ${conversationToDelete.id}`);
+    
+    const deleteResponse = await fetch(`http://localhost:5000/api/conversations/${conversationToDelete.id}`, {
+        method: 'DELETE',
+        headers: { 'Cookie': cookies }
+    });
+    
+    if (deleteResponse.ok) {
+        console.log('✅ Conversa excluída com sucesso');
+        return true;
+    } else {
+        console.log('❌ Falha ao excluir conversa');
+        return false;
+    }
+}
+
+async function testChatInteraction(cookies, conversationId) {
+    console.log('💬 Testando interação de chat...');
+    
+    const testMessage = 'Olá, você pode me ajudar com análise financeira?';
+    
+    const response = await fetch('http://localhost:5000/api/chat', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Cookie': cookies 
+        },
+        body: JSON.stringify({ 
+            message: testMessage,
+            conversationId: conversationId 
+        })
+    });
+    
+    const result = await response.json();
+    
+    if (response.ok && result.reply) {
+        console.log('✅ Chat respondeu');
+        console.log(`💬 Resposta (${result.reply.length} chars): ${result.reply.substring(0, 150)}...`);
+        return true;
+    } else {
+        console.log('❌ Chat não respondeu');
+        return false;
+    }
 }
 
 async function runCompleteSystemTest() {
-  console.log('🚀 TESTE COMPLETO DO SISTEMA FINANCEAI');
-  console.log('======================================');
-  
-  try {
-    // 1. Login
-    console.log('🔐 Fazendo login...');
-    const cookies = await loginAndGetSession();
-    console.log('✅ Login realizado com sucesso');
+    console.log('\n🔄 TESTE COMPLETO DO SISTEMA FinanceAI');
+    console.log('='.repeat(60));
     
-    // 2. Criar conversa
-    console.log('\n💬 Criando conversa...');
-    const conversationId = await createConversation(cookies);
-    console.log(`✅ Conversa criada: ${conversationId}`);
-    
-    // 3. Testar upload de documentos reais
-    console.log('\n📄 TESTANDO UPLOAD DE DOCUMENTOS');
-    console.log('=================================');
-    
-    const testFiles = [
-      { path: 'attached_assets/Nubank_2025-05-24_1751172520674.pdf', name: 'Fatura Nubank' },
-      { path: 'attached_assets/Fatura-CPF_1751146806544.PDF', name: 'Fatura CPF' }
-    ];
-    
-    const uploadResults = [];
-    
-    for (const file of testFiles) {
-      if (!fs.existsSync(file.path)) {
-        console.log(`⚠️ Arquivo não encontrado: ${file.path}`);
-        continue;
-      }
-      
-      console.log(`\n📤 Uploading: ${file.name}`);
-      const startTime = Date.now();
-      
-      try {
-        const uploadResult = await uploadDocumentWithConversation(file.path, cookies, conversationId);
-        const processingTime = Date.now() - startTime;
+    try {
+        // 1. Login
+        const cookies = await loginAndGetSession();
         
-        if (uploadResult.success) {
-          console.log(`✅ Upload processado em ${processingTime}ms`);
-          console.log(`📊 Método usado: ${uploadResult.method || 'NoLimitExtractor'}`);
-          console.log(`📈 Transações extraídas: ${uploadResult.analysis?.transactionCount || 0}`);
-          console.log(`💰 Saldo final: R$ ${uploadResult.analysis?.finalBalance || 0}`);
-          console.log(`📋 Total créditos: R$ ${uploadResult.analysis?.totalCredits || 0}`);
-          console.log(`📋 Total débitos: R$ ${uploadResult.analysis?.totalDebits || 0}`);
-          console.log(`🎯 Precisão: ${uploadResult.accuracy || 'N/A'}`);
-          
-          uploadResults.push({
-            file: file.name,
-            success: true,
-            processingTime,
-            transactionCount: uploadResult.analysis?.transactionCount || 0,
-            method: uploadResult.method || 'NoLimitExtractor',
-            accuracy: uploadResult.accuracy
-          });
+        // 2. Criar conversa
+        const conversationId = await createConversation(cookies);
+        
+        // 3. Upload de arquivo real
+        const testFile = 'attached_assets/Fatura-CPF_1751146806544.PDF';
+        const uploadResult = await uploadDocumentWithConversation(testFile, cookies, conversationId);
+        
+        // 4. Verificar dados reais
+        const dataCheck = await checkMessagesAndData(cookies, conversationId);
+        
+        // 5. Testar chat
+        const chatWorking = await testChatInteraction(cookies, conversationId);
+        
+        // 6. Testar exclusão de mensagem
+        const messageDeletionWorking = await testMessageDeletion(cookies, conversationId);
+        
+        // 7. Testar exclusão de conversa
+        const conversationDeletionWorking = await testConversationDeletion(cookies);
+        
+        // 8. Resultados finais
+        console.log('\n' + '='.repeat(60));
+        console.log('📋 RESULTADOS DO TESTE COMPLETO:');
+        console.log('='.repeat(60));
+        
+        const tests = [
+            { name: 'Login', passed: !!cookies },
+            { name: 'Criar Conversa', passed: !!conversationId },
+            { name: 'Upload Arquivo', passed: !!uploadResult.uploadId },
+            { name: 'Arquivo no Histórico', passed: dataCheck.hasFileAttachment },
+            { name: 'Dados Reais Gerados', passed: dataCheck.hasRealData },
+            { name: 'Chat Funcionando', passed: chatWorking },
+            { name: 'Exclusão Mensagem', passed: messageDeletionWorking },
+            { name: 'Exclusão Conversa', passed: conversationDeletionWorking }
+        ];
+        
+        let passedTests = 0;
+        tests.forEach(test => {
+            const status = test.passed ? '✅ PASSOU' : '❌ FALHOU';
+            console.log(`${status} - ${test.name}`);
+            if (test.passed) passedTests++;
+        });
+        
+        const score = Math.round((passedTests / tests.length) * 100);
+        console.log(`\n🎯 SCORE GERAL: ${score}% (${passedTests}/${tests.length} testes)`);
+        
+        // Detalhes específicos
+        console.log('\n📊 DETALHES DOS DADOS:');
+        console.log(`- Mensagens encontradas: ${dataCheck.messageCount}`);
+        console.log(`- Anexos detectados: ${dataCheck.hasFileAttachment ? 'Sim' : 'Não'}`);
+        console.log(`- Dados financeiros reais: ${dataCheck.hasRealData ? 'Sim' : 'Não'}`);
+        console.log(`- Transações processadas: ${dataCheck.realTransactionCount || 'N/A'}`);
+        
+        // Status final
+        if (score >= 80) {
+            console.log('\n🎉 SISTEMA FUNCIONANDO ADEQUADAMENTE!');
+        } else if (score >= 60) {
+            console.log('\n⚠️ Sistema parcialmente funcional - necessárias melhorias');
         } else {
-          console.log(`❌ Falha: ${uploadResult.error || 'Erro desconhecido'}`);
-          if (uploadResult.raw) {
-            console.log(`📝 Resposta raw: ${uploadResult.raw.substring(0, 300)}`);
-          }
-          
-          uploadResults.push({
-            file: file.name,
-            success: false,
-            error: uploadResult.error || 'Erro desconhecido'
-          });
+            console.log('\n🚨 SISTEMA COM PROBLEMAS CRÍTICOS');
         }
-      } catch (error) {
-        console.log(`❌ Erro no upload: ${error.message}`);
-        uploadResults.push({
-          file: file.name,
-          success: false,
-          error: error.message
-        });
-      }
-      
-      // Aguardar entre uploads
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
-    
-    // 4. Testar análise via chat
-    console.log('\n🤖 TESTANDO ANÁLISE VIA CHAT');
-    console.log('============================');
-    
-    const chatTests = [
-      { 
-        message: 'Analise os documentos que enviei e me dê um relatório completo da minha situação financeira',
-        type: 'Análise Completa'
-      },
-      {
-        message: 'Qual é meu score de crédito baseado nos documentos?',
-        type: 'Score de Crédito'
-      },
-      {
-        message: 'Identifique padrões suspeitos ou irregulares nos meus gastos',
-        type: 'Detecção de Padrões'
-      }
-    ];
-    
-    const chatResults = [];
-    
-    for (const test of chatTests) {
-      console.log(`\n💭 ${test.type}: ${test.message}`);
-      
-      try {
-        const chatResponse = await fetch(`${BASE_URL}/api/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Cookie': cookies },
-          body: JSON.stringify({ message: test.message, conversationId })
-        });
         
-        const chatResult = await chatResponse.json();
+        return { score, tests, dataCheck };
         
-        if (chatResult.success) {
-          console.log(`✅ Resposta gerada (${chatResult.response.length} caracteres)`);
-          console.log(`📝 Preview: ${chatResult.response.substring(0, 200)}...`);
-          
-          chatResults.push({
-            type: test.type,
-            success: true,
-            responseLength: chatResult.response.length
-          });
-        } else {
-          console.log(`❌ Falha no chat: ${chatResult.message}`);
-          chatResults.push({
-            type: test.type,
-            success: false,
-            error: chatResult.message
-          });
-        }
-      } catch (error) {
-        console.log(`❌ Erro no chat: ${error.message}`);
-        chatResults.push({
-          type: test.type,
-          success: false,
-          error: error.message
-        });
-      }
+    } catch (error) {
+        console.error('\n💥 ERRO NO TESTE:', error.message);
+        return false;
     }
-    
-    // 5. Relatório final de eficiência
-    console.log('\n📊 RELATÓRIO FINAL DE EFICIÊNCIA');
-    console.log('=================================');
-    
-    const successfulUploads = uploadResults.filter(r => r.success);
-    const failedUploads = uploadResults.filter(r => !r.success);
-    const successfulChats = chatResults.filter(r => r.success);
-    const failedChats = chatResults.filter(r => !r.success);
-    
-    console.log('📤 UPLOADS:');
-    console.log(`   ✅ Sucessos: ${successfulUploads.length}/${uploadResults.length}`);
-    console.log(`   ❌ Falhas: ${failedUploads.length}/${uploadResults.length}`);
-    
-    if (successfulUploads.length > 0) {
-      const avgTime = successfulUploads.reduce((sum, r) => sum + r.processingTime, 0) / successfulUploads.length;
-      const totalTransactions = successfulUploads.reduce((sum, r) => sum + r.transactionCount, 0);
-      
-      console.log(`   ⏱️ Tempo médio: ${Math.round(avgTime)}ms`);
-      console.log(`   📊 Total transações: ${totalTransactions}`);
-      console.log(`   🔧 Método principal: NoLimitExtractor`);
-    }
-    
-    console.log('\n💬 CHAT:');
-    console.log(`   ✅ Sucessos: ${successfulChats.length}/${chatResults.length}`);
-    console.log(`   ❌ Falhas: ${failedChats.length}/${chatResults.length}`);
-    
-    // Status geral do sistema
-    console.log('\n🎯 STATUS GERAL DO SISTEMA:');
-    console.log('===========================');
-    console.log('✅ Login: Funcionando');
-    console.log('✅ Criação de conversas: Funcionando');
-    console.log(`${successfulUploads.length > 0 ? '✅' : '❌'} Upload de documentos: ${successfulUploads.length > 0 ? 'Funcionando' : 'Com problemas'}`);
-    console.log(`${successfulChats.length > 0 ? '✅' : '❌'} Chat de análise: ${successfulChats.length > 0 ? 'Funcionando' : 'Com problemas'}`);
-    console.log('✅ NoLimitExtractor: Ativo e funcional');
-    console.log('⚠️ APIs externas: OpenAI indisponível, outras disponíveis');
-    
-    // Problemas críticos
-    if (failedUploads.length > 0) {
-      console.log('\n🔴 PROBLEMAS CRÍTICOS IDENTIFICADOS:');
-      failedUploads.forEach(f => {
-        console.log(`   - Upload ${f.file}: ${f.error}`);
-      });
-    }
-    
-    if (failedChats.length > 0) {
-      console.log('\n🔴 PROBLEMAS NO CHAT:');
-      failedChats.forEach(f => {
-        console.log(`   - ${f.type}: ${f.error}`);
-      });
-    }
-    
-    // Recomendações
-    console.log('\n💡 RECOMENDAÇÕES:');
-    if (successfulUploads.length === uploadResults.length && successfulChats.length === chatResults.length) {
-      console.log('🎉 SISTEMA 100% FUNCIONAL!');
-      console.log('   - Todos os componentes operacionais');
-      console.log('   - Pronto para uso em produção');
-    } else {
-      if (failedUploads.length > 0) {
-        console.log('   - Corrigir problemas de upload identificados');
-      }
-      if (failedChats.length > 0) {
-        console.log('   - Verificar sistema de chat');
-      }
-    }
-    
-    console.log('   - Sistema local (NoLimitExtractor) funcionando perfeitamente');
-    console.log('   - Implementar melhorias nas APIs externas quando disponíveis');
-    
-    return {
-      uploads: uploadResults,
-      chats: chatResults,
-      overallSuccess: successfulUploads.length === uploadResults.length && successfulChats.length === chatResults.length
-    };
-    
-  } catch (error) {
-    console.error('❌ Erro crítico no teste:', error);
-    return { error: error.message };
-  }
 }
 
-runCompleteSystemTest()
-  .then(results => {
-    if (results.overallSuccess) {
-      console.log('\n🏆 TESTE CONCLUÍDO COM SUCESSO');
-      console.log('===============================');
-      console.log('🎯 FINANCEAI TOTALMENTE OPERACIONAL!');
-    } else {
-      console.log('\n⚠️ TESTE CONCLUÍDO COM PROBLEMAS');
-      console.log('=================================');
-      console.log('🔧 Correções necessárias identificadas');
-    }
-  })
-  .catch(console.error);
+// Executar teste
+runCompleteSystemTest().catch(console.error);
