@@ -16,6 +16,7 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState([])
   const [showUploadProgress, setShowUploadProgress] = useState(false)
+  const [uploadStatus, setUploadStatus] = useState({})
   
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -409,14 +410,22 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           </div>
         )}
 
-        {/* Progress de Upload */}
+        {/* Progress de Upload Melhorado */}
         {showUploadProgress && uploadingFiles.length > 0 && (
           <div className="fixed bottom-20 right-4 bg-white dark:bg-gray-800 rounded-3xl shadow-lg border p-4 max-w-sm z-50">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Processando Documentos
-            </h4>
-            <div className="space-y-2">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Processando ({uploadingFiles.length})
+              </h4>
+              <button 
+                onClick={() => setShowUploadProgress(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 max-h-48 overflow-y-auto">
               {uploadingFiles.map((file, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">
                   <div className="flex-1">
