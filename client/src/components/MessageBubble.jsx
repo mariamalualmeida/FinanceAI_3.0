@@ -7,7 +7,7 @@ export default function MessageBubble({ message, isTyping = false, isGemini = fa
   
   // Log para debug
   if (message.text || message.content) {
-    const messageText = message.text || message.content || '';
+    const messageText = String(message.text || message.content || '');
     console.log('Renderizando mensagem:', {
       sender: message.sender,
       textLength: messageText.length || 0,
