@@ -500,6 +500,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test Upload endpoint - bypasses LLM completely
+  app.post('/api/test/upload', isAuthenticated, upload.array('files', 5), async (req: any, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      
+      if (!files || files.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'No files uploaded' 
+        });
+      }
+
+      const results = [];
+
+      for (const file of files) {
+        try {
+          const fileType = path.extname(file.originalname).toLowerCase().slice(1);
+          const processedDocument = await fileProcessor.processDocument(file.path, fileType);
+          
+          results.push({
+            filename: file.originalname,
+            status: 'success',
+            data: processedDocument
+          });
+
+          // Clean up file
+          await fs.unlink(file.path).catch(() => {});
+
+        } catch (error) {
+          results.push({
+            filename: file.originalname,
+            status: 'error',
+            error: error.message
+          });
+        }
+      }
+
+      res.json({
+        success: true,
+        message: 'Files processed',
+        results
+      });
+
+    } catch (error) {
+      console.error('Test upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error',
+        error: error.message
+      });
+    }
+  });
+
   // Chat Upload with Analysis endpoint
   app.post('/api/chat/upload', isAuthenticated, upload.array('files', 5), async (req: any, res) => {
     try {
@@ -540,26 +593,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const fileType = path.extname(file.originalname).toLowerCase().slice(1);
             const processedDocument = await fileProcessor.processDocument(file.path, fileType);
             
-            // Create financial analysis with the extracted data
-            const analysisResult = await financialAnalyzer.analyzeFinancialData(
-              req.session.userId!,
-              conversationId || null,
-              processedDocument,
-              file.originalname
-            );
-
+            // Show extracted data directly (bypass LLM analysis for now)
+            const metadata = processedDocument.metadata;
+            console.log('Processed document metadata:', JSON.stringify(metadata, null, 2));
+            
             analysisData = {
-              documentType: processedDocument.metadata.docType || 'financial',
-              summary: `Analisado ${processedDocument.metadata.transactions?.length || 0} transações do ${processedDocument.metadata.bank || 'banco'}`,
-              insights: `Score de Crédito: ${analysisResult.creditScore}/850 | Risco: ${analysisResult.riskLevel} | Receitas: R$ ${analysisResult.totalIncome.toFixed(2)} | Despesas: R$ ${analysisResult.totalExpenses.toFixed(2)}`,
-              riskScore: analysisResult.creditScore,
-              creditScore: analysisResult.creditScore,
-              transactionCount: analysisResult.transactionCount,
-              totalIncome: analysisResult.totalIncome,
-              totalExpenses: analysisResult.totalExpenses,
-              balance: analysisResult.balance,
-              riskLevel: analysisResult.riskLevel,
-              recommendations: analysisResult.recommendations.join(' | ')
+              documentType: metadata.docType || 'financial',
+              summary: `✅ EXTRAÇÃO REALIZADA: ${metadata.transactions?.length || 0} transações do ${metadata.bank || 'banco desconhecido'}`,
+              insights: `💰 Receitas: R$ ${(metadata.financialSummary?.total_income || 0).toFixed(2)} | 💸 Despesas: R$ ${(metadata.financialSummary?.total_expenses || 0).toFixed(2)} | 💳 Saldo: R$ ${(metadata.financialSummary?.net_balance || 0).toFixed(2)}`,
+              riskScore: 650, // Placeholder while LLM is down
+              creditScore: 650,
+              transactionCount: metadata.transactions?.length || 0,
+              totalIncome: metadata.financialSummary?.total_income || 0,
+              totalExpenses: metadata.financialSummary?.total_expenses || 0,
+              balance: metadata.financialSummary?.net_balance || 0,
+              riskLevel: 'medium',
+              recommendations: 'Análise básica realizada - dados extraídos com sucesso',
+              bankDetected: metadata.bank,
+              documentType: metadata.docType,
+              extractedTransactions: metadata.transactions?.slice(0, 5) || [] // Show first 5 transactions
             };
 
             // Update file status
