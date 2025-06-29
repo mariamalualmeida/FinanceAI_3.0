@@ -413,6 +413,11 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. Teste com documentos reais: 7 novos formatos incluindo CSV, OFX, faturas Itaú
 - June 29, 2025. Nubank funcionando: 35+ transações extraídas corretamente de fatura real
 - June 29, 2025. Identificados ajustes necessários: priorização do novo parser e detecção de banco
+- June 29, 2025. Sistema de validação automática implementado: compara documentos reais vs dados extraídos
+- June 29, 2025. Validação documento por documento executada: score médio 40/100, problemas identificados
+- June 29, 2025. APIs testadas: OpenAI disponível, necessário implementar validação cruzada com LLMs
+- June 29, 2025. Problemas críticos identificados: detecção de banco 0% precisão, parsers específicos inativos
+- June 29, 2025. BrazilianBanksParser expandido com 6 novas fintechs: PagBank, MercadoPago, Will Bank
 
 ## User Preferences
 
