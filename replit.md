@@ -408,6 +408,11 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. API de teste implementada (/api/test/upload) para validação contínua do sistema
 - June 29, 2025. Fallback LLM implementado para casos complexos sem dependência externa obrigatória
 - June 29, 2025. Sistema de análise financeira expandido: suporte completo a todos principais bancos brasileiros
+- June 29, 2025. Expansão para fintechs testada: InfinitePay, Stone, PicPay, Inter em múltiplos formatos
+- June 29, 2025. BrazilianBanksParser expandido com parsers específicos para fintechs brasileiras
+- June 29, 2025. Teste com documentos reais: 7 novos formatos incluindo CSV, OFX, faturas Itaú
+- June 29, 2025. Nubank funcionando: 35+ transações extraídas corretamente de fatura real
+- June 29, 2025. Identificados ajustes necessários: priorização do novo parser e detecção de banco
 
 ## User Preferences
 
