@@ -1016,5 +1016,85 @@ ${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`;
     });
   }
 
+  // API Testing and Validation Routes
+  app.get('/api/test/apis', async (req: Request, res: Response) => {
+    try {
+      const { documentValidator } = await import('./services/documentValidator');
+      const results = await documentValidator.testAllAPIs();
+      res.json({
+        success: true,
+        apiStatus: results,
+        summary: {
+          working: Object.values(results).filter(Boolean).length,
+          total: Object.keys(results).length
+        }
+      });
+    } catch (error) {
+      console.error('API test error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao testar APIs',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Document Validation Route
+  app.post('/api/validate/document', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { documentText, extractedData } = req.body;
+      
+      if (!documentText || !extractedData) {
+        return res.status(400).json({
+          success: false,
+          message: 'Document text and extracted data are required'
+        });
+      }
+
+      const { documentValidator } = await import('./services/documentValidator');
+      const validationResults = await documentValidator.validateDocument(documentText, extractedData);
+      
+      res.json({
+        success: true,
+        validationResults,
+        summary: {
+          averageScore: validationResults.reduce((sum, r) => sum + r.validationScore, 0) / validationResults.length,
+          providersUsed: validationResults.length
+        }
+      });
+    } catch (error) {
+      console.error('Document validation error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro na validação do documento',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Mass Document Validation Route
+  app.post('/api/validate/all-documents', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { documentValidator } = await import('./services/documentValidator');
+      const results = await documentValidator.validateAllDocuments();
+      
+      res.json({
+        success: true,
+        results,
+        summary: {
+          documentsProcessed: Object.keys(results).length,
+          totalValidations: Object.values(results).reduce((sum, validations) => sum + validations.length, 0)
+        }
+      });
+    } catch (error) {
+      console.error('Mass validation error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro na validação em massa',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   return server;
 }
