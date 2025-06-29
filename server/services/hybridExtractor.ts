@@ -1,5 +1,7 @@
 import { LLMExtractor } from './llmExtractor';
 import { FileProcessor } from './fileProcessor';
+import fs from 'fs';
+import { spawn } from 'child_process';
 
 interface ExtractionResult {
   success: boolean;
@@ -93,14 +95,9 @@ export class HybridExtractor {
   }
 
   private async extractTextFromFile(filePath: string): Promise<string> {
-    // Usar método existente do FileProcessor para extrair texto
-    const fs = require('fs');
-    const path = require('path');
-    
     if (filePath.toLowerCase().endsWith('.pdf')) {
       // Para PDFs, usar extração Python se disponível
       try {
-        const { spawn } = require('child_process');
         return new Promise((resolve, reject) => {
           const python = spawn('python3', ['-c', `
 import PyPDF2
@@ -121,15 +118,15 @@ except Exception as e:
           let output = '';
           let error = '';
           
-          python.stdout.on('data', (data) => {
+          python.stdout.on('data', (data: any) => {
             output += data.toString();
           });
           
-          python.stderr.on('data', (data) => {
+          python.stderr.on('data', (data: any) => {
             error += data.toString();
           });
           
-          python.on('close', (code) => {
+          python.on('close', (code: any) => {
             if (code === 0) {
               resolve(output.trim());
             } else {
