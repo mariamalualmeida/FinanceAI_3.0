@@ -74,8 +74,10 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
       onSelectConversation(conversation)
     }
     
-    // Sidebar só fecha quando explicitamente solicitado
-    // Removido fechamento automático no mobile
+    // Fechar sidebar automaticamente ao selecionar conversa
+    if (onClose) {
+      onClose()
+    }
   }
 
   const handleDeleteConversation = async (conversationId: string) => {
