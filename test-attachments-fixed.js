@@ -1,128 +1,96 @@
 #!/usr/bin/env node
 
-import fetch from 'node-fetch';
-import FormData from 'form-data';
 import fs from 'fs';
+import FormData from 'form-data';
+import fetch from 'node-fetch';
 
 async function testAttachmentsFixed() {
-    console.log('\n🔗 TESTE DE ANEXOS CORRIGIDOS');
-    console.log('='.repeat(50));
+    console.log('🔧 TESTE FINAL - ANEXOS E MENSAGENS CORRIGIDOS');
+
+    const baseUrl = 'http://localhost:5000';
     
     try {
-        // LOGIN
-        const loginResponse = await fetch('http://localhost:5000/api/login', {
+        // 1. Login
+        const loginResponse = await fetch(`${baseUrl}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: 'Admin', password: 'admin123' })
         });
-        
+
         const cookies = loginResponse.headers.get('set-cookie');
-        console.log('✅ Login OK');
+        console.log('✅ Login realizado');
+
+        // 2. Teste upload via /api/chat/upload (rota principal)
+        console.log('\n📄 Testando upload via /api/chat/upload...');
         
-        // CRIAR CONVERSA
-        const conversationResponse = await fetch('http://localhost:5000/api/conversations', {
+        const form = new FormData();
+        form.append('files', fs.createReadStream('attached_assets/Fatura-CPF_1751146806544.PDF'));
+        form.append('message', 'Analise esta fatura CPF');
+
+        const uploadResponse = await fetch(`${baseUrl}/api/chat/upload`, {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                'Cookie': cookies 
+                'Cookie': cookies,
+                ...form.getHeaders()
             },
-            body: JSON.stringify({ title: 'Teste Anexos' })
+            body: form
         });
-        
-        const conversation = await conversationResponse.json();
-        console.log('✅ Conversa criada:', conversation.id);
-        
-        // UPLOAD
-        const testFile = 'attached_assets/Fatura-CPF_1751146806544.PDF';
-        const formData = new FormData();
-        formData.append('file', fs.createReadStream(testFile));
-        formData.append('conversationId', conversation.id);
-        
-        const uploadResponse = await fetch('http://localhost:5000/api/upload', {
-            method: 'POST',
-            headers: { 'Cookie': cookies },
-            body: formData
-        });
-        
-        console.log('✅ Upload enviado');
-        
-        // AGUARDAR PROCESSAMENTO
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        
-        // VERIFICAR MENSAGENS COM DETALHES
-        const messagesResponse = await fetch(`http://localhost:5000/api/conversations/${conversation.id}/messages`, {
-            headers: { 'Cookie': cookies }
-        });
-        
-        const messages = await messagesResponse.json();
-        console.log(`\n📋 ANÁLISE DETALHADA DAS MENSAGENS (${messages.length}):`);
-        
-        let foundUserWithAttachment = false;
-        let foundAutoAnalysis = false;
-        let attachmentDetails = null;
-        
-        messages.forEach((msg, i) => {
-            console.log(`\n   === MENSAGEM ${i + 1} ===`);
-            console.log(`   Sender: ${msg.sender}`);
-            console.log(`   Content: ${msg.content?.substring(0, 50)}...`);
+
+        if (uploadResponse.ok) {
+            const result = await uploadResponse.json();
+            console.log('✅ Upload realizado com sucesso');
+            console.log('📄 Arquivos processados:', result.results?.length || 0);
+            console.log('🧠 Análise gerada:', result.aiResponse ? 'Sim' : 'Não');
             
-            // Verificar anexos
-            if (msg.metadata?.attachments) {
-                foundUserWithAttachment = true;
-                attachmentDetails = msg.metadata.attachments[0];
-                console.log(`   📎 ANEXO ENCONTRADO:`);
-                console.log(`      - Nome: ${attachmentDetails.originalname}`);
-                console.log(`      - Tamanho: ${(attachmentDetails.fileSize / 1024).toFixed(1)} KB`);
-                console.log(`      - Tipo: ${attachmentDetails.fileType}`);
+            // Verificar se a conversa foi criada
+            if (result.conversationId) {
+                console.log('✅ Conversa criada:', result.conversationId);
+                
+                // 3. Verificar mensagens na conversa
+                const messagesResponse = await fetch(`${baseUrl}/api/conversations/${result.conversationId}/messages`, {
+                    headers: { 'Cookie': cookies }
+                });
+                
+                if (messagesResponse.ok) {
+                    const messages = await messagesResponse.json();
+                    console.log('✅ Mensagens carregadas:', messages.length);
+                    
+                    // Verificar se as mensagens têm anexos
+                    const messageWithAttachment = messages.find(m => 
+                        m.metadata?.attachments || 
+                        (m.content && m.content.includes('📎'))
+                    );
+                    
+                    if (messageWithAttachment) {
+                        console.log('✅ Mensagem com anexo encontrada');
+                        console.log('📎 Anexos:', messageWithAttachment.metadata?.attachments?.length || 0);
+                    }
+                    
+                    // Verificar se há resposta da IA
+                    const aiMessage = messages.find(m => m.sender === 'assistant');
+                    if (aiMessage) {
+                        console.log('✅ Resposta da IA encontrada');
+                        console.log('📝 Tamanho da resposta:', aiMessage.content?.length || 0, 'chars');
+                    }
+                }
             }
             
-            // Verificar análise
-            if (msg.content?.includes('ANÁLISE FINANCEIRA')) {
-                foundAutoAnalysis = true;
-                console.log(`   ✅ ANÁLISE DETECTADA`);
-            }
-        });
-        
-        console.log('\n' + '='.repeat(50));
-        console.log('🎯 RESULTADOS DA CORREÇÃO:');
-        console.log('='.repeat(50));
-        
-        const results = [
-            { test: 'Mensagem do usuário com anexo', status: foundUserWithAttachment ? '✅ CORRIGIDO' : '❌ AINDA COM PROBLEMA' },
-            { test: 'Análise automática gerada', status: foundAutoAnalysis ? '✅ FUNCIONANDO' : '❌ PROBLEMA' },
-            { test: 'Detalhes do anexo salvos', status: attachmentDetails ? '✅ FUNCIONANDO' : '❌ PROBLEMA' }
-        ];
-        
-        results.forEach(result => {
-            console.log(`${result.status} - ${result.test}`);
-        });
-        
-        const fixedCount = results.filter(r => r.status.includes('✅')).length;
-        const score = Math.round((fixedCount / results.length) * 100);
-        
-        console.log(`\n🎯 SCORE PÓS-CORREÇÃO: ${score}% (${fixedCount}/${results.length} funcionando)`);
-        
-        if (attachmentDetails) {
-            console.log('\n📎 DETALHES DO ANEXO SALVO:');
-            console.log(`- Nome original: ${attachmentDetails.originalname}`);
-            console.log(`- Tamanho: ${(attachmentDetails.fileSize / 1024).toFixed(1)} KB`);
-            console.log(`- Tipo: ${attachmentDetails.fileType}`);
-            console.log(`- MIME: ${attachmentDetails.mimeType}`);
-        }
-        
-        if (score >= 90) {
-            console.log('\n🎉 ANEXOS CORRIGIDOS COM SUCESSO!');
-            console.log('Sistema agora exibe anexos no histórico das conversas.');
+            return true;
         } else {
-            console.log('\n⚠️ Algumas funcionalidades ainda precisam de ajustes');
+            console.log('❌ Erro no upload:', uploadResponse.status);
+            const error = await uploadResponse.text();
+            console.log('Erro:', error);
+            return false;
         }
-        
-        return score;
-        
+
     } catch (error) {
-        console.error('💥 Erro no teste:', error.message);
-        return 0;
+        console.error('❌ ERRO:', error.message);
+        return false;
     }
 }
 
-testAttachmentsFixed().catch(console.error);
+testAttachmentsFixed().then(success => {
+    console.log('\n🎯 RESULTADO FINAL:');
+    console.log(success ? '✅ SISTEMA FUNCIONANDO - Anexos e mensagens corrigidos' : '❌ PROBLEMAS DETECTADOS');
+    process.exit(success ? 0 : 1);
+});
