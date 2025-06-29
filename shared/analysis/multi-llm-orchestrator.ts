@@ -64,51 +64,7 @@ export class MultiLLMOrchestrator {
   }
 
   async initialize() {
-    console.log('Skipping OpenAI provider due to permissions issues');
-    
-    // OpenAI temporarily disabled due to API key permission issues
-    // try {
-    //   // Initialize OpenAI directly with available API key
-    //   const openaiClient = new OpenAI({
-    //     apiKey: process.env.OPENAI_API_KEY
-    //   });
-
-    //   const provider: LLMProvider = {
-    //     name: 'openai',
-    //     client: openaiClient,
-    //     generateResponse: async (prompt: string, context?: string) => {
-    //       const fullPrompt = context ? `${context}\n\n${prompt}` : prompt;
-    //       
-    //       const response = await openaiClient.chat.completions.create({
-    //         model: 'gpt-4o-mini',
-    //         messages: [{ role: 'user', content: fullPrompt }],
-    //         max_tokens: 1000,
-    //         temperature: 0.7
-    //       });
-
-    //       return response.choices[0].message.content || '';
-    //     },
-    //     isHealthy: async () => {
-    //       try {
-    //         await openaiClient.chat.completions.create({
-    //           model: 'gpt-4o-mini',
-    //           messages: [{ role: 'user', content: 'test' }],
-    //           max_tokens: 5
-    //         });
-    //         return true;
-    //       } catch {
-    //         return false;
-    //       }
-    //     }
-    //   };
-
-    //   this.providers.set('openai', provider);
-    //   console.log(`OpenAI provider initialized successfully. Total providers: ${this.providers.size}`);
-    // } catch (error) {
-    //   console.error('Failed to initialize OpenAI provider:', error);
-    // }
-    
-    console.log('OpenAI provider disabled. Will use other available APIs.');
+    console.log('OpenAI provider disabled due to permissions issues. Will use other available APIs.');
 
     // Load database configurations if storage is available
     if (this.storage) {
