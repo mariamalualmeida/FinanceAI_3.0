@@ -307,8 +307,10 @@ export class AdvancedMultiLLMOrchestrator {
       const enhancementSteps: string[] = [];
       
       // 3. VALIDAÇÃO CRUZADA (se habilitada)
-      if (this.config.strategies.validation && this.providers.size > 1) {
-        console.log('🔍 Performing cross-validation...');
+      // Validação apenas para queries complexas (>100 chars ou palavras-chave)
+      const isComplexQuery = prompt.length > 100 || prompt.includes('análise') || prompt.includes('documento');
+      if (this.config.strategies.validation && this.providers.size > 1 && isComplexQuery) {
+        console.log('🔍 Performing cross-validation for complex query...');
         const validationResult = await this.performCrossValidation(finalResponse, prompt);
         
         if (validationResult.isValid) {
@@ -316,9 +318,8 @@ export class AdvancedMultiLLMOrchestrator {
           confidence = Math.min(confidence + 0.1, 1.0);
           console.log('✅ Cross-validation passed');
         } else {
-          console.log('⚠️ Cross-validation failed, using corrected response');
-          finalResponse = validationResult.correctedResponse || finalResponse;
-          validated = true;
+          console.log('⚠️ Cross-validation failed - keeping original response');
+          validated = false;
         }
       }
       

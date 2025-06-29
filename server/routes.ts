@@ -680,7 +680,7 @@ ${summary.recommendations || '• Monitore gastos recorrentes\n• Mantenha cont
           }
           
           await storage.updateFileUploadStatus(fileUpload.id, 'completed');
-          console.log(`[Upload] ✅ Processamento finalizado: ${req.file!.originalname}`);
+          console.log(`[Upload] ✅ Processamento finalizado: ${req.file?.originalname || 'arquivo'}`);
 
         } catch (processingError) {
           console.error('[NoLimit] Erro no processamento:', processingError);
