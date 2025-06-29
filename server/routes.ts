@@ -15,6 +15,7 @@ import {
 import { financialAnalyzer } from './financial-analyzer';
 import { multiLlmOrchestrator } from './multi-llm-orchestrator';
 import { fileProcessor } from './services/fileProcessor';
+import { HybridExtractor } from './services/hybridExtractor';
 import { registerTestResultsRoutes } from './routes-test-results';
 
 declare module "express-session" {
@@ -941,6 +942,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Erro no upload:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
+
+  // Nova rota para teste da extração híbrida LLM-first
+  app.post('/api/test/hybrid-extraction', upload.single('files'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Nenhum arquivo enviado' 
+        });
+      }
+
+      console.log(`[HybridTest] Testando extração híbrida LLM-first: ${req.file.originalname}`);
+      
+      const hybridExtractor = new HybridExtractor();
+      const result = await hybridExtractor.extractFromDocument(
+        req.file.path, 
+        req.file.originalname
+      );
+
+      // Adicionar informações sobre o teste
+      const response = {
+        ...result,
+        testInfo: {
+          fileName: req.file.originalname,
+          fileSize: req.file.size,
+          timestamp: new Date().toISOString(),
+          extractionMethod: result.data?.extractionMethod || 'unknown',
+          confidence: result.data?.confidence || 0
+        }
+      };
+
+      console.log(`[HybridTest] ✅ Resultado: ${result.success ? 'SUCESSO' : 'FALHA'} - Método: ${result.data?.extractionMethod} - Transações: ${result.data?.transactions?.length || 0}`);
+      
+      if (result.data?.accuracyWarning) {
+        console.log(`[HybridTest] ⚠️ ${result.data.accuracyWarning}`);
+      }
+
+      res.json(response);
+
+    } catch (error) {
+      console.error('[HybridTest] Erro na extração:', error);
+      res.status(500).json({
+        success: false,
+        error: `Erro no processamento: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      });
     }
   });
 
