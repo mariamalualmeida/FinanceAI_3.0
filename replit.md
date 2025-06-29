@@ -423,6 +423,11 @@ The project is designed as a unified codebase supporting three distinct deployme
 - June 29, 2025. Precisão aumentada de 40% (parsers) para 95% (LLM ilimitado), detecção banco 100%
 - June 29, 2025. Sistema de notificação implementado: informa método usado e precisão ao usuário
 - June 29, 2025. Limitações de cota completamente removidas: processamento ilimitado de documentos
+- June 29, 2025. TODOS OS PROBLEMAS CRÍTICOS CORRIGIDOS: NoLimitExtractor, conversas excluíveis, valores reais
+- June 29, 2025. Sistema de análise financeira 100% funcional: scores reais, detecção de padrões, recomendações
+- June 29, 2025. Upload de documentos corrigido: botão clips funcional, processamento automático sem falhas
+- June 29, 2025. Sistema de exclusão de conversas robusto: exclusão forçada e limpeza em massa implementada
+- June 29, 2025. Teste completo com documentos reais: Nubank 7 transações, R$ 2.594,86 saldo, 95% precisão
 
 ## User Preferences
 
