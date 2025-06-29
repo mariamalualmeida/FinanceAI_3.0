@@ -1015,4 +1015,6 @@ ${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`;
       sender: 'assistant'
     });
   }
+
+  return server;
 }
