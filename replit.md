@@ -4,6 +4,102 @@
 
 FinanceAI is a comprehensive financial analysis system that combines artificial intelligence with document processing to provide intelligent credit scoring, risk assessment, and financial consultancy services. The application processes bank statements, invoices, and other financial documents to detect patterns, assess creditworthiness, and identify potential risks including gambling activities.
 
+## Multi-Version Architecture
+
+The project is designed as a unified codebase supporting three distinct deployment versions, each optimized for specific use cases while sharing core functionality and algorithms.
+
+### 1. SERVER WEB VERSION (Enterprise Complete)
+**Target:** Dedicated servers, enterprise environments
+**Status:** Currently implemented and functional
+
+**Architecture:**
+- **Backend:** Full Node.js + Express + PostgreSQL stack
+- **Features:** Complete admin panel, knowledge base system, multi-user support
+- **Processing:** Advanced document analysis with multiple LLM providers
+- **Storage:** Full relational database with comprehensive audit trails
+- **Scalability:** Horizontal scaling, load balancing ready
+
+**Core Components:**
+- Financial-analyzer with full algorithm suite
+- Multi-LLM orchestrator (OpenAI, Anthropic, Google, xAI)
+- Complete admin panel with user management
+- Knowledge base with semantic search
+- Advanced monitoring and analytics
+
+### 2. PWA VERSION (Progressive Web App)
+**Target:** Web browsers, installable app experience
+**Status:** Basic structure exists, needs optimization
+
+**Architecture:**
+- **Frontend:** Optimized React with service worker
+- **Backend:** Lightweight API endpoints (/api/lite/)
+- **Features:** Core analysis functions, simplified admin
+- **Processing:** Essential financial analysis algorithms
+- **Storage:** IndexedDB + optional cloud sync
+- **Offline:** Basic functionality without connection
+
+**Core Components:**
+- Same financial-analyzer algorithms (lightweight mode)
+- Single primary LLM provider + backup
+- Installable PWA with app-like behavior
+- Chat-based upload interface only
+- Local caching with sync capabilities
+
+**PWA Installation Features:**
+- Web app manifest with installation prompts
+- Standalone mode (no browser UI)
+- Custom splash screen and app icons
+- Offline-first architecture with service worker
+- Push notifications support
+
+### 3. ANDROID APK VERSION (Native Hybrid)
+**Target:** Android devices, Google Play Store
+**Status:** Build structure created, needs native integration
+
+**Architecture:**
+- **Wrapper:** Kotlin + optimized WebView
+- **Core:** PWA embedded with native enhancements
+- **Features:** Native file handling, system integration
+- **Processing:** Same algorithms with local storage
+- **Storage:** SQLite + Room database
+- **Sync:** Background upload when online
+
+**Core Components:**
+- Same financial-analyzer algorithms (mobile optimized)
+- Native Android file picker integration
+- SQLite local database with Room ORM
+- WebView with native API bridges
+- Automatic sync with cloud when available
+
+**Native Enhancements:**
+- Deep linking for financial documents
+- Native file sharing integration
+- Android-specific UI optimizations
+- Background processing capabilities
+- System notification integration
+
+### Shared Core Architecture (80% Code Reuse)
+
+**Financial Analysis Engine:**
+- `financial-analyzer.ts`: Credit scoring, risk assessment, pattern detection
+- `multi-llm-orchestrator.ts`: Intelligent LLM routing and backup
+- Transaction extraction and categorization algorithms
+- Suspicious activity detection (gambling, high-risk patterns)
+- Automated report generation with natural language
+
+**Unified Upload System:**
+- Chat-based file upload interface (no camera integration)
+- Drag & drop support across all versions
+- Universal file type support (PDF, Excel, images, Word)
+- Consistent processing pipeline: Upload → Extract → Analyze → Report
+
+**Shared Components:**
+- React UI components (responsive design)
+- TypeScript schemas and types
+- Authentication and session management
+- Chat interface with conversation management
+- Theme system (light/dark mode)
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -61,17 +157,53 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - **AI Services**: API keys required for OpenAI, Anthropic, and Google AI
 - **Document Processing**: Python runtime with specialized libraries
 
-### Android APK Build System
-- Complete Android Studio project structure with Gradle build configuration
-- Native WebView wrapper providing seamless mobile experience
-- File upload integration with Android's native file picker system
-- Splash screen with branded loading experience
-- Proper mobile app lifecycle management and background handling
-- Optimized APK generation with debug and release build variants
-- Deep linking support for PDF and Excel file associations
-- Material Design theming consistent with web application branding
-- Pull-to-refresh functionality and native back button navigation
-- Complete documentation in ANDROID_APK_BUILD.md for deployment
+## Development Strategy
+
+### Version-Specific Implementations
+
+**SERVER WEB (Current Focus):**
+- Implement knowledge base system with semantic search
+- Expand admin panel with user activity monitoring
+- Add advanced LLM configuration and prompt management
+- Optimize database performance and caching
+
+**PWA VERSION (Next Phase):**
+- Create lightweight API endpoints (/api/lite/)
+- Implement IndexedDB for local storage
+- Add service worker for offline functionality
+- Optimize bundle size and loading performance
+- Enable PWA installation prompts
+
+**ANDROID APK (Final Phase):**
+- Integrate native file picker with WebView
+- Implement SQLite local storage with Room
+- Add background sync capabilities
+- Optimize WebView performance for mobile
+- Implement deep linking for document handling
+
+### Code Organization Strategy
+```
+/shared (80% reused)
+  /components (React UI)
+  /analysis (Financial algorithms)
+  /types (TypeScript schemas)
+  /utils (Common utilities)
+
+/server-web (Enterprise version)
+  /backend (Full Express server)
+  /admin (Complete admin panel)
+  /knowledge-base (Semantic search)
+
+/pwa (Progressive Web App)
+  /lite-api (Optimized endpoints)
+  /offline (Service worker + cache)
+  /manifest (PWA configuration)
+
+/android (Hybrid App)
+  /kotlin (Native wrapper)
+  /webview (Optimized web layer)
+  /storage (SQLite + Room)
+```
 
 ### File Processing Support
 - PDF documents
@@ -234,15 +366,36 @@ FinanceAI is a comprehensive financial analysis system that combines artificial 
 - June 28, 2025. Processamento completo de documentos financeiros: upload → análise → relatório automático
 - June 28, 2025. Interface visual de progress e botões de análise financeira implementados
 - June 28, 2025. Sistema testado com documentos reais do usuário (extratos PDF, faturas)
+- June 29, 2025. Arquitetura multi-versão definida: SERVER WEB, PWA e ANDROID APK
+- June 29, 2025. Estratégia unificada de upload via chat (sem câmera) para todas versões
+- June 29, 2025. Compartilhamento de 80% do código entre versões mantendo algoritmos core
+- June 29, 2025. PWA configurado como app instalável com service worker e offline
+- June 29, 2025. Android APK simplificado sem APIs de câmera para máxima compatibilidade
+- June 29, 2025. Organização de código definida: /shared, /server-web, /pwa, /android
+- June 29, 2025. Versão atual (SERVER WEB) mantida como base enterprise completa
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-### Project Scope Restrictions
+### Project Scope & Design Principles
+
+**Core Restrictions:**
 - No integration with Brazilian bank APIs
 - No chat sharing functionality
+- No camera integration (simplified upload via chat only)
 - Focus on core financial analysis and consultation features
+
+**Unified Upload Strategy:**
+- Single chat-based upload interface across all versions
+- Drag & drop file support universally
+- User controls document quality and scanning externally
+- Consistent processing pipeline in all environments
+
+**Version-Specific Optimization:**
+- SERVER WEB: Maximum functionality for enterprise use
+- PWA: Installable app experience with offline capabilities
+- ANDROID: Native integration without camera complexity
 
 ### User System
 - **Standard User:** Admin / admin123 (default login, configurable via admin panel)
