@@ -1088,29 +1088,27 @@ ${analyses.map((analysis, i) =>
           let analysisData: any = {};
 
           try {
-            // Process the uploaded file using the real file processor
-            const fileType = path.extname(file.originalname).toLowerCase().slice(1);
-            const processedDocument = await fileProcessor.processDocument(file.path, fileType);
+            // Use NoLimitExtractor for real financial analysis
+            const { extractFinancialData } = await import('./services/noLimitExtractor.js');
+            const extractedData = await extractFinancialData(file.path, file.originalname);
             
-            // Show extracted data directly (bypass LLM analysis for now)
-            const metadata = processedDocument.metadata;
-            console.log('Processed document metadata:', JSON.stringify(metadata, null, 2));
+            console.log(`[ChatUpload] ✅ Análise via NoLimitExtractor: ${extractedData.transactions.length} transações`);
             
             analysisData = {
-              documentType: metadata.docType || 'financial',
-              summary: `✅ EXTRAÇÃO REALIZADA: ${metadata.transactions?.length || 0} transações do ${metadata.bank || 'banco desconhecido'}`,
-              insights: `💰 Receitas: R$ ${(metadata.financialSummary?.total_income || 0).toFixed(2)} | 💸 Despesas: R$ ${(metadata.financialSummary?.total_expenses || 0).toFixed(2)} | 💳 Saldo: R$ ${(metadata.financialSummary?.net_balance || 0).toFixed(2)}`,
-              riskScore: 650, // Placeholder while LLM is down
-              creditScore: 650,
-              transactionCount: metadata.transactions?.length || 0,
-              totalIncome: metadata.financialSummary?.total_income || 0,
-              totalExpenses: metadata.financialSummary?.total_expenses || 0,
-              balance: metadata.financialSummary?.net_balance || 0,
-              riskLevel: 'medium',
-              recommendations: 'Análise básica realizada - dados extraídos com sucesso',
-              bankDetected: metadata.bank,
-              documentType: metadata.docType,
-              extractedTransactions: metadata.transactions?.slice(0, 5) || [] // Show first 5 transactions
+              documentType: extractedData.documentType || 'extrato_bancario',
+              summary: extractedData.summary,
+              insights: `💰 Receitas: R$ ${extractedData.summary.totalCredits.toFixed(2)} | 💸 Despesas: R$ ${extractedData.summary.totalDebits.toFixed(2)} | 💳 Saldo: R$ ${extractedData.summary.finalBalance.toFixed(2)}`,
+              riskScore: extractedData.summary.riskScore || 650,
+              creditScore: extractedData.summary.creditScore || 650,
+              transactionCount: extractedData.transactions.length,
+              totalIncome: extractedData.summary.totalCredits,
+              totalExpenses: extractedData.summary.totalDebits,
+              balance: extractedData.summary.finalBalance,
+              riskLevel: extractedData.summary.riskLevel || 'medium',
+              recommendations: extractedData.summary.recommendations || 'Análise realizada com sucesso',
+              bankDetected: extractedData.bank,
+              documentType: extractedData.documentType,
+              extractedTransactions: extractedData.transactions.slice(0, 5) // Show first 5 transactions
             };
 
             // Update file status
@@ -1173,16 +1171,17 @@ ${analyses.map((analysis, i) =>
 
         try {
           // Simplified response generation for now
-          aiResponse = `📊 **Análise Financeira Completa**\n\n` +
+          aiResponse = `📊 **ANÁLISE FINANCEIRA COMPLETA**\n\n` +
                       `Processei ${fileAnalyses.length} documento(s) com sucesso:\n\n` +
                       fileAnalyses.map(fa => 
                         `• **${fa.filename}**: ${fa.insights}\n` +
                         `  - Tipo: ${fa.analysis.documentType}\n` +
-                        `  - Risk Score: ${fa.analysis.riskScore}/100\n` +
-                        `  - Credit Score: ${fa.analysis.creditScore}/850\n`
+                        `  - Risk Score: ${fa.analysis.riskScore}/1000\n` +
+                        `  - Credit Score: ${fa.analysis.creditScore}/850\n` +
+                        `  - Transações: ${fa.analysis.transactionCount}\n` +
+                        `  - Banco: ${fa.analysis.bankDetected || 'Detectado'}\n`
                       ).join('\n') +
-                      `\n💡 **Recomendações**: Documentos processados com análise básica implementada. ` +
-                      `Sistema está pronto para análises mais detalhadas conforme configuração.`;
+                      `\n💡 **Recomendações**: ${fileAnalyses.length > 0 ? fileAnalyses[0].analysis.recommendations : 'Documentos processados com sucesso'}`;;
         } catch (llmError) {
           console.error('LLM processing error:', llmError);
           aiResponse = `Análise concluída para ${fileAnalyses.length} arquivo(s). ` +
