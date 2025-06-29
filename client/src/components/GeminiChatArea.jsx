@@ -464,8 +464,8 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           <InputAreaFixed 
             onSend={sendMessage}
             onFileUpload={(file) => {
-              // Upload simples sem quebrar a interface
-              console.log('Arquivo anexado:', file.name)
+              // Upload real de arquivos via clips
+              handleFinancialDocumentUpload([file])
             }}
             onFinancialAnalysis={openFinancialFileSelector}
             isProcessing={isTyping}
