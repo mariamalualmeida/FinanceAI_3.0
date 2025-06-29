@@ -531,17 +531,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: 'processing'
           });
 
-          // Basic file analysis (simplified version)
+          // Real file analysis using the file processor
           let analysisSuccess = false;
-          let analysisData = {
-            documentType: 'financial',
-            summary: `Documento ${file.originalname} processado com sucesso`,
-            insights: 'Análise financeira básica realizada',
-            riskScore: Math.floor(Math.random() * 100),
-            creditScore: Math.floor(Math.random() * 850)
-          };
+          let analysisData: any = {};
 
           try {
+            // Process the uploaded file using the real file processor
+            const fileType = path.extname(file.originalname).toLowerCase().slice(1);
+            const processedDocument = await fileProcessor.processDocument(file.path, fileType);
+            
+            // Create financial analysis with the extracted data
+            const analysisResult = await financialAnalyzer.analyzeFinancialData(
+              req.session.userId!,
+              conversationId || null,
+              processedDocument,
+              file.originalname
+            );
+
+            analysisData = {
+              documentType: processedDocument.metadata.docType || 'financial',
+              summary: `Analisado ${processedDocument.metadata.transactions?.length || 0} transações do ${processedDocument.metadata.bank || 'banco'}`,
+              insights: `Score de Crédito: ${analysisResult.creditScore}/850 | Risco: ${analysisResult.riskLevel} | Receitas: R$ ${analysisResult.totalIncome.toFixed(2)} | Despesas: R$ ${analysisResult.totalExpenses.toFixed(2)}`,
+              riskScore: analysisResult.creditScore,
+              creditScore: analysisResult.creditScore,
+              transactionCount: analysisResult.transactionCount,
+              totalIncome: analysisResult.totalIncome,
+              totalExpenses: analysisResult.totalExpenses,
+              balance: analysisResult.balance,
+              riskLevel: analysisResult.riskLevel,
+              recommendations: analysisResult.recommendations.join(' | ')
+            };
+
             // Update file status
             await storage.updateFileUploadStatus(fileUpload.id, 'completed');
             analysisSuccess = true;
