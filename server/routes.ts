@@ -278,18 +278,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const messages = await storage.getMessagesByConversation(conversationId);
         console.log(`[DeleteConv] Encontradas ${messages.length} mensagens para excluir`);
         
-        // Exclusão forçada de mensagens
+        // Exclusão forçada de mensagens com validação UUID
         for (const message of messages) {
           try {
-            await storage.deleteMessage(message.id);
+            // Validar se é UUID válido antes de tentar exclusão
+            if (typeof message.id === 'string' && message.id.includes('-')) {
+              await storage.deleteMessage(message.id);
+            } else {
+              console.warn(`[DeleteConv] ID inválido detectado: ${message.id} (tipo: ${typeof message.id})`);
+            }
           } catch (msgError) {
             console.warn(`[DeleteConv] Falha ao excluir mensagem ${message.id}:`, msgError);
-            // Tentar exclusão forçada via SQL direto se necessário
-            try {
-              await storage.query(`DELETE FROM messages WHERE id = $1`, [message.id]);
-            } catch {
-              console.warn(`[DeleteConv] Exclusão forçada também falhou para ${message.id}`);
-            }
           }
         }
         

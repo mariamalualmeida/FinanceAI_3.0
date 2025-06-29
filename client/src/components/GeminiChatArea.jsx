@@ -275,19 +275,65 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
     }, 5000);
   };
 
-  // Função para abrir seletor de arquivos
-  const openFinancialFileSelector = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.xlsx,.xls,.csv,.txt';
-    input.multiple = true;
-    input.onchange = (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length > 0) {
-        handleFinancialDocumentUpload(files);
+  // Função para upload via clips - simples e direto
+  const handleClipsUpload = async (file) => {
+    try {
+      console.log('📎 Processando arquivo via clips:', file.name);
+      
+      // Mostrar indicador visual
+      setShowUploadProgress(true);
+      setUploadingFiles([{
+        name: file.name,
+        status: 'uploading',
+        progress: 0
+      }]);
+      
+      // Criar FormData com o arquivo real do usuário
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('conversationId', currentConversationId);
+      
+      // Upload via API normal (não a do financial-document)
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Atualizar status para concluído
+        setUploadingFiles(prev => prev.map(f => ({ 
+          ...f, 
+          status: 'completed',
+          progress: 100
+        })));
+        
+        console.log('✅ Upload via clips concluído:', result);
+        
+        // Recarregar mensagens para mostrar o arquivo anexado
+        setTimeout(() => {
+          loadConversationMessages(currentConversationId);
+        }, 1000);
+        
+      } else {
+        throw new Error(result.message || 'Erro no upload');
       }
-    };
-    input.click();
+      
+    } catch (error) {
+      console.error('❌ Erro no upload via clips:', error);
+      setUploadingFiles(prev => prev.map(f => ({ 
+        ...f, 
+        status: 'error',
+        progress: 0
+      })));
+    }
+    
+    // Limpar progress após 3 segundos
+    setTimeout(() => {
+      setShowUploadProgress(false);
+      setUploadingFiles([]);
+    }, 3000);
   };
 
   return (
@@ -464,10 +510,12 @@ export default function GeminiChatArea({ user, settings, onToggleSidebar, sideba
           <InputAreaFixed 
             onSend={sendMessage}
             onFileUpload={(file) => {
-              // Upload real de arquivos via clips
-              handleFinancialDocumentUpload([file])
+              // Upload simples via clips - apenas anexar
+              console.log('Arquivo selecionado via clips:', file.name)
+              // Processar arquivo real do usuário via API de upload normal
+              handleClipsUpload(file)
             }}
-            onFinancialAnalysis={openFinancialFileSelector}
+
             isProcessing={isTyping}
             uploadProgress={uploadProgress ? { progress: uploadProgress, fileName: 'Processando...' } : null}
           />
