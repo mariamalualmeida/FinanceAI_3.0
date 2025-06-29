@@ -1,14 +1,14 @@
 {
   "app": {
     "name": "FinanceAI",
-    "version": "3.0.0",
-    "buildNumber": "202506290001",
-    "codename": "EnhancedIntelligence",
+    "version": "3.1.0",
+    "buildNumber": "202506291800",
+    "codename": "ConsultancyGPT",
     "releaseDate": "2025-06-29"
   },
   "platforms": {
     "web": {
-      "version": "3.0.0",
+      "version": "3.1.0",
       "lastUpdate": "2025-06-29",
       "features": [
         "Multi-LLM Orchestration",
