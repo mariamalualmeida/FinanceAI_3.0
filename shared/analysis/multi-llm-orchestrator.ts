@@ -320,6 +320,13 @@ export class MultiLLMOrchestrator {
   }
 
   private buildPrompt(input: string): string {
+    // Primeiro tenta usar prompts do Mig
+    const migPrompt = this.buildMigPrompt(input);
+    if (migPrompt !== input) {
+      return migPrompt;
+    }
+
+    // Fallback para prompts do sistema
     if (!this.prompts) {
       return input;
     }
@@ -345,6 +352,46 @@ export class MultiLLMOrchestrator {
     }
 
     return `${promptChain.join('\n\n')}\n\nUser Input: ${input}`;
+  }
+
+  private buildMigPrompt(input: string): string {
+    // Detecta o tipo de análise baseado no input
+    const analysisType = this.detectAnalysisType(input);
+    
+    if (analysisType) {
+      const migPrompt = getMigPrompt(analysisType);
+      if (migPrompt) {
+        const personalityPrompt = getMigPrompt('mig-personality');
+        const basePrompt = personalityPrompt ? personalityPrompt.prompt : '';
+        
+        return `${basePrompt}\n\n${migPrompt.prompt}\n\nUser Input: ${input}`;
+      }
+    }
+
+    return input;
+  }
+
+  private detectAnalysisType(input: string): string | null {
+    const inputLower = input.toLowerCase();
+    
+    // Detecção baseada em palavras-chave
+    if (inputLower.includes('crédito') || inputLower.includes('score') || inputLower.includes('risco')) {
+      return 'mig-credit-analysis';
+    }
+    
+    if (inputLower.includes('consultoria') || inputLower.includes('plano') || inputLower.includes('financeiro')) {
+      return 'mig-financial-consultancy';
+    }
+    
+    if (inputLower.includes('meta') || inputLower.includes('objetivo') || inputLower.includes('ação')) {
+      return 'mig-action-plan';
+    }
+    
+    if (inputLower.includes('relatório') || inputLower.includes('análise') || inputLower.includes('documento')) {
+      return 'mig-reporting';
+    }
+    
+    return null;
   }
 
   private getLastUsedProvider(): string {
