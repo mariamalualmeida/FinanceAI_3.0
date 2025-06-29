@@ -139,8 +139,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setCurrentConversation(newConversation.id);
         clearChat();
         
-        // Close sidebar only on new conversation creation
-        setSidebarOpen(false);
+        // Sidebar closes only when explicitly requested by button
+        // Removed automatic closing here
         
         return newConversation.id;
       }

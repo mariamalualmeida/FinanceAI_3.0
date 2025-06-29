@@ -62,7 +62,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
     // Usar a prop do App.tsx para criar nova conversa
     if (onNewConversation) {
       onNewConversation()
-      if (onClose) onClose() // Fechar sidebar no mobile
+      // Fechar sidebar explicitamente quando criar nova conversa
+      if (onClose) onClose()
     }
   }
 
@@ -73,10 +74,8 @@ export default function Sidebar({ user, onLogout, settings, onUpdateSettings, is
       onSelectConversation(conversation)
     }
     
-    // Close sidebar on mobile after selection
-    if (window.innerWidth < 768 && onClose) {
-      onClose()
-    }
+    // Sidebar só fecha quando explicitamente solicitado
+    // Removido fechamento automático no mobile
   }
 
   const handleDeleteConversation = async (conversationId: string) => {
