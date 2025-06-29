@@ -85,6 +85,7 @@ from dataframe_parsers_1750515734454_1750930357013 import process_dataframe_gene
 from bank_specific_parsers_1750515734450_1750930357073 import parse_nubank_extrato_pdf, parse_c6_fatura_pdf
 from categorization_logic_1750515734451_1750930357059 import categorizar_transacao_granular, categorize_transactions_detailed
 from config_1750515734453_1750930357044 import SITES_APOSTAS, PROCESSADORAS_PAGAMENTO_NAO_APOSTA, MAPPING_COLUNAS_PADRAO_GENERICO
+from caixa_extrato_parser import parse_caixa_extrato_pdf, process_caixa_extrato_text
 
 def extract_transactions(file_path, file_type):
     """Main function to extract and categorize transactions from documents."""
@@ -108,12 +109,28 @@ def extract_transactions(file_path, file_type):
                 transactions = parse_nubank_extrato_pdf(text_content, doc_type)
             elif 'c6' in bank.lower() and doc_type == 'fatura_cartao':
                 transactions = parse_c6_fatura_pdf(text_content, doc_type)
+            elif 'caixa' in bank.lower() or 'CAIXA' in text_content:
+                # Use the new Caixa parser
+                transactions = parse_caixa_extrato_pdf(text_content, doc_type)
+            
+            # Generic fallback for PDFs that might be bank statements
+            if not transactions and text_content.strip():
+                # Try to detect if it looks like a Caixa statement
+                if any(indicator in text_content.upper() for indicator in [
+                    'CAIXA ECONÔMICA', 'SAC CAIXA', 'ALÔ CAIXA', 'EXTRATO POR PERÍODO'
+                ]):
+                    transactions = parse_caixa_extrato_pdf(text_content, doc_type)
             
             # OCR fallback for scanned PDFs
             if not transactions and not text_content.strip():
                 ocr_text = perform_ocr(file_path)
-                if ocr_text and 'nubank' in bank.lower():
-                    transactions = parse_nubank_extrato_pdf(ocr_text, doc_type)
+                if ocr_text:
+                    if 'nubank' in bank.lower():
+                        transactions = parse_nubank_extrato_pdf(ocr_text, doc_type)
+                    elif any(indicator in ocr_text.upper() for indicator in [
+                        'CAIXA ECONÔMICA', 'SAC CAIXA', 'ALÔ CAIXA'
+                    ]):
+                        transactions = parse_caixa_extrato_pdf(ocr_text, doc_type)
         
         elif file_type in ['csv', 'xlsx']:
             # Process DataFrames

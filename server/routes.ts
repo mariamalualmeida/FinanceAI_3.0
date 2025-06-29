@@ -397,14 +397,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           await storage.updateFileUploadStatus(fileUpload.id, 'processing');
 
-          // Read file content for analysis
-          const fileContent = await fs.readFile(req.file!.path, 'utf-8');
+          // Process the uploaded file using the file processor
+          const fileType = path.extname(req.file!.originalname).toLowerCase().slice(1);
+          const processedDocument = await fileProcessor.processDocument(req.file!.path, fileType);
           
-          // Create financial analysis
-          const analysis = await financialAnalyzer.analyzeFinancialDocument(
+          // Create financial analysis with the extracted data
+          const analysis = await financialAnalyzer.analyzeFinancialData(
             req.session.userId!,
             conversationId || null,
-            fileContent,
+            processedDocument,
             req.file!.originalname
           );
           

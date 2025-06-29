@@ -34,6 +34,83 @@ export class FinancialAnalyzer {
     multiLlmOrchestrator.initialize().catch(console.error);
   }
 
+  async analyzeFinancialData(
+    userId: number,
+    conversationId: string | null,
+    processedDocument: any,
+    fileName: string
+  ): Promise<FinancialAnalysisResult> {
+    try {
+      const transactions = processedDocument.metadata.transactions || [];
+      const financialSummary = processedDocument.metadata.financialSummary || {};
+      
+      // Convert transactions to internal format
+      const formattedTransactions = transactions.map((t: any) => ({
+        date: t.date,
+        description: t.description || '',
+        amount: Math.abs(t.value || 0),
+        type: t.value >= 0 ? 'credit' : 'debit',
+        category: t.category || 'outros',
+        subcategory: t.subcategory || 'nao_categorizado'
+      }));
+
+      // Calculate credit score using the file processor
+      const creditScore = await fileProcessor.calculateCreditScore(transactions, processedDocument.metadata.personalData);
+      
+      // Perform comprehensive analysis
+      const analysisResult = await this.performAnalysis(formattedTransactions, processedDocument.text);
+      
+      // Override with calculated values from processing
+      analysisResult.creditScore = creditScore;
+      analysisResult.totalIncome = financialSummary.total_income || 0;
+      analysisResult.totalExpenses = financialSummary.total_expenses || 0;
+      analysisResult.netBalance = financialSummary.net_balance || 0;
+      analysisResult.transactionCount = financialSummary.transaction_count || 0;
+      
+      // Update risk level based on credit score
+      if (creditScore >= 700) {
+        analysisResult.riskLevel = 'baixo';
+      } else if (creditScore >= 500) {
+        analysisResult.riskLevel = 'medio';
+      } else {
+        analysisResult.riskLevel = 'alto';
+      }
+
+      // Save analysis to database
+      const analysis = await storage.createFinancialAnalysis({
+        userId,
+        conversationId: conversationId,
+        analysisType: 'comprehensive',
+        results: analysisResult,
+        score: creditScore.toString(),
+        riskLevel: analysisResult.riskLevel,
+        recommendations: analysisResult.recommendations.join('\n')
+      });
+
+      // Save individual transactions
+      if (formattedTransactions.length > 0) {
+        const transactionRecords = formattedTransactions.map(t => ({
+          analysisId: analysis.id,
+          date: new Date(t.date),
+          description: t.description,
+          amount: t.amount.toString(),
+          type: t.type,
+          category: t.category,
+          subcategory: t.subcategory,
+          isSuspicious: this.isSuspiciousTransaction(t),
+          metadata: { originalFile: fileName }
+        }));
+
+        await storage.createMultipleTransactions(transactionRecords);
+      }
+
+      return analysisResult;
+    } catch (error) {
+      console.error('Erro na análise financeira:', error);
+      throw new Error('Falha ao analisar dados financeiros');
+    }
+  }
+
   async analyzeFinancialDocument(
     userId: number,
     conversationId: string,
