@@ -374,8 +374,8 @@ class MultiLLMOrchestrator {
       throw new Error('No LLM providers available. Please configure at least one API key.');
     }
 
-    // Usar apenas APIs funcionais (OpenAI temporariamente desabilitada por problemas de permissão)
-    const providerPriority = ['google', 'anthropic', 'xai'];
+    // Prioridade: Gemini como principal, Anthropic como backup
+    const providerPriority = ['gemini', 'anthropic', 'xai', 'openai'];
     
     for (const providerName of providerPriority) {
       const provider = this.providers.get(providerName);
@@ -465,23 +465,24 @@ class MultiLLMOrchestrator {
   private routeBySubject(input: string): LLMProvider | null {
     const lowerInput = input.toLowerCase();
 
-    // Roteamento baseado em palavras-chave
-    if (lowerInput.includes('financeiro') || lowerInput.includes('crédito') || lowerInput.includes('extrato')) {
-      // Claude é melhor para análise financeira conservadora
-      return this.providers.get('anthropic') || null;
+    // Roteamento baseado em palavras-chave com Gemini como preferência
+    if (lowerInput.includes('financeiro') || lowerInput.includes('crédito') || lowerInput.includes('extrato') || lowerInput.includes('análise')) {
+      // Gemini para análise financeira avançada
+      return this.providers.get('gemini') || this.providers.get('anthropic') || null;
     }
 
     if (lowerInput.includes('imagem') || lowerInput.includes('áudio') || lowerInput.includes('arquivo')) {
-      // GPT-4o é melhor para multimodal
-      return this.providers.get('openai') || null;
+      // Gemini primeiro, depois GPT-4o para multimodal
+      return this.providers.get('gemini') || this.providers.get('openai') || null;
     }
 
     if (lowerInput.includes('técnico') || lowerInput.includes('código') || lowerInput.includes('dados')) {
-      // Gemini é bom para análise técnica
-      return this.providers.get('google') || null;
+      // Gemini é excelente para análise técnica
+      return this.providers.get('gemini') || null;
     }
 
-    return null;
+    // Default para Gemini se disponível
+    return this.providers.get('gemini') || null;
   }
 
   private async validateResponse(response: string, originalInput: string, context?: string): Promise<string> {
